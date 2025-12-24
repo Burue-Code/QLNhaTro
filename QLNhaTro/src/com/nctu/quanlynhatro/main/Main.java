@@ -1,6 +1,6 @@
 package com.nctu.quanlynhatro.main;
 
-import com.nctu.quanlynhatro.view.Login.*;
+import com.nctu.quanlynhatro.view.login.*;
 
 public class Main {
     public static void main(String[] args) {
