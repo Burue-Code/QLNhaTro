@@ -1,4 +1,4 @@
-package com.nctu.quanlynhatro.view.Login;
+package com.nctu.quanlynhatro.view.login;
 import javax.swing.*;
 import java.awt.*;
 
