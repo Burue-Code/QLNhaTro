@@ -9,58 +9,30 @@ import java.util.Properties;
 
 public class DatabaseConnection {
 
-    private static String url = "jdbc:sqlserver://localhost:1433;databaseName=QLTroNew;encrypt=true;trustServerCertificate=true";
-    private static String url1 = "jdbc:sqlserver://localhost:1433;databaseName=QLNhaTro;encrypt=true;trustServerCertificate=true";
-    private static String user;
-    private static String password;
+	private static String DB_URL = "jdbc:mysql://localhost:3306/QLNhaTro";
+    private static String USER_NAME = "root";
+    private static String PASSWORD = "";
 
-    // Khối static này sẽ chạy ngay khi class được gọi đến lần đầu tiên
-    static {
-        Properties prop = new Properties();
-        try (FileInputStream fis = new FileInputStream("config.properties")) {
-            prop.load(fis);
-            
-            // Lấy dữ liệu từ file properties
-            user = prop.getProperty("db.user");
-            password = prop.getProperty("db.password");
-            
-        } catch (IOException e) {
-            System.err.println("LỖI: Không tìm thấy hoặc không đọc được file config.properties!");
-            e.printStackTrace();
-        }
-    }
-
+  
     // Kết nối tới DB Chính
-    public static Connection getQLTroNew() {
+    public static Connection getConnection() {
+        Connection conn = null;
         try {
-            return DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL 8+
+            conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
+            System.out.println("✅ Kết nối MySQL thành công!");
+        } catch (ClassNotFoundException e) {
+            System.out.println("❌ Không tìm thấy Driver");
             e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Kết nối tới DB Accounts
-    public static Connection getQLNhaTroAccounts() {
-        try {
-            // Đã sửa lỗi: Sử dụng url1 thay vì url
-            return DriverManager.getConnection(url1, user, password);
         } catch (SQLException e) {
+            System.out.println("❌ Lỗi kết nối database");
             e.printStackTrace();
-            return null;
         }
+        return conn;
     }
 
     // Hàm main để test
     public static void main(String[] args) {
-        System.out.println("Đang kiểm tra kết nối...");
-        
-        try (Connection cn = getQLTroNew()) {
-            if (cn != null) System.out.println("=> Kết nối QLTroNew: THÀNH CÔNG!");
-        } catch (SQLException e) { e.printStackTrace(); }
-
-        try (Connection cn1 = getQLNhaTroAccounts()) {
-            if (cn1 != null) System.out.println("=> Kết nối QLNhaTro: THÀNH CÔNG!");
-        } catch (SQLException e) { e.printStackTrace(); }
+    	DatabaseConnection.getConnection();
     }
 }
