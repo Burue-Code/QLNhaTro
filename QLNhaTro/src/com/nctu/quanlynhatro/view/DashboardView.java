@@ -5,6 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import com.nctu.quanlynhatro.view.phu_phi.*;
 import com.nctu.quanlynhatro.view.thong_ke.*;
+import com.nctu.quanlynhatro.view.dien_nuoc.*;
+import com.nctu.quanlynhatro.view.hop_dong.*;
+import com.nctu.quanlynhatro.view.khach_hang.*;
+import com.nctu.quanlynhatro.view.nha_tro.*;
+import com.nctu.quanlynhatro.view.phong.*;
+import com.nctu.quanlynhatro.view.phuong_thuc_tt.*;
+import com.nctu.quanlynhatro.view.gia_dien_nuoc.*;
+import com.nctu.quanlynhatro.view.hoa_don.*;
 
 public class DashboardView extends JFrame {
 	
@@ -78,10 +86,15 @@ public class DashboardView extends JFrame {
         cardsContainer = new JPanel(cardLayout);
 
         // Thêm các view con vào và đặt TÊN ĐỊNH DANH (KEY)
-        // Ví dụ: PhuPhiView ứng với menu Điện - Nước
-        cardsContainer.add(new PhuPhiView(), "VIEW_PHUPHI"); 
-        
-        // Bạn cần tạo thêm các Panel khác và add vào đây
+        cardsContainer.add(new NhaTroView(), "VIEW_NHATRO");
+        cardsContainer.add(new PhuPhiView(), "VIEW_PHUPHI");
+        cardsContainer.add(new HopDongView(), "VIEW_HOPDONG");
+        cardsContainer.add(new HoaDonView(), "VIEW_HOADON");
+        cardsContainer.add(new KhachHangView(), "VIEW_KHACHHANG");
+        cardsContainer.add(new PhongView(), "VIEW_PHONG");
+        cardsContainer.add(new PhuongThucThanhToanView(), "VIEW_PHUONGTHUCTHANHTOAN");
+        cardsContainer.add(new DienNuocView(), "VIEW_DIENNUOC");
+        cardsContainer.add(new GiaDienNuocView(), "VIEW_GIADIENNUOC");
         cardsContainer.add(new ThongKeDoanhThuView(), "VIEW_THONGKEDOANHTHU");
         
 
