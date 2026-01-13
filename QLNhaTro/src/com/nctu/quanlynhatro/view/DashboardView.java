@@ -1,12 +1,5 @@
 package com.nctu.quanlynhatro.view;
 
-import com.nctu.quanlynhatro.view.dien_nuoc.DienNuocView; 
-import com.nctu.quanlynhatro.view.hoa_dong.HoaDonView;
-import com.nctu.quanlynhatro.view.hop_dong.HopDongView;
-import com.nctu.quanlynhatro.view.khach_hang.KhachHangView;
-import com.nctu.quanlynhatro.view.nha_tro.NhaTroView;
-import com.nctu.quanlynhatro.view.phong.PhongView;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
