@@ -1,12 +1,14 @@
-package com.nctu.quanlynhatro.view.hoa_dong;
+package com.nctu.quanlynhatro.view.hoa_don;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-public class SuaHoaDonView extends JFrame {
+public class ThemHoaDonView extends JFrame {
 
     // --- Component KHU VỰC TRÁI ---
     private JTextField txtTenKH, txtNgayThanhToan;
@@ -23,16 +25,14 @@ public class SuaHoaDonView extends JFrame {
 
     // --- Component KHU VỰC DƯỚI (Footer) ---
     private JTextField txtTongTienDN, txtTongTienPhuPhi, txtTongThanhToan;
-    private JButton btnHuy, btnCapNhat, btnIn;
+    private JButton btnHuy, btnXacNhan, btnIn;
 
     private DefaultTableModel mainTableModel;
-    private int rowIndex;
 
-    public SuaHoaDonView(DefaultTableModel model, int row) {
+    public ThemHoaDonView(DefaultTableModel model) {
         this.mainTableModel = model;
-        this.rowIndex = row;
-        
-        setTitle("Cập Nhật Hóa Đơn");
+        setTitle("Lập Hóa Đơn Thanh Toán");
+        // setSize(1100, 700); <-- Dùng pack() ở cuối
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel contentPane = new JPanel(new BorderLayout(10, 10));
@@ -56,28 +56,26 @@ public class SuaHoaDonView extends JFrame {
         addLabel(pnlLeftForm, "Ngày Thanh Toán:", 1, 0);
         
         txtTenKH = createTextField();
-        // Lấy Tên KH từ cột tương ứng trong bảng cha (Vui lòng kiểm tra index cột)
-        txtTenKH.setText(getValue(2)); 
+        txtTenKH.setEditable(false); // Tự động load từ Hợp đồng
         addComponent(pnlLeftForm, txtTenKH, 0, 1);
         
         txtNgayThanhToan = createTextField();
         txtNgayThanhToan.setEditable(false);
-        txtNgayThanhToan.setText(getValue(3)); // Ví dụ cột 3 là Ngày TT
+        txtNgayThanhToan.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         addComponent(pnlLeftForm, txtNgayThanhToan, 1, 1);
 
-        // Hàng 2
+        // Hàng 2: Mã Hợp Đồng (Đã bỏ nút ...) & Điện Nước
         addLabel(pnlLeftForm, "Mã Hợp Đồng:", 0, 2);
         addLabel(pnlLeftForm, "Hóa Đơn Điện Nước:", 1, 2);
 
+        // Ô Mã Hợp Đồng: Chỉ là Textbox Read-only
         txtMaHopDong = createTextField();
-        txtMaHopDong.setText(getValue(0)); // Cột 0 Mã HĐ
-        txtMaHopDong.setEditable(false);
+        txtMaHopDong.setEditable(false); 
         addComponent(pnlLeftForm, txtMaHopDong, 0, 3);
 
+        // Panel Điện nước
         JPanel pnlDienNuocOption = new JPanel(new BorderLayout(5, 0));
-        cboChonDienNuoc = new JComboBox<>(new String[]{"Chọn phiếu..."});
-        // Logic load phiếu điện nước sẽ thêm sau từ DB
-        
+        cboChonDienNuoc = new JComboBox<>(new String[]{"-- Chọn phiếu --"});
         btnCongDN = new JButton("+");
         btnThemPhieuMoi = new JButton("Mới");
         
@@ -95,12 +93,11 @@ public class SuaHoaDonView extends JFrame {
         addLabel(pnlLeftForm, "Giá Thuê:", 1, 4);
 
         txtNhaTro = createTextField(); 
-        txtNhaTro.setEditable(false); // Thường là readonly
-        // txtNhaTro.setText(getValue(X)); 
+        txtNhaTro.setEditable(false); // Tự động load
         addComponent(pnlLeftForm, txtNhaTro, 0, 5);
 
         txtGiaThue = createTextField();
-        // txtGiaThue.setText(getValue(Y));
+        txtGiaThue.setEditable(false); // Tự động load
         addComponent(pnlLeftForm, txtGiaThue, 1, 5);
 
         // Hàng 4
@@ -108,12 +105,10 @@ public class SuaHoaDonView extends JFrame {
         addLabel(pnlLeftForm, "Ghi Chú:", 1, 6);
 
         txtPhong = createTextField(); 
-        txtPhong.setText(getValue(1)); // Cột 1 Mã Phòng
-        txtPhong.setEditable(false);
+        txtPhong.setEditable(false); // Tự động load
         addComponent(pnlLeftForm, txtPhong, 0, 7);
 
         txtGhiChu = createTextField();
-        txtGhiChu.setText(getValue(5)); // Cột 5 Ghi chú
         addComponent(pnlLeftForm, txtGhiChu, 1, 7);
 
         // Hàng 5
@@ -128,7 +123,6 @@ public class SuaHoaDonView extends JFrame {
         cboLoaiThanhToan.setPreferredSize(new Dimension(0, 30));
         addComponent(pnlLeftForm, cboLoaiThanhToan, 1, 9);
         
-        // Đẩy content lên trên
         gbc.gridx = 0; gbc.gridy = 10; gbc.weighty = 1.0;
         pnlLeftForm.add(new JLabel(), gbc);
 
@@ -144,7 +138,7 @@ public class SuaHoaDonView extends JFrame {
         tblPhuPhi = new JTable(modelPhuPhi);
         tblPhuPhi.setRowHeight(25);
         tblPhuPhi.setPreferredScrollableViewportSize(new Dimension(450, 100)); 
-        // Không add row mẫu nữa
+        // Không add dữ liệu demo
         pnlPhuPhi.add(new JScrollPane(tblPhuPhi), BorderLayout.CENTER);
 
         // Bảng Điện Nước
@@ -160,6 +154,7 @@ public class SuaHoaDonView extends JFrame {
         pnlRightTables.add(pnlPhuPhi);
         pnlRightTables.add(pnlDienNuoc);
 
+        // Add vào Center
         pnlCenter.add(pnlLeftForm);
         pnlCenter.add(pnlRightTables);
         contentPane.add(pnlCenter, BorderLayout.CENTER);
@@ -171,7 +166,7 @@ public class SuaHoaDonView extends JFrame {
         JPanel pnlFooter = new JPanel(new GridLayout(1, 2, 20, 0));
         pnlFooter.setBorder(new EmptyBorder(10, 0, 0, 0)); 
 
-        // --- CỘT TRÁI FOOTER: TỔNG TIỀN (Chữ Đỏ) ---
+        // --- CỘT TRÁI FOOTER: TỔNG TIỀN ---
         JPanel pnlTotalContainer = new JPanel(new BorderLayout());
         pnlTotalContainer.setBorder(new TitledBorder("Tổng Tiền"));
         
@@ -179,8 +174,6 @@ public class SuaHoaDonView extends JFrame {
         txtTongTienDN = createTotalField();
         txtTongTienPhuPhi = createTotalField();
         txtTongThanhToan = createTotalField();
-        
-        txtTongThanhToan.setText(getValue(4)); // Cột 4 Tổng Tiền
 
         pnlTotalFields.add(createLabeledPanel("Tổng Tiền Điện Nước:", txtTongTienDN));
         pnlTotalFields.add(createLabeledPanel("Tổng Tiền Phụ Phí:", txtTongTienPhuPhi));
@@ -196,14 +189,14 @@ public class SuaHoaDonView extends JFrame {
         btnHuy = new JButton("Hủy");
         btnHuy.setPreferredSize(new Dimension(100, 40));
         
-        btnCapNhat = new JButton("Cập Nhật"); 
-        btnCapNhat.setPreferredSize(new Dimension(100, 40));
+        btnXacNhan = new JButton("Xác Nhận");
+        btnXacNhan.setPreferredSize(new Dimension(100, 40));
         
         btnIn = new JButton("In");
         btnIn.setPreferredSize(new Dimension(100, 40));
 
         pnlButtons.add(btnHuy);
-        pnlButtons.add(btnCapNhat);
+        pnlButtons.add(btnXacNhan);
         pnlButtons.add(btnIn);
         
         pnlButtonsContainer.add(pnlButtons, BorderLayout.SOUTH); 
@@ -215,35 +208,27 @@ public class SuaHoaDonView extends JFrame {
         setLocationRelativeTo(null); 
 
         // --- SỰ KIỆN ---
+        
         btnHuy.addActionListener(e -> this.dispose());
         
-        btnCapNhat.addActionListener(e -> {
-            if (txtTenKH.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khách hàng!");
+        btnXacNhan.addActionListener(e -> {
+            if (txtMaHopDong.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn hợp đồng!");
                 return;
             }
-            
-            // Logic Cập Nhật: setValueAt vào dòng đang chọn (rowIndex)
-            mainTableModel.setValueAt(txtPhong.getText(), rowIndex, 1);
-            mainTableModel.setValueAt(txtNgayThanhToan.getText(), rowIndex, 2);
-            mainTableModel.setValueAt(txtTongThanhToan.getText(), rowIndex, 3);
-            mainTableModel.setValueAt("Đã thanh toán", rowIndex, 4); // Hoặc lấy từ combo trạng thái
-            mainTableModel.setValueAt(txtGhiChu.getText(), rowIndex, 5);
-            
-            JOptionPane.showMessageDialog(this, "Cập nhật hóa đơn thành công!");
+            mainTableModel.addRow(new Object[]{
+                txtPhong.getText(), 
+                txtNgayThanhToan.getText(),
+                txtTongThanhToan.getText(),
+                "Đã thanh toán",
+                txtGhiChu.getText()
+            });
+            JOptionPane.showMessageDialog(this, "Lập hóa đơn thành công!");
             this.dispose();
         });
     }
 
     // --- Helper Functions ---
-    
-    // Hàm lấy giá trị an toàn từ bảng cha
-    private String getValue(int col) {
-        if (col < 0 || col >= mainTableModel.getColumnCount()) return ""; // Tránh lỗi index
-        Object val = mainTableModel.getValueAt(rowIndex, col);
-        return (val == null) ? "" : val.toString();
-    }
-
     private void addLabel(JPanel panel, String text, int x, int y) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x; gbc.gridy = y;
@@ -268,10 +253,10 @@ public class SuaHoaDonView extends JFrame {
     }
 
     private JTextField createTotalField() {
-        JTextField txt = new JTextField("0"); // Mặc định là 0
+        JTextField txt = new JTextField("0");
         txt.setEditable(false);
         txt.setBackground(new Color(230, 230, 230)); 
-        txt.setForeground(Color.RED); 
+        txt.setForeground(Color.RED); // Chữ màu ĐỎ
         txt.setHorizontalAlignment(JTextField.RIGHT);
         txt.setFont(new Font("Arial", Font.BOLD, 14));
         txt.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));

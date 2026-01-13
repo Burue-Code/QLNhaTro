@@ -1,12 +1,5 @@
 package com.nctu.quanlynhatro.view;
 
-import com.nctu.quanlynhatro.view.dien_nuoc.DienNuocView; 
-import com.nctu.quanlynhatro.view.hoa_dong.HoaDonView;
-import com.nctu.quanlynhatro.view.hop_dong.HopDongView;
-import com.nctu.quanlynhatro.view.khach_hang.KhachHangView;
-import com.nctu.quanlynhatro.view.nha_tro.NhaTroView;
-import com.nctu.quanlynhatro.view.phong.PhongView;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +13,8 @@ import com.nctu.quanlynhatro.view.nha_tro.*;
 import com.nctu.quanlynhatro.view.phong.*;
 import com.nctu.quanlynhatro.view.phuong_thuc_tt.*;
 import com.nctu.quanlynhatro.view.gia_dien_nuoc.*;
+import com.nctu.quanlynhatro.view.gia_diennuoc.*;
+import com.nctu.quanlynhatro.view.gia_diennuoc.GiaDienNuocView;
 import com.nctu.quanlynhatro.view.hoa_don.*;
 
 public class DashboardView extends JFrame {
@@ -47,122 +42,40 @@ public class DashboardView extends JFrame {
     private void setupMenu() {
     	JMenuBar menuBar = new JMenuBar();
 
-        JMenuBar menuBar = new JMenuBar();
-
-        // --- MENU DANH MỤC ---
+        // --- Menu Danh Mục ---
         JMenu dm = new JMenu("Danh mục");
+        mniNhaTro = new JMenuItem("Nhà trọ");
+        mniPhong = new JMenuItem("Phòng");
+        mniKhachHang = new JMenuItem("Khách hàng");
         
-     // 2. Tách menu item "Nhà Trọ" ra biến riêng để xử lý
-        JMenuItem mnuNhaTro = new JMenuItem("Nhà Trọ");
-        
-        // 3. Thêm sự kiện click
-        mnuNhaTro.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Mở form Nhà Trọ
-            	NhaTroView viewDN = new NhaTroView();
-                viewDN.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Chỉ đóng form con, không tắt Dashboard
-                viewDN.setVisible(true);
-            }
-        });
-        
-        dm.add(mnuNhaTro); // Thêm vào menu cha
-        
-        
-     // 2. Tách menu item "Phòng" ra biến riêng để xử lý
-        JMenuItem mnuPhong = new JMenuItem("Phòng");
-        
-        // 3. Thêm sự kiện click
-        mnuPhong.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Mở form Phòng
-            	PhongView viewDN = new PhongView();
-                viewDN.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Chỉ đóng form con, không tắt Dashboard
-                viewDN.setVisible(true);
-            }
-        });
-        
-        dm.add(mnuPhong); // Thêm vào menu cha
-        
-        
-     // 2. Tách menu item "Khách Hàng" ra biến riêng để xử lý
-        JMenuItem mnuKhachHang = new JMenuItem("Khách Hàng");
-        
-        // 3. Thêm sự kiện click
-        mnuKhachHang.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Mở form Khách Hàng
-            	KhachHangView viewDN = new KhachHangView();
-                viewDN.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Chỉ đóng form con, không tắt Dashboard
-                viewDN.setVisible(true);
-            }
-        });
-        
-        dm.add(mnuKhachHang); // Thêm vào menu cha
+        dm.add(mniNhaTro);
+        dm.add(mniPhong);
+        dm.add(mniKhachHang);
 
-        
-        // --- MENU NGHIỆP VỤ ---
+        // --- Menu Nghiệp Vụ ---
         JMenu nv = new JMenu("Nghiệp vụ");
+        mniHopDong = new JMenuItem("Hợp đồng");
+        mniHoaDon = new JMenuItem("Hóa đơn");
+        mniDienNuoc = new JMenuItem("Điện - Nước");
         
-     // 2. Tách menu item "Hợp Đồng" ra biến riêng để xử lý
-        JMenuItem mnuDopDong = new JMenuItem("Hợp Đồng");
-        
-        // 3. Thêm sự kiện click
-        mnuDopDong.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Mở form Hợp Đồng
-            	HopDongView viewDN = new HopDongView();
-                viewDN.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Chỉ đóng form con, không tắt Dashboard
-                viewDN.setVisible(true);
-            }
-        });
-        
-        nv.add(mnuDopDong); // Thêm vào menu cha
-        
-        
-     // 2. Tách menu item "Hóa Đơn" ra biến riêng để xử lý
-        JMenuItem mnuHoaDon = new JMenuItem("Hóa Đơn");
-        
-        // 3. Thêm sự kiện click
-        mnuHoaDon.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Mở form Hóa Đơn
-            	HoaDonView viewDN = new HoaDonView();
-                viewDN.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Chỉ đóng form con, không tắt Dashboard
-                viewDN.setVisible(true);
-            }
-        });
-        
-        nv.add(mnuHoaDon); // Thêm vào menu cha
+        nv.add(mniHopDong);
+        nv.add(mniHoaDon);
+        nv.add(mniDienNuoc);
 
-        
-        // 2. Tách menu item "Điện - Nước" ra biến riêng để xử lý
-        JMenuItem mnuDienNuoc = new JMenuItem("Điện - Nước");
-        
-        // 3. Thêm sự kiện click
-        mnuDienNuoc.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Mở form Điện Nước
-                DienNuocView viewDN = new DienNuocView();
-                viewDN.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Chỉ đóng form con, không tắt Dashboard
-                viewDN.setVisible(true);
-            }
-        });
-        
-        nv.add(mnuDienNuoc); // Thêm vào menu cha
-        
-
-        // --- MENU THỐNG KÊ ---
+        // --- Menu Thống Kê ---
         JMenu tk = new JMenu("Thống kê");
+        mniThongKeDoanhThu = new JMenuItem("Doanh thu");
+        tk.add(mniThongKeDoanhThu);
         
-        tk.add(new JMenuItem("Doanh thu"));
-
-        // Add các menu vào thanh bar
+        // --- Menu Cài Đặt ---
+        JMenu cd = new JMenu("Cài Đặt");
+        mniPhuPhi = new JMenuItem("Cấu hình Phụ Phí");
+        mniPhuongThucTT = new JMenuItem("Cấu hình Phương Thức Thanh Toán");
+        mniGiaDienNuoc = new JMenuItem("Cấu hình Giá Điện Nước");
+        cd.add(mniPhuPhi);
+        cd.add(mniPhuongThucTT);
+        cd.add(mniGiaDienNuoc);
+        // Add các Menu chính vào Bar
         menuBar.add(dm);
         menuBar.add(nv);
         menuBar.add(tk);
@@ -195,11 +108,40 @@ public class DashboardView extends JFrame {
         add(lbl, BorderLayout.CENTER);
     }
     
-    // Hàm main để chạy thử Dashboard
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new DashboardView().setVisible(true);
-        });
+    public void addMenuListener(ActionListener listener) {
+    	mniNhaTro.addActionListener(listener);
+        mniPhong.addActionListener(listener);
+        mniKhachHang.addActionListener(listener);
+        
+        mniHopDong.addActionListener(listener);
+        mniHoaDon.addActionListener(listener);
+        mniDienNuoc.addActionListener(listener);
+        
+        mniThongKeDoanhThu.addActionListener(listener);
+        
+        mniPhuPhi.addActionListener(listener);
+        mniPhuongThucTT.addActionListener(listener);
+        mniGiaDienNuoc.addActionListener(listener);
     }
+
+    // 2. Phương thức để Controller yêu cầu chuyển trang
+    public void showCard(String key) {
+        cardLayout.show(cardsContainer, key);
+    }
+    
+ // Getter để nhận biết nút nào được nhấn
+    public JMenuItem getMniNhaTro() { return mniNhaTro; }
+    public JMenuItem getMniPhong() { return mniPhong; }
+    public JMenuItem getMniKhachHang() { return mniKhachHang; }
+    
+    public JMenuItem getMniHopDong() { return mniHopDong; }
+    public JMenuItem getMniHoaDon() { return mniHoaDon; }
+    public JMenuItem getMniDienNuoc() { return mniDienNuoc; }
+    
+    public JMenuItem getMniThongKeDoanhThu() { return mniThongKeDoanhThu; }
+    
+    public JMenuItem getMniPhuPhi() { return mniPhuPhi; }
+    public JMenuItem getMniPhuongThucTT() { return mniPhuongThucTT; }
+    public JMenuItem getMniGiaDienNuoc() { return mniGiaDienNuoc; }
 }
 
