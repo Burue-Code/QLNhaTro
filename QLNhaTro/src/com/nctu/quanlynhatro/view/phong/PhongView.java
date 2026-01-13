@@ -2,258 +2,221 @@ package com.nctu.quanlynhatro.view.phong;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class PhongView extends JFrame {
 
-    // Khai báo các component nhập liệu
-    private JTextField txtMaPhong, txtTenPhong;
-    private JTextField txtGiaPhong, txtDienTich;
-    private JComboBox<String> cboLoaiPhong, cboTrangThai;
-    private JTextArea txtMoTa;
-
-    // Các nút chức năng
-    private JButton btnThem, btnSua, btnXoa, btnThoat;
-
-    // Bảng và Model dữ liệu
+    private JTextField txtTimKiem;
+    private JCheckBox chkDaThue, chkConTrong, chkBaoTri;
     private JTable tblPhong;
     private DefaultTableModel tableModel;
+    
+    private JPopupMenu popupMenu;
+    private JMenuItem mnuThem, mnuSua, mnuXoa, mnuLamMoi; // Thêm nút làm mới cho đủ bộ
+    
+    private TableRowSorter<DefaultTableModel> rowSorter;
 
     public PhongView() {
-        // Cấu hình Form chính
-        setTitle("Quản lý Danh Sách Phòng Trọ");
-        setSize(900, 600);
+        // Cấu hình Form
+        setTitle("Quản Lý Danh Sách Phòng");
+        setSize(1100, 650);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Đóng form này không tắt cả App
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // --- PANEL CHÍNH ---
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         setContentPane(mainPanel);
 
         // =================================================================
-        // PHẦN 1: NORTH - FORM NHẬP LIỆU & NÚT BẤM
+        // 1. KHU VỰC NORTH: TIÊU ĐỀ + TÌM KIẾM + LỌC
         // =================================================================
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel pnlNorth = new JPanel(new BorderLayout(0, 10));
 
-        // 1.1 Tiêu đề
-        JLabel lblTitle = new JLabel("QUẢN LÝ THÔNG TIN PHÒNG", SwingConstants.CENTER);
+        // 1.1 Tiêu đề (Đã thêm lại theo yêu cầu)
+        JLabel lblTitle = new JLabel("DANH SÁCH PHÒNG", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitle.setForeground(Color.BLUE);
-        lblTitle.setBorder(new EmptyBorder(0, 0, 15, 0));
-        topPanel.add(lblTitle, BorderLayout.NORTH);
+        pnlNorth.add(lblTitle, BorderLayout.NORTH);
 
-        // 1.2 Form nhập liệu (GridBagLayout)
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(new TitledBorder("Thông tin chi tiết phòng"));
+        // 1.2 Panel chứa Tìm kiếm (Trái) và Checkbox (Phải)
+        JPanel pnlControl = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10); // Padding cho thoáng
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // --- Dòng 1: Mã Phòng & Tên Phòng ---
-        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(new JLabel("Mã Phòng:"), gbc);
+        // --- Panel Tìm Kiếm ---
+        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        JLabel lblTimKiem = new JLabel("Tìm kiếm:");
+        lblTimKiem.setFont(new Font("Arial", Font.BOLD, 14)); // Font Đậm
+        lblTimKiem.setForeground(new Color(0, 51, 102)); 
         
-        txtMaPhong = new JTextField(15);
-        txtMaPhong.setEditable(false); // Mã tự động
-        gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1.0;
-        formPanel.add(txtMaPhong, gbc);
-
-        gbc.gridx = 2; gbc.gridy = 0; gbc.weightx = 0;
-        formPanel.add(new JLabel("Tên Phòng:"), gbc);
+        txtTimKiem = new JTextField(25); 
+        txtTimKiem.setFont(new Font("Arial", Font.PLAIN, 14));
         
-        txtTenPhong = new JTextField(15);
-        gbc.gridx = 3; gbc.gridy = 0; gbc.weightx = 1.0;
-        formPanel.add(txtTenPhong, gbc);
+        pnlSearch.add(lblTimKiem);
+        pnlSearch.add(txtTimKiem);
 
-        // --- Dòng 2: Loại Phòng & Giá Phòng ---
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
-        formPanel.add(new JLabel("Loại Phòng:"), gbc);
+        // --- Panel Checkbox (Đã bỏ tô đen focus) ---
+        JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
         
-        String[] loaiPhong = {"Phòng Thường", "Phòng VIP", "Phòng Có Gác", "Phòng Máy Lạnh"};
-        cboLoaiPhong = new JComboBox<>(loaiPhong);
-        gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1.0;
-        formPanel.add(cboLoaiPhong, gbc);
+        chkDaThue = new JCheckBox("Đã thuê"); 
+        chkDaThue.setFocusable(false); // Bỏ viền focus
+        chkDaThue.setFont(new Font("Arial", Font.PLAIN, 13));
 
-        gbc.gridx = 2; gbc.gridy = 1; gbc.weightx = 0;
-        formPanel.add(new JLabel("Giá Phòng:"), gbc);
+        chkConTrong = new JCheckBox("Còn trống"); 
+        chkConTrong.setFocusable(false); 
+        chkConTrong.setFont(new Font("Arial", Font.PLAIN, 13));
+
+        chkBaoTri = new JCheckBox("Phòng bảo trì"); 
+        chkBaoTri.setFocusable(false); 
+        chkBaoTri.setFont(new Font("Arial", Font.PLAIN, 13));
         
-        txtGiaPhong = new JTextField(15);
-        gbc.gridx = 3; gbc.gridy = 1; gbc.weightx = 1.0;
-        formPanel.add(txtGiaPhong, gbc);
+        pnlFilter.add(chkDaThue); 
+        pnlFilter.add(chkConTrong); 
+        pnlFilter.add(chkBaoTri);
 
-        // --- Dòng 3: Diện Tích & Trạng Thái ---
-        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
-        formPanel.add(new JLabel("Diện Tích (m2):"), gbc);
+        // Add vào pnlControl (Search chiếm ít, Filter chiếm nhiều)
+        gbc.weightx = 0.0; gbc.gridx = 0; pnlControl.add(pnlSearch, gbc);
+        gbc.weightx = 1.0; gbc.gridx = 1; pnlControl.add(pnlFilter, gbc);
+
+        // Add pnlControl vào phía dưới tiêu đề
+        pnlNorth.add(pnlControl, BorderLayout.SOUTH);
         
-        txtDienTich = new JTextField(15);
-        gbc.gridx = 1; gbc.gridy = 2; gbc.weightx = 1.0;
-        formPanel.add(txtDienTich, gbc);
+        mainPanel.add(pnlNorth, BorderLayout.NORTH);
 
-        gbc.gridx = 2; gbc.gridy = 2; gbc.weightx = 0;
-        formPanel.add(new JLabel("Trạng Thái:"), gbc);
-        
-        String[] trangThai = {"Trống", "Đang thuê", "Đang sửa chữa"};
-        cboTrangThai = new JComboBox<>(trangThai);
-        gbc.gridx = 3; gbc.gridy = 2; gbc.weightx = 1.0;
-        formPanel.add(cboTrangThai, gbc);
-
-        // --- Dòng 4: Mô Tả (TextArea) ---
-        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0;
-        formPanel.add(new JLabel("Mô Tả Thêm:"), gbc);
-        
-        txtMoTa = new JTextArea(3, 15);
-        txtMoTa.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        JScrollPane scrollMoTa = new JScrollPane(txtMoTa); // Thêm scroll cho mô tả
-        
-        gbc.gridx = 1; gbc.gridy = 3; 
-        gbc.gridwidth = 3; // Chiếm hết 3 ô còn lại
-        gbc.weightx = 1.0;
-        formPanel.add(scrollMoTa, gbc);
-
-        topPanel.add(formPanel, BorderLayout.CENTER);
-
-        // 1.3 Panel Nút Bấm
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        btnThem = new JButton("Thêm");
-        btnSua = new JButton("Sửa");
-        btnXoa = new JButton("Xóa");
-        btnThoat = new JButton("Thoát");
-
-        Dimension btnSize = new Dimension(100, 35);
-        btnThem.setPreferredSize(btnSize);
-        btnSua.setPreferredSize(btnSize);
-        btnXoa.setPreferredSize(btnSize);
-        btnThoat.setPreferredSize(btnSize);
-
-        buttonPanel.add(btnThem);
-        buttonPanel.add(btnSua);
-        buttonPanel.add(btnXoa);
-        buttonPanel.add(btnThoat);
-
-        topPanel.add(buttonPanel, BorderLayout.SOUTH);
-        mainPanel.add(topPanel, BorderLayout.NORTH);
 
         // =================================================================
-        // PHẦN 2: CENTER - DANH SÁCH PHÒNG (TRỐNG)
+        // 2. BẢNG DỮ LIỆU
         // =================================================================
         String[] headers = {
-            "Mã Phòng", "Tên Phòng", "Loại Phòng", "Giá Thuê", "Diện Tích", "Trạng Thái", "Mô Tả"
+            "MaPhong", "Số Phòng", "Giá", "Số Người Ở Tối Đa", 
+            "Phụ Thu", "Trạng Thái Phòng", "Ghi Chú" // Cột khớp với form Thêm/Sửa
         };
         
-        // Model không có dữ liệu ban đầu
         tableModel = new DefaultTableModel(headers, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            public boolean isCellEditable(int row, int column) { return false; }
         };
 
         tblPhong = new JTable(tableModel);
-        tblPhong.setRowHeight(25);
+        tblPhong.setRowHeight(35); // Chiều cao dòng thoáng hơn
+        tblPhong.setFont(new Font("Arial", Font.PLAIN, 14));
+        tblPhong.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        tblPhong.getTableHeader().setBackground(new Color(230, 230, 230));
         tblPhong.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        // Điều chỉnh độ rộng cột Mô tả cho dễ nhìn
-        tblPhong.getColumnModel().getColumn(6).setPreferredWidth(150);
+        // Chỉnh độ rộng cột
+        tblPhong.getColumnModel().getColumn(0).setPreferredWidth(80);  // Mã
+        tblPhong.getColumnModel().getColumn(1).setPreferredWidth(120); // Tên
+        tblPhong.getColumnModel().getColumn(2).setPreferredWidth(120); // Loại
+        tblPhong.getColumnModel().getColumn(3).setPreferredWidth(100); // Giá
+        tblPhong.getColumnModel().getColumn(4).setPreferredWidth(80);  // DT
+        tblPhong.getColumnModel().getColumn(5).setPreferredWidth(120); // Trạng thái
+        tblPhong.getColumnModel().getColumn(6).setPreferredWidth(250); // Mô tả
+
+        // Bộ lọc tìm kiếm
+        rowSorter = new TableRowSorter<>(tableModel);
+        tblPhong.setRowSorter(rowSorter);
+        
+        // Thêm dữ liệu mẫu
+        tableModel.addRow(new Object[]{"P001", "Phòng 101", "Phòng Thường", "2,500,000", "25m2", "Đã Thuê", ""});
+        tableModel.addRow(new Object[]{"P002", "Phòng 102", "Phòng Máy Lạnh", "3,000,000", "30m2", "Phòng Trống", "Có ban công"});
+        tableModel.addRow(new Object[]{"P003", "Phòng 201", "Phòng VIP", "4,500,000", "40m2", "Bảo Trì", "Sửa máy nước nóng"});
 
         JScrollPane scrollPane = new JScrollPane(tblPhong);
-        scrollPane.setBorder(new TitledBorder("Danh sách phòng hiện có"));
+        scrollPane.getViewport().setBackground(Color.WHITE); 
+        tblPhong.setFillsViewportHeight(true); 
         
         mainPanel.add(scrollPane, BorderLayout.CENTER);
-
-        // =================================================================
-        // PHẦN 3: XỬ LÝ SỰ KIỆN
-        // =================================================================
         
-        // 3.1 Click bảng -> Đổ dữ liệu lên Form
-        tblPhong.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = tblPhong.getSelectedRow();
-                if (row >= 0) {
-                    txtMaPhong.setText(getValue(row, 0));
-                    txtTenPhong.setText(getValue(row, 1));
-                    cboLoaiPhong.setSelectedItem(getValue(row, 2));
-                    txtGiaPhong.setText(getValue(row, 3));
-                    txtDienTich.setText(getValue(row, 4));
-                    cboTrangThai.setSelectedItem(getValue(row, 5));
-                    txtMoTa.setText(getValue(row, 6));
-                }
+        // --- 3. SỰ KIỆN TÌM KIẾM ---
+        txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { filter(); }
+            public void removeUpdate(DocumentEvent e) { filter(); }
+            public void changedUpdate(DocumentEvent e) { filter(); }
+            private void filter() {
+                String text = txtTimKiem.getText();
+                if (text.trim().length() == 0) rowSorter.setRowFilter(null);
+                else rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
             }
         });
 
-        // 3.2 Nút Thêm (Demo)
-        btnThem.addActionListener(e -> {
-            String maMoi = "P" + (100 + tableModel.getRowCount() + 1);
-            tableModel.addRow(new Object[]{
-                maMoi,
-                txtTenPhong.getText(),
-                cboLoaiPhong.getSelectedItem(),
-                txtGiaPhong.getText(),
-                txtDienTich.getText(),
-                cboTrangThai.getSelectedItem(),
-                txtMoTa.getText()
-            });
-            resetForm();
-        });
+        // --- 4. CONTEXT MENU & SỰ KIỆN ---
+        popupMenu = new JPopupMenu();
+        mnuThem = new JMenuItem("Thêm Phòng Mới");
+        mnuSua = new JMenuItem("Sửa Thông Tin");
+        mnuXoa = new JMenuItem("Xóa Phòng");
+        mnuLamMoi = new JMenuItem("Làm Mới Danh Sách"); // Thêm nút làm mới
 
-        // 3.3 Nút Sửa
-        btnSua.addActionListener(e -> {
-            int row = tblPhong.getSelectedRow();
-            if (row >= 0) {
-                tableModel.setValueAt(txtTenPhong.getText(), row, 1);
-                tableModel.setValueAt(cboLoaiPhong.getSelectedItem(), row, 2);
-                tableModel.setValueAt(txtGiaPhong.getText(), row, 3);
-                tableModel.setValueAt(txtDienTich.getText(), row, 4);
-                tableModel.setValueAt(cboTrangThai.getSelectedItem(), row, 5);
-                tableModel.setValueAt(txtMoTa.getText(), row, 6);
-                JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+        popupMenu.add(mnuThem); 
+        popupMenu.add(mnuSua); 
+        popupMenu.add(mnuXoa);
+        popupMenu.addSeparator();
+        popupMenu.add(mnuLamMoi);
+
+        tblPhong.addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) { if (e.isPopupTrigger()) showPopup(e); }
+            public void mousePressed(MouseEvent e) { if (e.isPopupTrigger()) showPopup(e); }
+            private void showPopup(MouseEvent e) {
+                int row = tblPhong.rowAtPoint(e.getPoint());
+                if (row >= 0 && row < tblPhong.getRowCount()) {
+                    tblPhong.setRowSelectionInterval(row, row);
+                } else {
+                    tblPhong.clearSelection();
+                }
+                popupMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+        
+        // --- XỬ LÝ SỰ KIỆN MENU ---
+        
+        // 1. Thêm
+        mnuThem.addActionListener(e -> {
+            ThemPhongView frm = new ThemPhongView(tableModel);
+            frm.setVisible(true);
+        });
+        
+        // 2. Sửa
+        mnuSua.addActionListener(e -> {
+            int viewRow = tblPhong.getSelectedRow();
+            if (viewRow >= 0) {
+                int modelRow = tblPhong.convertRowIndexToModel(viewRow);
+                // Truyền đúng model và dòng cần sửa
+                SuaPhongView frm = new SuaPhongView(tableModel, modelRow); 
+                frm.setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn phòng cần sửa!");
             }
         });
-
-        // 3.4 Nút Xóa
-        btnXoa.addActionListener(e -> {
-            int row = tblPhong.getSelectedRow();
-            if (row >= 0) {
+        
+        // 3. Xóa
+        mnuXoa.addActionListener(e -> {
+            int viewRow = tblPhong.getSelectedRow();
+            if (viewRow >= 0) {
                 int confirm = JOptionPane.showConfirmDialog(this, "Bạn chắc chắn muốn xóa phòng này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    tableModel.removeRow(row);
-                    resetForm();
+                    int modelRow = tblPhong.convertRowIndexToModel(viewRow);
+                    tableModel.removeRow(modelRow);
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn phòng cần xóa!");
             }
         });
-
-        // 3.5 Nút Thoát
-        btnThoat.addActionListener(e -> this.dispose());
+        
+        // 4. Làm mới
+        mnuLamMoi.addActionListener(e -> {
+            txtTimKiem.setText("");
+            rowSorter.setRowFilter(null);
+            // TODO: Load lại dữ liệu từ DB tại đây
+            JOptionPane.showMessageDialog(this, "Đã làm mới danh sách!");
+        });
     }
 
-    // Helper: Lấy giá trị chuỗi an toàn
-    private String getValue(int row, int col) {
-        Object val = tableModel.getValueAt(row, col);
-        return val == null ? "" : val.toString();
-    }
-
-    // Helper: Reset form
-    private void resetForm() {
-        txtMaPhong.setText("");
-        txtTenPhong.setText("");
-        txtGiaPhong.setText("");
-        txtDienTich.setText("");
-        txtMoTa.setText("");
-        cboLoaiPhong.setSelectedIndex(0);
-        cboTrangThai.setSelectedIndex(0);
-        txtTenPhong.requestFocus();
-    }
-
-    // Main Test
     public static void main(String[] args) {
         try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) {}
         SwingUtilities.invokeLater(() -> new PhongView().setVisible(true));
