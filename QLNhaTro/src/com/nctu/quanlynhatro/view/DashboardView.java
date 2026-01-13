@@ -13,12 +13,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class DashboardView extends JFrame {
+	
+	// 1. Khai báo các thành phần giao diện ở cấp độ Class (để Controller gọi được)
+    private JPanel cardsContainer;
+    private CardLayout cardLayout;
+
+    // Khai báo các Menu Item cần bắt sự kiện
+    private JMenuItem mniNhaTro, mniPhong, mniKhachHang;
+    private JMenuItem mniHopDong, mniHoaDon, mniDienNuoc;
+    private JMenuItem mniThongKeDoanhThu;
+    private JMenuItem mniPhuPhi,mniPhuongThucTT,mniGiaDienNuoc;
 
     public DashboardView() {
         setTitle("Trang chủ - Quản lý Nhà Trọ");
         setSize(900, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        setupMenu();
+        setupPanels();
+    }
+    
+    private void setupMenu() {
+    	JMenuBar menuBar = new JMenuBar();
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -139,8 +156,22 @@ public class DashboardView extends JFrame {
         menuBar.add(dm);
         menuBar.add(nv);
         menuBar.add(tk);
+        menuBar.add(cd);
 
         setJMenuBar(menuBar);
+    }
+    
+    private void setupPanels() {
+    	cardLayout = new CardLayout();
+        cardsContainer = new JPanel(cardLayout);
+
+        // Thêm các view con vào và đặt TÊN ĐỊNH DANH (KEY)
+        // Ví dụ: PhuPhiView ứng với menu Điện - Nước
+        cardsContainer.add(new PhuPhiView(), "VIEW_PHUPHI"); 
+        
+        // Bạn cần tạo thêm các Panel khác và add vào đây
+        cardsContainer.add(new ThongKeDoanhThuView(), "VIEW_THONGKEDOANHTHU");
+        
 
         // Nội dung chính
         JLabel lbl = new JLabel("HỆ THỐNG QUẢN LÝ NHÀ TRỌ", JLabel.CENTER);
