@@ -31,5 +31,30 @@ public class MainController implements ActionListener {
         else if (source == view.getMniThongKeDoanhThu()) {
              view.showCard("VIEW_THONGKEDOANHTHU"); 
         }
+        else if (source == view.getMniDienNuoc()) {
+            view.showCard("VIEW_DIENNUOC"); 
+       }
+        else if (source == view.getMniGiaDienNuoc()) {
+            view.showCard("VIEW_GIADIENNUOC"); 
+       }
+        else if (source == view.getMniHoaDon()) {
+            view.showCard("VIEW_HOADON"); 
+       }
+        else if (source == view.getMniHopDong()) {
+            view.showCard("VIEW_HOPDONG"); 
+       }
+        else if (source == view.getMniKhachHang()) {
+            view.showCard("VIEW_KHACHHANG"); 
+       }
+        else if (source == view.getMniNhaTro()) {
+            view.showCard("VIEW_NHATRO"); 
+       }
+        else if (source == view.getMniPhong()) {
+            view.showCard("VIEW_PHONG"); 
+       }
+        else if (source == view.getMniPhuongThucTT()) {
+            view.showCard("VIEW_PHUONGTHUCTHANHTOAN"); 
+       }
+        
     }
 }

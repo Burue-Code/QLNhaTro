@@ -11,6 +11,11 @@ public class NhaTro {
     private String ghiChu;
 
     private List<Phong> danhSachPhong;
+    
+    
+    public NhaTro() {
+    	
+    }
 
     public long getMaNT() {
         return maNT;

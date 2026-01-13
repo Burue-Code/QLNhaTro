@@ -13,8 +13,30 @@ public class Phong {
     private String ghiChu;
 
     private HopDong hopDong;
+    private NhaTro nhaTro;
     private List<PhuPhi> danhSachPhuPhi;
 
+    public Phong() {
+    	this.nhaTro = new NhaTro();
+    	this.hopDong = new HopDong();
+    }
+    
+    public Phong(long maPhong, int soPhong, double gia,
+        int soNguoiToiDa, double phuThu,
+        String trangThaiPhong, String ghiChu, boolean baoTri) {
+    	this.nhaTro = new NhaTro();
+    	this.hopDong = new HopDong();
+    	
+		this.maPhong = maPhong;
+		this.soPhong = soPhong;
+		this.gia = gia;
+		this.soNguoiToiDa = soNguoiToiDa;
+		this.phuThu = phuThu;
+		this.trangThaiPhong = trangThaiPhong;
+		this.ghiChu = ghiChu;
+		this.baoTri = baoTri;
+    }
+    
     public long getMaPhong() {
         return maPhong;
     }
@@ -85,6 +107,14 @@ public class Phong {
 
     public void setHopDong(HopDong hopDong) {
         this.hopDong = hopDong;
+    }
+    
+    public NhaTro getNhaTro() {
+        return nhaTro;
+    }
+
+    public void setNhaTro(NhaTro nhaTro) {
+        this.nhaTro = nhaTro;
     }
 
     public List<PhuPhi> getDanhSachPhuPhi() {
