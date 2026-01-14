@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PhuPhiView extends JFrame {
+public class PhuPhiView extends JPanel {
 
     private JTextField txtTimKiem;
     private JTable tblPhuPhi;
@@ -23,14 +23,8 @@ public class PhuPhiView extends JFrame {
 
     public PhuPhiView() {
         // Cấu hình Form
-        setTitle("Quản Lý Phụ Phí");
-        setSize(800, 500); 
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+    	setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // =================================================================
         // 1. KHU VỰC NORTH: TIÊU ĐỀ + TÌM KIẾM
@@ -58,7 +52,7 @@ public class PhuPhiView extends JFrame {
 
         pnlNorth.add(pnlSearch, BorderLayout.SOUTH);
         
-        mainPanel.add(pnlNorth, BorderLayout.NORTH);
+        add(pnlNorth, BorderLayout.NORTH);
 
 
         // =================================================================
@@ -103,7 +97,7 @@ public class PhuPhiView extends JFrame {
         scrollPane.getViewport().setBackground(Color.WHITE); 
         tblPhuPhi.setFillsViewportHeight(true); 
         
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         
         // --- 3. SỰ KIỆN TÌM KIẾM ---
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {

@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class HoaDonView extends JFrame {
+public class HoaDonView extends JPanel {
 
     private JTable tblHoaDon;
     private DefaultTableModel tableModel;
@@ -24,14 +24,8 @@ public class HoaDonView extends JFrame {
 
     public HoaDonView() {
         // Cấu hình Form
-        setTitle("Quản lý Hóa Đơn");
-        setSize(850, 600);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+    	setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // =================================================================
         // PHẦN 1: KHU VỰC NORTH (TIÊU ĐỀ + TÌM KIẾM)
@@ -59,7 +53,7 @@ public class HoaDonView extends JFrame {
         
         pnlNorth.add(pnlSearch, BorderLayout.SOUTH);
         
-        mainPanel.add(pnlNorth, BorderLayout.NORTH);
+        add(pnlNorth, BorderLayout.NORTH);
 
 
         // =================================================================
@@ -91,7 +85,7 @@ public class HoaDonView extends JFrame {
         scrollPane.setBorder(new TitledBorder("Danh sách hóa đơn"));
         tblHoaDon.setFillsViewportHeight(true);
         
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
         // --- XỬ LÝ SỰ KIỆN TÌM KIẾM ---
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {

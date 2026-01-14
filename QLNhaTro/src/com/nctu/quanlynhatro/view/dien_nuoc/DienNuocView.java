@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class DienNuocView extends JFrame {
+public class DienNuocView extends JPanel {
 
     private JTable tblDanhSach;
     private DefaultTableModel tableModel;
@@ -23,14 +23,8 @@ public class DienNuocView extends JFrame {
     private JMenuItem mnuThem, mnuSua, mnuXoa, mnuLamMoi;
 
     public DienNuocView() {
-        setTitle("Quản lý Điện Nước");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(950, 600);
-        setLocationRelativeTo(null);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+    	setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // =================================================================
         // PHẦN 1: HEADER (TIÊU ĐỀ + TÌM KIẾM)
@@ -58,7 +52,7 @@ public class DienNuocView extends JFrame {
         
         topPanel.add(searchPanel, BorderLayout.SOUTH);
 
-        mainPanel.add(topPanel, BorderLayout.NORTH);
+        add(topPanel, BorderLayout.NORTH);
 
         // =================================================================
         // PHẦN 2: BẢNG DỮ LIỆU
@@ -92,7 +86,7 @@ public class DienNuocView extends JFrame {
         scrollPane.setBorder(new TitledBorder("Danh sách hóa đơn"));
         tblDanhSach.setFillsViewportHeight(true);
         
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
         // =================================================================
         // PHẦN 3: XỬ LÝ TÌM KIẾM (KeyAdapter)
