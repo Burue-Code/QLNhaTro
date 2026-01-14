@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PhuongThucThanhToanView extends JFrame {
+public class PhuongThucThanhToanView extends JPanel {
 
     private JTextField txtTimKiem;
     private JTable tblPhuongThuc;
@@ -23,14 +23,8 @@ public class PhuongThucThanhToanView extends JFrame {
 
     public PhuongThucThanhToanView() {
         // Cấu hình Form
-        setTitle("Quản Lý Phương Thức Thanh Toán");
-        setSize(800, 500); 
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+    	setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // =================================================================
         // 1. KHU VỰC NORTH: TIÊU ĐỀ + TÌM KIẾM
@@ -58,7 +52,7 @@ public class PhuongThucThanhToanView extends JFrame {
 
         pnlNorth.add(pnlSearch, BorderLayout.SOUTH);
         
-        mainPanel.add(pnlNorth, BorderLayout.NORTH);
+        add(pnlNorth, BorderLayout.NORTH);
 
 
         // =================================================================
@@ -101,7 +95,7 @@ public class PhuongThucThanhToanView extends JFrame {
         scrollPane.getViewport().setBackground(Color.WHITE); 
         tblPhuongThuc.setFillsViewportHeight(true); 
         
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         
         // --- 3. SỰ KIỆN TÌM KIẾM ---
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {

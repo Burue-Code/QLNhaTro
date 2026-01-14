@@ -13,8 +13,6 @@ import com.nctu.quanlynhatro.view.nha_tro.*;
 import com.nctu.quanlynhatro.view.phong.*;
 import com.nctu.quanlynhatro.view.phuong_thuc_tt.*;
 import com.nctu.quanlynhatro.view.gia_dien_nuoc.*;
-import com.nctu.quanlynhatro.view.gia_diennuoc.*;
-import com.nctu.quanlynhatro.view.gia_diennuoc.GiaDienNuocView;
 import com.nctu.quanlynhatro.view.hoa_don.*;
 
 public class DashboardView extends JFrame {
@@ -80,7 +78,7 @@ public class DashboardView extends JFrame {
         menuBar.add(nv);
         menuBar.add(tk);
         menuBar.add(cd);
-
+ 
         setJMenuBar(menuBar);
     }
     
@@ -102,10 +100,8 @@ public class DashboardView extends JFrame {
         
 
         // Nội dung chính
-        JLabel lbl = new JLabel("HỆ THỐNG QUẢN LÝ NHÀ TRỌ", JLabel.CENTER);
-        lbl.setFont(new Font("Arial", Font.BOLD, 26));
-        lbl.setForeground(Color.BLUE);
-        add(lbl, BorderLayout.CENTER);
+        
+        add(cardsContainer,BorderLayout.CENTER);
     }
     
     public void addMenuListener(ActionListener listener) {

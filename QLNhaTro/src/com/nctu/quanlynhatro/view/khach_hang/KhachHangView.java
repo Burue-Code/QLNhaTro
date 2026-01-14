@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class KhachHangView extends JFrame {
+public class KhachHangView extends JPanel {
 
     private JTable tblKhachHang;
     private DefaultTableModel tableModel;
@@ -23,14 +23,8 @@ public class KhachHangView extends JFrame {
     private TableRowSorter<DefaultTableModel> rowSorter;
 
     public KhachHangView() {
-        setTitle("Quản lý Thông Tin Khách Hàng");
-        setSize(1000, 600); 
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+    	setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // --- KHU VỰC NORTH: TIÊU ĐỀ + TÌM KIẾM ---
         JPanel pnlNorth = new JPanel(new BorderLayout(0, 10));
@@ -53,7 +47,7 @@ public class KhachHangView extends JFrame {
         pnlSearch.add(txtTimKiem);
         
         pnlNorth.add(pnlSearch, BorderLayout.SOUTH);
-        mainPanel.add(pnlNorth, BorderLayout.NORTH);
+        add(pnlNorth, BorderLayout.NORTH);
 
 
         // --- BẢNG DỮ LIỆU ---
@@ -81,7 +75,7 @@ public class KhachHangView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(tblKhachHang);
         scrollPane.setBorder(new TitledBorder("Danh sách khách hàng"));
         tblKhachHang.setFillsViewportHeight(true);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
         // --- 3. XỬ LÝ SỰ KIỆN TÌM KIẾM ---
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {

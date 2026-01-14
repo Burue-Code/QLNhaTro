@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class NhaTroView extends JFrame {
+public class NhaTroView extends JPanel {
 
     private JTable tblNhaTro;
     private DefaultTableModel tableModel;
@@ -24,14 +24,8 @@ public class NhaTroView extends JFrame {
     private TableRowSorter<DefaultTableModel> rowSorter;
 
     public NhaTroView() {
-        setTitle("Quản lý Danh Sách Nhà Trọ");
-        setSize(900, 600);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+    	setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // --- KHU VỰC NORTH (TIÊU ĐỀ + TÌM KIẾM) ---
         JPanel pnlNorth = new JPanel(new BorderLayout(0, 10));
@@ -54,7 +48,7 @@ public class NhaTroView extends JFrame {
         pnlTimKiem.add(txtTimKiem);
         
         pnlNorth.add(pnlTimKiem, BorderLayout.SOUTH);
-        mainPanel.add(pnlNorth, BorderLayout.NORTH);
+        add(pnlNorth, BorderLayout.NORTH);
 
         // --- BẢNG DỮ LIỆU ---
         String[] headers = {"MaNT", "Tên Nhà Trọ", "Số Lượng Phòng", "Địa Chỉ", "Trạng Thái", "Ghi Chú"};
@@ -81,7 +75,7 @@ public class NhaTroView extends JFrame {
         scrollPane.setBorder(new TitledBorder("Danh sách chi tiết"));
         tblNhaTro.setFillsViewportHeight(true); 
         
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
         // --- XỬ LÝ TÌM KIẾM (Gõ đến đâu lọc đến đó) ---
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {

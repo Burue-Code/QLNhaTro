@@ -1,6 +1,6 @@
-package com.nctu.quanlynhatro.view.Login;
+package com.nctu.quanlynhatro.view.login;
 
-import com.nctu.quanlynhatro.view.Login.DangKyView;
+import com.nctu.quanlynhatro.view.login.DangKyView;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;

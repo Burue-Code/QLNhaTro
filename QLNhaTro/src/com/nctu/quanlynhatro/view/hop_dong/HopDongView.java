@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class HopDongView extends JFrame {
+public class HopDongView extends JPanel {
 
     private JTable tblHopDong;
     private DefaultTableModel tableModel;
@@ -24,14 +24,8 @@ public class HopDongView extends JFrame {
 
     public HopDongView() {
         // Cấu hình Form
-        setTitle("Quản lý Hợp Đồng Thuê Phòng");
-        setSize(1000, 600); // Tăng chiều rộng một chút cho đẹp
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+    	setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // =================================================================
         // PHẦN 1: KHU VỰC NORTH (TIÊU ĐỀ + TÌM KIẾM)
@@ -59,7 +53,7 @@ public class HopDongView extends JFrame {
         
         pnlNorth.add(pnlSearch, BorderLayout.SOUTH);
         
-        mainPanel.add(pnlNorth, BorderLayout.NORTH);
+        add(pnlNorth, BorderLayout.NORTH);
 
 
         // =================================================================
@@ -93,7 +87,7 @@ public class HopDongView extends JFrame {
         scrollPane.setBorder(new TitledBorder("Danh sách hợp đồng"));
         tblHopDong.setFillsViewportHeight(true);
         
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
         // --- XỬ LÝ SỰ KIỆN TÌM KIẾM ---
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
