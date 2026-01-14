@@ -1,5 +1,9 @@
 package com.nctu.quanlynhatro.view.gia_dien_nuoc;
 
-public class GiaDienNuocView {
+import javax.swing.JPanel;
 
+public class GiaDienNuocView extends JPanel{
+	public GiaDienNuocView() {
+		
+	}
 }

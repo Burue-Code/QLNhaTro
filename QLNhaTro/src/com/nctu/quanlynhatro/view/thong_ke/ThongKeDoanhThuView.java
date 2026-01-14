@@ -7,7 +7,7 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 
-public class ThongKeDoanhThuView extends JFrame {
+public class ThongKeDoanhThuView extends JPanel {
 
     private JComboBox<Integer> cboNam;
     private JButton btnThongKe, btnXuatExcel;
@@ -16,14 +16,8 @@ public class ThongKeDoanhThuView extends JFrame {
     private JLabel lblTongDoanhThu;
 
     public ThongKeDoanhThuView() {
-        setTitle("Thống Kê Doanh Thu");
-        setSize(1000, 600);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+    	setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // =================================================================
         // 1. KHU VỰC NORTH: TIÊU ĐỀ + BỘ LỌC
@@ -69,7 +63,7 @@ public class ThongKeDoanhThuView extends JFrame {
         pnlFilter.add(btnXuatExcel);
 
         pnlNorth.add(pnlFilter, BorderLayout.SOUTH);
-        mainPanel.add(pnlNorth, BorderLayout.NORTH);
+        add(pnlNorth, BorderLayout.NORTH);
 
 
         // =================================================================
@@ -99,7 +93,7 @@ public class ThongKeDoanhThuView extends JFrame {
         scrollPane.getViewport().setBackground(Color.WHITE);
         tblDoanhThu.setFillsViewportHeight(true);
         
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
 
         // =================================================================
@@ -119,7 +113,7 @@ public class ThongKeDoanhThuView extends JFrame {
         pnlSouth.add(lblTextTong);
         pnlSouth.add(lblTongDoanhThu);
 
-        mainPanel.add(pnlSouth, BorderLayout.SOUTH);
+        add(pnlSouth, BorderLayout.SOUTH);
 
         // =================================================================
         // 4. SỰ KIỆN
