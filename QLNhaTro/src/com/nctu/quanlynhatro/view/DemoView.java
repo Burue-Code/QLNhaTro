@@ -6,12 +6,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.JFrame;
+import javax.swing.SwingConstants;
+import javax.swing.SwingContainer;
 public class DemoView extends JFrame {
     public DemoView() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
 
         // 1. Nhãn tiêu đề
-        MyLabel lblTitle = new MyLabel("THÔNG TIN NHÂN VIÊN", MyLabel.HEADER);
+        MyLabel lblTitle = new MyLabel("THÔNG TIN NHÂN VIÊN", MyLabel.HEADER, SwingConstants.CENTER);
         
         // 2. Ô nhập có hint
         MyTextField txtName = new MyTextField("Nhập họ và tên...");

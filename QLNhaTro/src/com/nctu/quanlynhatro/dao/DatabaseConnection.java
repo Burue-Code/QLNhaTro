@@ -31,8 +31,4 @@ public class DatabaseConnection {
         return conn;
     }
 
-    // Hàm main để test
-    public static void main(String[] args) {
-    	DatabaseConnection.getConnection();
-    }
 }
