@@ -11,12 +11,13 @@ public class MyLabel extends JLabel {
     public static final int NORMAL = 2; // Chữ thường
     public static final int ITALIC = 3; // Chữ nghiêng
 
-    public MyLabel(String text, int type) {
+    public MyLabel(String text, int type, int alignment) {
         super(text);
+        setHorizontalAlignment(alignment);
         switch (type) {
             case HEADER:
                 setFont(new Font("SansSerif", Font.BOLD, 24));
-                setForeground(new Color(33, 33, 33)); // Đen đậm
+                setForeground(new Color(0, 0, 254)); // Đen đậm
                 break;
             case NORMAL:
                 setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -33,6 +34,6 @@ public class MyLabel extends JLabel {
     
     // Constructor mặc định là Normal
     public MyLabel(String text) {
-        this(text, NORMAL);
+        this(text, NORMAL, LEFT);
     }
 }

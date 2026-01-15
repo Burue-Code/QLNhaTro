@@ -9,6 +9,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import com.nctu.quanlynhatro.view.component.*;
 
 public class PhongView extends JPanel {
 
@@ -209,10 +210,5 @@ public class PhongView extends JPanel {
             // TODO: Load lại dữ liệu từ DB tại đây
             JOptionPane.showMessageDialog(this, "Đã làm mới danh sách!");
         });
-    }
-
-    public static void main(String[] args) {
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) {}
-        SwingUtilities.invokeLater(() -> new PhongView().setVisible(true));
     }
 }
