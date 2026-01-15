@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import com.nctu.quanlynhatro.view.component.*;
 
 public class ThongKeDoanhThuView extends JPanel {
 

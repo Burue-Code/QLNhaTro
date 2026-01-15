@@ -1,17 +1,41 @@
 package com.nctu.quanlynhatro.model;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 
 public class PhieuDienNuoc {
     private long maDN;
-    private YearMonth thangNam;
-    private double chiSoDienCu;
-    private double chiSoDienMoi;
-    private double chiSoNuocCu;
-    private double chiSoNuocMoi;
-    private double tienDien;
-    private double tienNuoc;
-    private double tongTien;
+    private LocalDate thangNam; // DB là kiểu DATE
+    private float chiSoDienCu, chiSoDienMoi;
+    private float chiSoNuocCu, chiSoNuocMoi;
+    private double tienDien, tienNuoc, tongTien;
+    private double giaDienTaiThoiDiem, giaNuocTaiThoiDiem;
+    private String trangThaiDN; // DB là varchar(50)
+    private boolean trangThaiXoa; // DB là bit(1)
+    private Phong phong;
+
+    public PhieuDienNuoc() {
+        this.phong = new Phong();
+    }
+
+    // Constructor đầy đủ khớp với các cột chính trong DB
+    public PhieuDienNuoc(long maDN, LocalDate thangNam, float chiSoDienCu, float chiSoDienMoi, 
+                        float chiSoNuocCu, float chiSoNuocMoi, double tienDien, double tienNuoc, 
+                        double giaDien, double giaNuoc, double tongTien, String trangThaiDN) {
+        this.phong = new Phong();
+        this.maDN = maDN;
+        this.thangNam = thangNam;
+        this.chiSoDienCu = chiSoDienCu;
+        this.chiSoDienMoi = chiSoDienMoi;
+        this.chiSoNuocCu = chiSoNuocCu;
+        this.chiSoNuocMoi = chiSoNuocMoi;
+        this.tienDien = tienDien;
+        this.tienNuoc = tienNuoc;
+        this.giaDienTaiThoiDiem = giaDien;
+        this.giaNuocTaiThoiDiem = giaNuoc;
+        this.tongTien = tongTien;
+        this.trangThaiDN = trangThaiDN;
+    }
 
     public long getMaDN() {
         return maDN;
@@ -21,35 +45,35 @@ public class PhieuDienNuoc {
         this.maDN = maDN;
     }
 
-    public YearMonth getThangNam() {
+    public LocalDate getThangNam() {
         return thangNam;
     }
 
-    public void setThangNam(YearMonth thangNam) {
+    public void setThangNam(LocalDate thangNam) {
         this.thangNam = thangNam;
     }
 
-    public double getChiSoDienCu() {
+    public float getChiSoDienCu() {
         return chiSoDienCu;
     }
 
-    public void setChiSoDienCu(double chiSoDienCu) {
+    public void setChiSoDienCu(float chiSoDienCu) {
         this.chiSoDienCu = chiSoDienCu;
     }
 
-    public double getChiSoDienMoi() {
+    public float getChiSoDienMoi() {
         return chiSoDienMoi;
     }
 
-    public void setChiSoDienMoi(double chiSoDienMoi) {
+    public void setChiSoDienMoi(float chiSoDienMoi) {
         this.chiSoDienMoi = chiSoDienMoi;
     }
 
-    public double getChiSoNuocCu() {
+    public float getChiSoNuocCu() {
         return chiSoNuocCu;
     }
 
-    public void setChiSoNuocCu(double chiSoNuocCu) {
+    public void setChiSoNuocCu(float chiSoNuocCu) {
         this.chiSoNuocCu = chiSoNuocCu;
     }
 
@@ -57,7 +81,7 @@ public class PhieuDienNuoc {
         return chiSoNuocMoi;
     }
 
-    public void setChiSoNuocMoi(double chiSoNuocMoi) {
+    public void setChiSoNuocMoi(float chiSoNuocMoi) {
         this.chiSoNuocMoi = chiSoNuocMoi;
     }
 
@@ -83,5 +107,37 @@ public class PhieuDienNuoc {
 
     public void setTongTien(double tongTien) {
         this.tongTien = tongTien;
+    }
+    
+    public double getGiaDienTaiThoiDiem() {
+        return giaDienTaiThoiDiem;
+    }
+    
+    public void setGiaDienTaiThoiDiem(double giaDienTaiThoiDiem) {
+        this.giaDienTaiThoiDiem = giaDienTaiThoiDiem;
+    }
+    
+    public double getGiaNuocTaiThoiDiem() {
+        return giaNuocTaiThoiDiem;
+    }
+    
+    public void setGiaNuocTaiThoiDiem(double giaNuocTaiThoiDiem) {
+        this.giaNuocTaiThoiDiem = giaNuocTaiThoiDiem;
+    }
+    
+    public String getTrangThaiDN() {
+        return trangThaiDN;
+    }
+    
+    public void setTrangThaiDN(String trangThaiDN) {
+        this.trangThaiDN = trangThaiDN;
+    }
+    
+    public Phong getPhong() {
+        return phong;
+    }
+
+    public void setPhong(Phong phong) {
+        this.phong = phong;
     }
 }
