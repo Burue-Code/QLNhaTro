@@ -17,14 +17,7 @@ import com.nctu.quanlynhatro.view.component.*;
 public class DienNuocView extends JPanel {
 
     private MyTable tblDanhSach;
-    private DefaultTableModel tableModel;
-    private TableRowSorter<DefaultTableModel> sorter;
-    
     private MyTextField txtTimKiem; 
-    
-    private JPopupMenu popupMenu;
-    private JMenuItem mnuThem, mnuSua, mnuXoa, mnuLamMoi;
-
     public DienNuocView() {
     	setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -52,7 +45,7 @@ public class DienNuocView extends JPanel {
         // PHẦN 2: BẢNG DỮ LIỆU
         // =================================================================
         String[] headers = {
-            "Mã ĐN", "Số Phòng", "Thời Gian", 
+            "Mã DN", "Số Phòng", "Thời Gian", 
             "Giá Điện", "Giá Nước", "Tổng Tiền", "Trạng Thái"
         };
         

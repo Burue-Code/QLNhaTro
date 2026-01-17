@@ -6,15 +6,18 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.nctu.quanlynhatro.view.component.*;
 
 public class ThongKeDoanhThuView extends JPanel {
 
-    private JComboBox<Integer> cboNam;
-    private JButton btnThongKe, btnXuatExcel;
-    private JTable tblDoanhThu;
+    private MyComboBox cboNam;
+    private MyButton btnThongKe, btnXuatExcel;
+    private MyTable tblDoanhThu;
     private DefaultTableModel tableModel;
-    private JLabel lblTongDoanhThu;
+    private MyLabel lblTongDoanhThu;
 
     public ThongKeDoanhThuView() {
     	setLayout(new BorderLayout(10, 10));
@@ -26,37 +29,26 @@ public class ThongKeDoanhThuView extends JPanel {
         JPanel pnlNorth = new JPanel(new BorderLayout(0, 10));
 
         // 1.1 Tiêu đề
-        JLabel lblTitle = new JLabel("THỐNG KÊ DOANH THU NHÀ TRỌ", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
-        lblTitle.setForeground(Color.BLUE);
+        MyLabel lblTitle = new MyLabel("THỐNG KÊ DOANH THU NHÀ TRỌ", MyLabel.HEADER, SwingConstants.CENTER);
         pnlNorth.add(lblTitle, BorderLayout.NORTH);
 
         // 1.2 Panel Bộ Lọc (Chọn Năm)
         JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         
-        JLabel lblNam = new JLabel("Chọn Năm:");
-        lblNam.setFont(new Font("Arial", Font.BOLD, 14));
-        
-        cboNam = new JComboBox<>();
-        cboNam.setPreferredSize(new Dimension(100, 30));
+        MyLabel lblNam = new MyLabel("Chọn Năm:");
+       
+        List<String> dsNam = new ArrayList<String>();
         // Load năm: từ 2020 đến năm hiện tại
         int currentYear = LocalDate.now().getYear();
         for (int i = currentYear; i >= 2020; i--) {
-            cboNam.addItem(i);
+        	dsNam.add(String.valueOf(i));
         }
-
+		cboNam = new MyComboBox(dsNam.toArray(new String[0]));
         // --- SỬA LỖI TẠI ĐÂY: Khởi tạo nút Thống Kê ---
-        btnThongKe = new JButton("Xem Thống Kê");
-        btnThongKe.setPreferredSize(new Dimension(130, 30));
-        btnThongKe.setBackground(new Color(0, 102, 204));
-        btnThongKe.setForeground(Color.WHITE);
-        btnThongKe.setFocusPainted(false);
-
-        btnXuatExcel = new JButton("Xuất Excel");
-        btnXuatExcel.setPreferredSize(new Dimension(130, 30));
-        btnXuatExcel.setBackground(new Color(34, 139, 34)); // Màu xanh lá
-        btnXuatExcel.setForeground(Color.WHITE);
-        btnXuatExcel.setFocusPainted(false);
+        btnThongKe = new MyButton("Xem Thống Kê",150,35);
+        btnThongKe.setButtonColor(new Color(0, 102, 204));
+        btnXuatExcel = new MyButton("Xuất Excel",130,35);
+        btnXuatExcel.setButtonColor(new Color(34, 139, 34));
 
         pnlFilter.add(lblNam);
         pnlFilter.add(cboNam);
@@ -74,27 +66,33 @@ public class ThongKeDoanhThuView extends JPanel {
             "Tháng", "Số HĐ Đã Thu", "Tiền Phòng", "Tiền Điện Nước", "Phụ Phí", "Tổng Doanh Thu"
         };
         
-        tableModel = new DefaultTableModel(headers, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; 
-            }
-        };
-
-        tblDoanhThu = new JTable(tableModel);
-        tblDoanhThu.setRowHeight(30);
-        tblDoanhThu.setFont(new Font("Arial", Font.PLAIN, 14));
+        tblDoanhThu = new MyTable(headers);
+        MyScrollTable scrollTable = new MyScrollTable(tblDoanhThu, "");
         
-        // Header font thường
-        tblDoanhThu.getTableHeader().setFont(new Font("Arial", Font.PLAIN, 14));
-        tblDoanhThu.getTableHeader().setBackground(new Color(230, 230, 230));
-        tblDoanhThu.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        JScrollPane scrollPane = new JScrollPane(tblDoanhThu);
-        scrollPane.getViewport().setBackground(Color.WHITE);
-        tblDoanhThu.setFillsViewportHeight(true);
+        add(scrollTable, BorderLayout.CENTER);
         
-        add(scrollPane, BorderLayout.CENTER);
+        
+//        tableModel = new DefaultTableModel(headers, 0) {
+//            @Override
+//            public boolean isCellEditable(int row, int column) {
+//                return false; 
+//            }
+//        };
+//
+//        tblDoanhThu = new JTable(tableModel);
+//        tblDoanhThu.setRowHeight(30);
+//        tblDoanhThu.setFont(new Font("Arial", Font.PLAIN, 14));
+//        
+//        // Header font thường
+//        tblDoanhThu.getTableHeader().setFont(new Font("Arial", Font.PLAIN, 14));
+//        tblDoanhThu.getTableHeader().setBackground(new Color(230, 230, 230));
+//        tblDoanhThu.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//
+//        JScrollPane scrollPane = new JScrollPane(tblDoanhThu);
+//        scrollPane.getViewport().setBackground(Color.WHITE);
+//        tblDoanhThu.setFillsViewportHeight(true);
+//        
+//        add(scrollPane, BorderLayout.CENTER);
 
 
         // =================================================================
@@ -104,11 +102,9 @@ public class ThongKeDoanhThuView extends JPanel {
         pnlSouth.setBackground(new Color(245, 245, 245));
         pnlSouth.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
 
-        JLabel lblTextTong = new JLabel("TỔNG DOANH THU CẢ NĂM:");
-        lblTextTong.setFont(new Font("Arial", Font.BOLD, 16));
+        MyLabel lblTextTong = new MyLabel("TỔNG DOANH THU CẢ NĂM:", MyLabel.HEADER, SwingConstants.RIGHT);
         
-        lblTongDoanhThu = new JLabel("0 VNĐ");
-        lblTongDoanhThu.setFont(new Font("Arial", Font.BOLD, 18));
+        lblTongDoanhThu = new MyLabel("0 VNĐ",MyLabel.HEADER, SwingConstants.RIGHT);
         lblTongDoanhThu.setForeground(Color.RED);
 
         pnlSouth.add(lblTextTong);
@@ -121,51 +117,48 @@ public class ThongKeDoanhThuView extends JPanel {
         // =================================================================
         
         // Load dữ liệu mẫu khi mở
-        loadDummyData();
+//        loadDummyData();
+//
+//        // Thêm sự kiện cho nút Thống Kê
+//        btnThongKe.addActionListener(e -> {
+//            int nam = (int) cboNam.getSelectedItem();
+//            JOptionPane.showMessageDialog(this, "Đang tải dữ liệu thống kê năm " + nam + "...");
+//            loadDummyData(); // Reload lại dữ liệu demo
+//        });
+//
+//        btnXuatExcel.addActionListener(e -> {
+//            JOptionPane.showMessageDialog(this, "Chức năng xuất báo cáo Excel đang phát triển!");
+//        });
+//    }
+//
+//    // Hàm tạo dữ liệu giả để test giao diện
+//    private void loadDummyData() {
+//        tableModel.setRowCount(0);
+//        DecimalFormat df = new DecimalFormat("#,###");
+//        long tongNam = 0;
+//
+//        // Giả lập 12 tháng
+//        for (int i = 1; i <= 12; i++) {
+//            long tienPhong = 10000000 + (i * 500000);
+//            long dienNuoc = 3000000 + (i * 100000);
+//            long phuPhi = 500000;
+//            long tongThang = tienPhong + dienNuoc + phuPhi;
+//            
+//            tongNam += tongThang;
+//
+//            tableModel.addRow(new Object[]{
+//                "Tháng " + i,
+//                "10", // Số HĐ
+//                df.format(tienPhong),
+//                df.format(dienNuoc),
+//                df.format(phuPhi),
+//                df.format(tongThang)
+//            });
+//        }
+//        
+//        // Cập nhật tổng
+//        lblTongDoanhThu.setText(df.format(tongNam) + " VNĐ");
+//    }
 
-        // Thêm sự kiện cho nút Thống Kê
-        btnThongKe.addActionListener(e -> {
-            int nam = (int) cboNam.getSelectedItem();
-            JOptionPane.showMessageDialog(this, "Đang tải dữ liệu thống kê năm " + nam + "...");
-            loadDummyData(); // Reload lại dữ liệu demo
-        });
-
-        btnXuatExcel.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Chức năng xuất báo cáo Excel đang phát triển!");
-        });
-    }
-
-    // Hàm tạo dữ liệu giả để test giao diện
-    private void loadDummyData() {
-        tableModel.setRowCount(0);
-        DecimalFormat df = new DecimalFormat("#,###");
-        long tongNam = 0;
-
-        // Giả lập 12 tháng
-        for (int i = 1; i <= 12; i++) {
-            long tienPhong = 10000000 + (i * 500000);
-            long dienNuoc = 3000000 + (i * 100000);
-            long phuPhi = 500000;
-            long tongThang = tienPhong + dienNuoc + phuPhi;
-            
-            tongNam += tongThang;
-
-            tableModel.addRow(new Object[]{
-                "Tháng " + i,
-                "10", // Số HĐ
-                df.format(tienPhong),
-                df.format(dienNuoc),
-                df.format(phuPhi),
-                df.format(tongThang)
-            });
-        }
-        
-        // Cập nhật tổng
-        lblTongDoanhThu.setText(df.format(tongNam) + " VNĐ");
-    }
-
-    public static void main(String[] args) {
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) {}
-        SwingUtilities.invokeLater(() -> new ThongKeDoanhThuView().setVisible(true));
     }
 }

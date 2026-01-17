@@ -20,7 +20,6 @@ public class DatabaseConnection {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL 8+
             conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
-            System.out.println("✅ Kết nối MySQL thành công!");
         } catch (ClassNotFoundException e) {
             System.out.println("❌ Không tìm thấy Driver");
             e.printStackTrace();
