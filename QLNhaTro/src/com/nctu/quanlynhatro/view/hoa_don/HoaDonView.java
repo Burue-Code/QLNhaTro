@@ -36,20 +36,14 @@ public class HoaDonView extends JPanel {
         MyLabel lblTitle = new MyLabel("DANH SÁCH HÓA ĐƠN THANH TOÁN", MyLabel.HEADER, SwingConstants.CENTER);
         pnlNorth.add(lblTitle, BorderLayout.NORTH);
 
-        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        MyLabel lblSearch = new MyLabel("Tìm kiếm:");
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        MyLabel lblTim = new MyLabel("Tìm kiếm: ");
+        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm.....",300,35); // Độ dài chuẩn
         
-        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm",300,35);
- 
-        
-        pnlSearch.add(lblSearch);
-        pnlSearch.add(txtTimKiem);
-        
-        pnlNorth.add(pnlSearch, BorderLayout.SOUTH);
-        
+        searchPanel.add(lblTim);
+        searchPanel.add(txtTimKiem);
+        pnlNorth.add(searchPanel, BorderLayout.SOUTH);
         add(pnlNorth, BorderLayout.NORTH);
-
 
         // =================================================================
         // PHẦN 2: BẢNG DỮ LIỆU

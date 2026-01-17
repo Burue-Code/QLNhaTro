@@ -37,19 +37,14 @@ public class PhuongThucThanhToanView extends JPanel {
         pnlNorth.add(lblTitle, BorderLayout.NORTH);
 
         // 1.2 Panel Tìm Kiếm (Style chuẩn của bạn)
-        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        MyLabel lblTim = new MyLabel("Tìm kiếm: ");
+        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm.....",300,35); // Độ dài chuẩn
         
-        MyLabel lblTimKiem = new MyLabel("Tìm kiếm:");
-        
-        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm");
-        
-        pnlSearch.add(lblTimKiem);
-        pnlSearch.add(txtTimKiem);
-
-        pnlNorth.add(pnlSearch, BorderLayout.SOUTH);
-        
+        searchPanel.add(lblTim);
+        searchPanel.add(txtTimKiem);
+        pnlNorth.add(searchPanel, BorderLayout.SOUTH);
         add(pnlNorth, BorderLayout.NORTH);
-
 
         // =================================================================
         // 2. BẢNG DỮ LIỆU (Giống ảnh)

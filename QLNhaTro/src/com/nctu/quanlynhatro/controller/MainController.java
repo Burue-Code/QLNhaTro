@@ -25,12 +25,13 @@ public class MainController implements ActionListener {
         // Kiểm tra xem người dùng nhấn vào đâu
         Object source = e.getSource();
         
-        if (source == view.getMniPhuPhi()) {
+        if (source == view.getMniThongKeDoanhThu()) {
+            view.showCard("VIEW_THONGKEDOANHTHU"); 
+       } 
+        else if (source == view.getMniPhuPhi()) {
             view.showCard("VIEW_PHUPHI");
-        } 
-        else if (source == view.getMniThongKeDoanhThu()) {
-             view.showCard("VIEW_THONGKEDOANHTHU"); 
-        }
+       } 
+        	
         else if (source == view.getMniDienNuoc()) {
             view.showCard("VIEW_DIENNUOC"); 
        }

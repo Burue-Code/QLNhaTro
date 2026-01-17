@@ -29,7 +29,7 @@ public class DashboardView extends JFrame {
 
     public DashboardView() {
         setTitle("Trang chủ - Quản lý Nhà Trọ");
-        setSize(900, 600);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
@@ -87,6 +87,7 @@ public class DashboardView extends JFrame {
         cardsContainer = new JPanel(cardLayout);
 
         // Thêm các view con vào và đặt TÊN ĐỊNH DANH (KEY)
+        cardsContainer.add(new ThongKeDoanhThuView(), "VIEW_THONGKEDOANHTHU");
         cardsContainer.add(new NhaTroView(), "VIEW_NHATRO");
         cardsContainer.add(new PhuPhiView(), "VIEW_PHUPHI");
         cardsContainer.add(new HopDongView(), "VIEW_HOPDONG");
@@ -96,7 +97,6 @@ public class DashboardView extends JFrame {
         cardsContainer.add(new PhuongThucThanhToanView(), "VIEW_PHUONGTHUCTHANHTOAN");
         cardsContainer.add(new DienNuocView(), "VIEW_DIENNUOC");
         cardsContainer.add(new GiaDienNuocView(), "VIEW_GIADIENNUOC");
-        cardsContainer.add(new ThongKeDoanhThuView(), "VIEW_THONGKEDOANHTHU");
         
 
         // Nội dung chính

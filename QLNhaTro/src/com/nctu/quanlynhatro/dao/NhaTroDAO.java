@@ -6,7 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NhaTroDAO {
+	private Connection conn;
 
+	public NhaTroDAO(Connection conn) {
+        this.conn = conn;
+    }
+	
     public Map<Integer, String> getNhaTroConCho() {
         Map<Integer, String> map = new HashMap<>();
 

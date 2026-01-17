@@ -1,5 +1,6 @@
 package com.nctu.quanlynhatro.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class NhaTro {
@@ -10,11 +11,21 @@ public class NhaTro {
     private String trangThai;
     private String ghiChu;
 
+    
     private List<Phong> danhSachPhong;
     
     
     public NhaTro() {
-    	
+ 
+    }
+    
+    public NhaTro(long maNT, String tenNT, String diaChi, int soLuongPhong, String trangThai, String ghiChu) {
+    	this.maNT = maNT;
+    	this.tenNT = tenNT;
+    	this.diaChi = diaChi;
+    	this.soLuongPhong = soLuongPhong;
+    	this.trangThai = trangThai;
+    	this.ghiChu = ghiChu;
     }
 
     public long getMaNT() {
