@@ -34,17 +34,14 @@ public class NhaTroView extends JPanel {
         MyLabel lblTitle = new MyLabel("DANH SÁCH NHÀ TRỌ", MyLabel.HEADER, SwingConstants.CENTER);
         pnlNorth.add(lblTitle, BorderLayout.NORTH);
 
-        JPanel pnlTimKiem = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
-        MyLabel lblSearch = new MyLabel("Tìm kiếm:");
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        MyLabel lblTim = new MyLabel("Tìm kiếm: ");
+        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm.....",300,35); // Độ dài chuẩn
         
-        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm");
-        
-        pnlTimKiem.add(lblSearch);
-        pnlTimKiem.add(txtTimKiem);
-        
-        pnlNorth.add(pnlTimKiem, BorderLayout.SOUTH);
+        searchPanel.add(lblTim);
+        searchPanel.add(txtTimKiem);
+        pnlNorth.add(searchPanel, BorderLayout.SOUTH);
         add(pnlNorth, BorderLayout.NORTH);
-
         // --- BẢNG DỮ LIỆU ---
         String[] headers = {"MaNT", "Tên Nhà Trọ", "Số Lượng Phòng", "Địa Chỉ", "Trạng Thái", "Ghi Chú"};
         

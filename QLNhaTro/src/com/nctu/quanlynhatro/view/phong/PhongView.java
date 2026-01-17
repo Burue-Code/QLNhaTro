@@ -43,15 +43,14 @@ public class PhongView extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // --- Panel Tìm Kiếm ---
-        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        MyLabel lblTimKiem = new MyLabel("Tìm kiếm:");
-        lblTimKiem.setFont(new Font("Arial", Font.BOLD, 14)); // Font Đậm
-        lblTimKiem.setForeground(new Color(0, 51, 102)); 
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        MyLabel lblTim = new MyLabel("Tìm kiếm: ");
+        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm.....",300,35); // Độ dài chuẩn
         
-        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm"); 
-        
-        pnlSearch.add(lblTimKiem);
-        pnlSearch.add(txtTimKiem);
+        searchPanel.add(lblTim);
+        searchPanel.add(txtTimKiem);
+        pnlNorth.add(searchPanel, BorderLayout.SOUTH);
+        add(pnlNorth, BorderLayout.NORTH);
 
         // --- Panel Checkbox (Đã bỏ tô đen focus) ---
         JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
@@ -73,7 +72,7 @@ public class PhongView extends JPanel {
         pnlFilter.add(chkBaoTri);
 
         // Add vào pnlControl (Search chiếm ít, Filter chiếm nhiều)
-        gbc.weightx = 0.0; gbc.gridx = 0; pnlControl.add(pnlSearch, gbc);
+        gbc.weightx = 0.0; gbc.gridx = 0; pnlControl.add(searchPanel, gbc);
         gbc.weightx = 1.0; gbc.gridx = 1; pnlControl.add(pnlFilter, gbc);
 
         // Add pnlControl vào phía dưới tiêu đề
