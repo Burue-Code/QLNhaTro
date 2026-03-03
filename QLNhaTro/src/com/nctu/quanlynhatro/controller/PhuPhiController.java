@@ -1,28 +1,32 @@
 package com.nctu.quanlynhatro.controller;
 
-import com.nctu.quanlynhatro.view.dien_nuoc.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
+
+import javax.swing.JMenuItem;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
 import com.nctu.quanlynhatro.dao.DatabaseConnection;
-import com.nctu.quanlynhatro.dao.DienNuocDAO;
-import com.nctu.quanlynhatro.model.PhieuDienNuoc;
+import com.nctu.quanlynhatro.dao.PhuPhiDAO;
+import com.nctu.quanlynhatro.model.PhuPhi;
 import com.nctu.quanlynhatro.view.component.*;
+import com.nctu.quanlynhatro.view.phu_phi.*;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.event.*;
-
-
-public class DienNuocController {
-	private DienNuocView view;
+public class PhuPhiController {
+	private PhuPhiView view;
     private MyTable table;
     private DefaultTableModel model;
     private TableRowSorter<DefaultTableModel> sorter;
-    private DienNuocDAO dienNuocDAO;
-
-    public DienNuocController(DienNuocView view) {
+    private PhuPhiDAO phuPhiDAO;
+    private List<PhuPhi> listPhuPhi;
+    public PhuPhiController(PhuPhiView view) {
         this.view = view;
         this.table = view.getTable();
         this.model = table.getTableModel();
-        dienNuocDAO = new DienNuocDAO(DatabaseConnection.getConnection());
+        phuPhiDAO = new PhuPhiDAO(DatabaseConnection.getConnection());
 
         initData();
         initSearch();
@@ -34,18 +38,12 @@ public class DienNuocController {
     private void initData() {
 
     	table.clear(); // clear table
-
-        for (PhieuDienNuoc dn : dienNuocDAO.getAll()) {
+    	listPhuPhi = phuPhiDAO.getAll();
+        for (PhuPhi pp : listPhuPhi ) {
         	table.addRow(new Object[]{
-                    dn.getMaDN(),
-                    // Truy cập vào đối tượng Phong để lấy số phòng
-                    (dn.getPhong() != null) ? dn.getPhong().getSoPhong() : "N/A",
-                    dn.getThangNam(), // Trong Model bạn đặt là thangNam chứ không phải thoiGian
-                    dn.getTienDien(), // Hoặc getGiaDienTaiThoiDiem() tùy mục đích hiển thị
-                    dn.getTienNuoc(),
-                    dn.getTongTien(),
-                    // Hiển thị trạng thái dưới dạng chữ cho người dùng dễ đọc
-                    dn.getTrangThaiDN()
+                    pp.getMaPP(),
+                    pp.getTenPP(),
+                    pp.getGia()
             });
         }
     }
@@ -79,16 +77,24 @@ public class DienNuocController {
         JMenuItem mnuLamMoi = popup.addItem("Làm mới");
 
         // ==== ACTION ====
-        mnuThem.addActionListener(e ->
-                new ThemDienNuocView(model).setVisible(true)
+        mnuThem.addActionListener(e ->{
+            ThemPhuPhiView themPhuPhiView = new ThemPhuPhiView(model);
+            themPhuPhiView.setModal(true);
+            new ThemPhuPhiController(themPhuPhiView, this);
+            initData();
+        	}
         );
 
         mnuSua.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row >= 0) {
                 int modelRow = table.convertRowIndexToModel(row);
-                new SuaDienNuocView(model, modelRow).setVisible(true);
+                PhuPhi phuPhiCanSua = listPhuPhi.get(modelRow);
+                ThemPhuPhiView suaPhuPhiView = new ThemPhuPhiView(model);
+                suaPhuPhiView.setModal(true);
+                new SuaPhuPhiController(suaPhuPhiView, this, phuPhiCanSua);
             }
+            initData();
         });
 
         mnuXoa.addActionListener(e -> {

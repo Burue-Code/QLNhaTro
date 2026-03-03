@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.DecimalFormat;
 
-public class SuaDienNuocView extends JFrame {
+public class SuaDienNuocView extends JDialog {
 
     private JTextField txtMaDN;
     private JComboBox<String> cboNhaTro, cboSoPhong;

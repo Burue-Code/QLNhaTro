@@ -11,6 +11,26 @@ public class KhachHang {
     private String sdt;
     private String gmail;
     private String cccd;
+    private long khachHangChinh;
+    private Phong phong;
+    
+    
+    public KhachHang() {
+    	this.phong = new Phong();
+    }
+    
+    public KhachHang(long maKH, String tenKH, String diaChi, boolean gioiTinh, LocalDate ngaySinh, String std, String gmail, String cccd, long maKHC) {
+    	this.phong = new Phong();
+    	this.maKH = maKH;
+    	this.tenKH = tenKH;
+    	this.diaChi = diaChi;
+    	this.gioiTinh = gioiTinh;
+    	this.ngaySinh = ngaySinh;
+    	this.sdt = std;
+    	this.gmail = gmail;
+    	this.cccd = cccd;
+    	this.khachHangChinh = maKHC;
+    }
 
     public long getMaKH() {
         return maKH;
@@ -36,7 +56,7 @@ public class KhachHang {
         this.diaChi = diaChi;
     }
 
-    public boolean isGioiTinh() {
+    public boolean getGioiTinh() {
         return gioiTinh;
     }
 
@@ -75,4 +95,21 @@ public class KhachHang {
     public void setCccd(String cccd) {
         this.cccd = cccd;
     }
+    
+    public long getKhachHangChinh() {
+        return khachHangChinh;
+    }
+
+    public void setKhachHangChinh(long khachHangChinh) {
+        this.khachHangChinh = khachHangChinh;
+    }
+    
+    public Phong getPhong() {
+        return phong;
+    }
+
+    public void setPhong(Phong phong) {
+        this.phong = phong;
+    }
+
 }

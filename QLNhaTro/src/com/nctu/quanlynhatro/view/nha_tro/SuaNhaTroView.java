@@ -6,7 +6,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class SuaNhaTroView extends JFrame {
+public class SuaNhaTroView extends JDialog {
 
     private JTextField txtTenNha, txtSoPhong, txtDiaChi;
     private JTextArea txtGhiChu;

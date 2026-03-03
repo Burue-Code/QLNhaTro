@@ -1,14 +1,13 @@
 package com.nctu.quanlynhatro.model;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class NhaTro {
     private long maNT;
     private String tenNT;
     private String diaChi;
-    private int soLuongPhong;
-    private String trangThai;
+    private int slPhong;
+    private String trangThaiNT;
     private String ghiChu;
 
     
@@ -19,12 +18,12 @@ public class NhaTro {
  
     }
     
-    public NhaTro(long maNT, String tenNT, String diaChi, int soLuongPhong, String trangThai, String ghiChu) {
+    public NhaTro(long maNT, String tenNT, String diaChi, int slPhong, String trangThaiNT, String ghiChu) {
     	this.maNT = maNT;
     	this.tenNT = tenNT;
     	this.diaChi = diaChi;
-    	this.soLuongPhong = soLuongPhong;
-    	this.trangThai = trangThai;
+    	this.slPhong = slPhong;
+    	this.trangThaiNT = trangThaiNT;
     	this.ghiChu = ghiChu;
     }
 
@@ -52,20 +51,20 @@ public class NhaTro {
         this.diaChi = diaChi;
     }
 
-    public int getSoLuongPhong() {
-        return soLuongPhong;
+    public int getSLPhong() {
+        return slPhong;
     }
 
-    public void setSoLuongPhong(int soLuongPhong) {
-        this.soLuongPhong = soLuongPhong;
+    public void setSLPhong(int slPhong) {
+        this.slPhong = slPhong;
     }
 
-    public String getTrangThai() {
-        return trangThai;
+    public String getTrangThaiNT() {
+        return trangThaiNT;
     }
 
-    public void setTrangThai(String trangThai) {
-        this.trangThai = trangThai;
+    public void setTrangThaiNT(String trangThaiNT) {
+        this.trangThaiNT = trangThaiNT;
     }
 
     public String getGhiChu() {

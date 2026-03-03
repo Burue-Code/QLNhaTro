@@ -10,6 +10,8 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import com.nctu.quanlynhatro.controller.HopDongController;
 import com.nctu.quanlynhatro.view.component.*;
 
 public class HopDongView extends JPanel {
@@ -51,12 +53,14 @@ public class HopDongView extends JPanel {
         // PHẦN 2: BẢNG DỮ LIỆU
         // =================================================================
         String[] headers = {
-            "MaHD", "Tên Khách Hàng", "Ngày Lập Hợp Đồng", "Ngày Kết Thúc Hợp Đồng", "Giá Thuê", "Trạng Thái Hợp Đồng", "Ghi Chú"
+            "MaHD", "Tên Khách Hàng", "Ngày Lập Hợp Đồng", "Ngày Kết Thúc Hợp Đồng", "Giá Thuê","Số Người Ở", "Trạng Thái Hợp Đồng", "Ghi Chú"
         };
         
         tblHopDong = new MyTable(headers);
         MyScrollTable scrollTable = new MyScrollTable(tblHopDong, "");
         add(scrollTable, BorderLayout.CENTER);
+        
+        new HopDongController(this);
         
 //        // --- CẤU HÌNH BỘ LỌC TÌM KIẾM ---
 //        rowSorter = new TableRowSorter<>(tableModel);
@@ -161,4 +165,6 @@ public class HopDongView extends JPanel {
 //            JOptionPane.showMessageDialog(this, "Đã làm mới danh sách!");
 //        });
     }
+    public MyTable getTable() { return tblHopDong; }
+    public MyTextField getTxtTimKiem() { return txtTimKiem; }
 }

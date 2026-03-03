@@ -1,127 +1,22 @@
-//package com.nctu.quanlynhatro.view.khach_hang;
-//
-//import javax.swing.*;
-//import javax.swing.border.EmptyBorder;
-//import javax.swing.border.TitledBorder;
-//import javax.swing.table.DefaultTableModel;
-//import java.awt.*;
-//
-//public class ThemKhachHangView extends JFrame {
-//
-//    private JTextField txtMaKH, txtTenKH, txtCCCD, txtSDT, txtQueQuan;
-//    private JComboBox<String> cboGioiTinh;
-//    private JButton btnThem;
-//    private DefaultTableModel tableModel;
-//
-//    public ThemKhachHangView(DefaultTableModel model) {
-//        this.tableModel = model;
-//        setTitle("Thêm Khách Hàng");
-//        setSize(700, 350);
-//        setLocationRelativeTo(null);
-//        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//
-//        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-//        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-//        setContentPane(mainPanel);
-//
-//        // --- FORM NHẬP LIỆU ---
-//        JPanel formPanel = new JPanel(new GridBagLayout());
-//        formPanel.setBorder(new TitledBorder("Thông tin cá nhân"));
-//        GridBagConstraints gbc = new GridBagConstraints();
-//        gbc.insets = new Insets(5, 10, 5, 10);
-//        gbc.fill = GridBagConstraints.HORIZONTAL;
-//
-//        // Dòng 1: Mã KH & Họ Tên
-//        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.EAST;
-//        formPanel.add(new JLabel("Mã Khách Hàng:"), gbc);
-//        
-//        txtMaKH = new JTextField(15);
-//        txtMaKH.setEditable(false);
-//        txtMaKH.setText("KH" + (model.getRowCount() + 101));
-//        gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1.0;
-//        formPanel.add(txtMaKH, gbc);
-//
-//        gbc.gridx = 2; gbc.gridy = 0; gbc.weightx = 0;
-//        formPanel.add(new JLabel("Họ và Tên:"), gbc);
-//        
-//        txtTenKH = new JTextField(15);
-//        gbc.gridx = 3; gbc.gridy = 0; gbc.weightx = 1.0;
-//        formPanel.add(txtTenKH, gbc);
-//
-//        // Dòng 2: CCCD & SĐT
-//        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
-//        formPanel.add(new JLabel("CCCD/CMND:"), gbc);
-//        
-//        txtCCCD = new JTextField(15);
-//        gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1.0;
-//        formPanel.add(txtCCCD, gbc);
-//
-//        gbc.gridx = 2; gbc.gridy = 1; gbc.weightx = 0;
-//        formPanel.add(new JLabel("Số Điện Thoại:"), gbc);
-//        
-//        txtSDT = new JTextField(15);
-//        gbc.gridx = 3; gbc.gridy = 1; gbc.weightx = 1.0;
-//        formPanel.add(txtSDT, gbc);
-//
-//        // Dòng 3: Quê Quán & Giới Tính
-//        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
-//        formPanel.add(new JLabel("Quê Quán:"), gbc);
-//        
-//        txtQueQuan = new JTextField(15);
-//        gbc.gridx = 1; gbc.gridy = 2; gbc.weightx = 1.0;
-//        formPanel.add(txtQueQuan, gbc);
-//
-//        gbc.gridx = 2; gbc.gridy = 2; gbc.weightx = 0;
-//        formPanel.add(new JLabel("Giới Tính:"), gbc);
-//        
-//        String[] genders = {"Nam", "Nữ", "Khác"};
-//        cboGioiTinh = new JComboBox<>(genders);
-//        gbc.gridx = 3; gbc.gridy = 2; gbc.weightx = 1.0;
-//        formPanel.add(cboGioiTinh, gbc);
-//
-//        mainPanel.add(formPanel, BorderLayout.CENTER);
-//
-//        // --- NÚT BẤM ---
-//        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-//        btnThem = new JButton("Thêm");
-//        btnThem.setPreferredSize(new Dimension(120, 35));
-//        
-//        btnThem.addActionListener(e -> {
-//            if(txtTenKH.getText().isEmpty()) {
-//                JOptionPane.showMessageDialog(this, "Tên không được để trống!");
-//                return;
-//            }
-//            tableModel.addRow(new Object[]{
-//                txtMaKH.getText(), txtTenKH.getText(), txtCCCD.getText(),
-//                txtSDT.getText(), txtQueQuan.getText(), cboGioiTinh.getSelectedItem()
-//            });
-//            JOptionPane.showMessageDialog(this, "Thêm thành công!");
-//            this.dispose();
-//        });
-//        
-//        buttonPanel.add(btnThem);
-//        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-//    }
-//}
-
-
-
 package com.nctu.quanlynhatro.view.khach_hang;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+
+import com.nctu.quanlynhatro.view.component.MyScrollTable;
+import com.nctu.quanlynhatro.view.component.MyTable;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class ThemKhachHangView extends JFrame {
+public class ThemKhachHangView extends JDialog {
 
     // --- Component bên TRÁI (Form nhập liệu) ---
     private JTextField txtTenKH, txtDiaChi, txtSDT;
     private JTextField txtCCCD, txtEmail;
-    private JTextField txtNgaySinh; // Tạm dùng text, sau này có thể dùng JDateChooser
+    private JTextField txtNgaySinh; 
     private JRadioButton rdoNam, rdoNu;
     private ButtonGroup btnGroupGioiTinh;
     
@@ -130,22 +25,21 @@ public class ThemKhachHangView extends JFrame {
 
     // --- Component bên PHẢI (Danh sách chọn KH chính) ---
     private JTextField txtTimKiem;
-    private JTable tblKhachHang;
-    private DefaultTableModel tableModelDS; // Model cho bảng tìm kiếm bên phải
+    private MyTable tblKhachHang;
+    private DefaultTableModel tableModelDS;
 
     // --- Component bên DƯỚI ---
     private JButton btnThem, btnHuy;
     
-    private DefaultTableModel mainTableModel; // Model của form cha để thêm dữ liệu về
+    private DefaultTableModel mainTableModel; 
 
     public ThemKhachHangView(DefaultTableModel model) {
         this.mainTableModel = model;
         setTitle("Thêm Khách Hàng / Sinh Viên");
-        setSize(1000, 550); // Form này cần rộng hơn để chứa 2 cột
+        setSize(1000, 550); 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Panel chính dùng BorderLayout
         JPanel contentPane = new JPanel(new BorderLayout(10, 10));
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         setContentPane(contentPane);
@@ -154,13 +48,12 @@ public class ThemKhachHangView extends JFrame {
         // 1. PANEL TRÁI: FORM NHẬP LIỆU
         // =================================================================
         JPanel pnlLeft = new JPanel(new GridBagLayout());
-        // pnlLeft.setBorder(new TitledBorder("Thông tin chi tiết"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        // --- Hàng 1: Tên Khách Hàng ---
+        // Dòng 1: Tên Khách Hàng
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         pnlLeft.add(new JLabel("Tên Khách Hàng:"), gbc);
         gbc.gridy = 1; 
@@ -168,7 +61,7 @@ public class ThemKhachHangView extends JFrame {
         txtTenKH.setPreferredSize(new Dimension(0, 30));
         pnlLeft.add(txtTenKH, gbc);
 
-        // --- Hàng 2: Địa Chỉ ---
+        // Dòng 2: Địa Chỉ
         gbc.gridy = 2; 
         pnlLeft.add(new JLabel("Địa Chỉ:"), gbc);
         gbc.gridy = 3; 
@@ -176,8 +69,7 @@ public class ThemKhachHangView extends JFrame {
         txtDiaChi.setPreferredSize(new Dimension(0, 30));
         pnlLeft.add(txtDiaChi, gbc);
 
-        // --- Hàng 3: Ngày Sinh & SĐT (Chia đôi) ---
-        // Panel con để chứa 2 ô này trên cùng 1 hàng layout
+        // Dòng 3: Ngày Sinh & SĐT 
         JPanel pnlRow3 = new JPanel(new GridLayout(1, 2, 10, 0));
         
         JPanel pnlNgaySinh = new JPanel(new BorderLayout());
@@ -198,7 +90,7 @@ public class ThemKhachHangView extends JFrame {
         gbc.gridy = 4;
         pnlLeft.add(pnlRow3, gbc);
 
-        // --- Hàng 4: Giới Tính ---
+        // Dòng 4: Giới Tính
         gbc.gridy = 5;
         pnlLeft.add(new JLabel("Giới Tính:"), gbc);
         
@@ -217,7 +109,7 @@ public class ThemKhachHangView extends JFrame {
         gbc.gridy = 6;
         pnlLeft.add(pnlGioiTinh, gbc);
 
-        // --- Hàng 5: CCCD ---
+        // Dòng 5: CCCD
         gbc.gridy = 7;
         pnlLeft.add(new JLabel("Số CCCD:"), gbc);
         gbc.gridy = 8;
@@ -225,7 +117,7 @@ public class ThemKhachHangView extends JFrame {
         txtCCCD.setPreferredSize(new Dimension(0, 30));
         pnlLeft.add(txtCCCD, gbc);
 
-        // --- Hàng 6: Gmail ---
+        // Dòng 6: Gmail
         gbc.gridy = 9;
         pnlLeft.add(new JLabel("Gmail:"), gbc);
         gbc.gridy = 10;
@@ -233,17 +125,17 @@ public class ThemKhachHangView extends JFrame {
         txtEmail.setPreferredSize(new Dimension(0, 30));
         pnlLeft.add(txtEmail, gbc);
 
-        // --- Hàng 7: Tên KH Chính (Read only) ---
+        // Dòng 7: Tên KH Chính 
         gbc.gridy = 11;
         pnlLeft.add(new JLabel("Tên Khách Hàng Chính:"), gbc);
         gbc.gridy = 12;
         txtTenKHChinh = new JTextField(20);
         txtTenKHChinh.setPreferredSize(new Dimension(0, 30));
-        txtTenKHChinh.setEditable(false); // Không cho sửa, chọn từ bảng bên phải
+        txtTenKHChinh.setEditable(false); 
         txtTenKHChinh.setBackground(new Color(240, 240, 240));
         pnlLeft.add(txtTenKHChinh, gbc);
 
-        // --- Hàng 8: Mã KH Chính (Read only) ---
+        // Dòng 8: Mã KH Chính 
         gbc.gridy = 13;
         pnlLeft.add(new JLabel("Mã Khách Hàng Chính:"), gbc);
         gbc.gridy = 14;
@@ -253,19 +145,16 @@ public class ThemKhachHangView extends JFrame {
         txtMaKHChinh.setBackground(new Color(240, 240, 240));
         pnlLeft.add(txtMaKHChinh, gbc);
         
-        // Đẩy các thành phần lên trên cùng
+        // Đẩy lên
         gbc.gridy = 15;
         gbc.weighty = 1.0;
         pnlLeft.add(new JLabel(), gbc); 
-
 
         // =================================================================
         // 2. PANEL PHẢI: DANH SÁCH TÌM KIẾM
         // =================================================================
         JPanel pnlRight = new JPanel(new BorderLayout(5, 5));
-        // pnlRight.setBorder(new TitledBorder("Chọn Khách Hàng Chính"));
 
-        // Ô tìm kiếm
         JPanel pnlSearch = new JPanel(new BorderLayout());
         pnlSearch.add(new JLabel("Tìm kiếm (Tên/Mã): "), BorderLayout.NORTH);
         txtTimKiem = new JTextField();
@@ -274,21 +163,12 @@ public class ThemKhachHangView extends JFrame {
         
         pnlRight.add(pnlSearch, BorderLayout.NORTH);
 
-        // Bảng dữ liệu
-        String[] headers = {"MaKH", "Tên Khách Hàng", "Địa Chỉ", "SĐT"};
-        tableModelDS = new DefaultTableModel(headers, 0) {
-            public boolean isCellEditable(int row, int col) { return false; }
-        };
+        String[] headers = {"MaKH", "Tên Khách Hàng", "Địa Chỉ","Giới Tính","Ngày Sinh", "SĐT"};
+        tblKhachHang = new MyTable(headers);
+        MyScrollTable scrollTable = new MyScrollTable(tblKhachHang, "");
         
-        tblKhachHang = new JTable(tableModelDS);
-        tblKhachHang.setRowHeight(25);
-        tblKhachHang.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+        pnlRight.add(scrollTable, BorderLayout.CENTER);
 
-        JScrollPane scrollPane = new JScrollPane(tblKhachHang);
-        pnlRight.add(scrollPane, BorderLayout.CENTER);
-
-        // Xử lý sự kiện click bảng bên phải -> Điền vào ô bên trái
         tblKhachHang.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -304,10 +184,10 @@ public class ThemKhachHangView extends JFrame {
         });
 
         // =================================================================
-        // 3. TỔNG HỢP: DÙNG SPLIT PANE
+        // 3. TỔNG HỢP (SPLIT PANE)
         // =================================================================
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlLeft, pnlRight);
-        splitPane.setDividerLocation(400); // Chiều rộng panel trái
+        splitPane.setDividerLocation(400); 
         splitPane.setResizeWeight(0.4);
         
         contentPane.add(splitPane, BorderLayout.CENTER);
@@ -329,53 +209,42 @@ public class ThemKhachHangView extends JFrame {
         pnlBottom.add(btnThem);
         
         contentPane.add(pnlBottom, BorderLayout.SOUTH);
+    }
 
-        // --- SỰ KIỆN NÚT ---
-        btnHuy.addActionListener(e -> this.dispose());
+    // =================================================================
+    // CÁC HÀM GETTER
+    // =================================================================
 
-        btnThem.addActionListener(e -> {
-            // Validate đơn giản
-        	
-        	// Bắt lỗi nếu có ô thông tin bị để trống
-            if (txtTenKH.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khách hàng!");
-                return;
-            }
-            
-            try {
-                // Đổi tên biến thành giaThue cho đỡ nhầm
-                int CCCD = Integer.parseInt(txtCCCD.getText().trim());
-                if(CCCD <= 0 || CCCD > 12) throw new NumberFormatException();
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "CCCD phải lớn hơn 0 và đủ 12 số!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            try {
-                // Đổi tên biến thành giaThue cho đỡ nhầm
-                int SDT = Integer.parseInt(txtSDT.getText().trim());
-                if(SDT <= 0 || SDT > 10) throw new NumberFormatException();
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Giá thuê phải là số và lớn hơn 0!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Logic Thêm (Giả lập thêm vào Model cha)
-            // Cột: MaKH, TenKH, CCCD, SDT, QueQuan, GioiTinh
-            // Lưu ý: Cần điều chỉnh lại Model cha nếu muốn lưu đủ các trường Email, MaKHChinh
-
-            String gioiTinh = rdoNam.isSelected() ? "Nam" : "Nữ";
-            
-            mainTableModel.addRow(new Object[]{ 
-                txtTenKH.getText(), 
-                txtCCCD.getText(), 
-                txtSDT.getText(), 
-                txtDiaChi.getText(), 
-                gioiTinh
-            });
-
-            JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công!");
-            this.dispose();
-        });
+    public String getTenKhachHang() { return txtTenKH.getText().trim(); }
+    public String getDiaChi() { return txtDiaChi.getText().trim(); }
+    public String getSoDienThoai() { return txtSDT.getText().trim(); }
+    public String getNgaySinh() { return txtNgaySinh.getText().trim(); }
+    public String getGioiTinh() { return rdoNam.isSelected() ? "Nam" : "Nữ"; }
+    public String getCCCD() { return txtCCCD.getText().trim(); }
+    public String getEmail() { return txtEmail.getText().trim(); }
+    public String getMaKhachHangChinh() { return txtMaKHChinh.getText().trim(); }
+    public String getTenKhachHangChinh() { return txtTenKHChinh.getText().trim(); }
+    
+    public JTextField getTxtTimKiem() { return txtTimKiem; }
+    public JButton getBtnThem() { return btnThem; }
+    public JButton getBtnHuy() { return btnHuy; }
+    public MyTable getTblKhachHang() { return tblKhachHang; }
+    public DefaultTableModel getTableModelDS() { return tableModelDS; }
+    
+    public void setTenKhachHang(String ten) { this.txtTenKH.setText(ten); }
+    public void setDiaChi(String diaChi) { this.txtDiaChi.setText(diaChi); }
+    public void setSoDienThoai(String sdt) { this.txtSDT.setText(sdt); }
+    public void setNgaySinh(String ngaySinh) { this.txtNgaySinh.setText(ngaySinh); }
+    public void setCCCD(String cccd) { this.txtCCCD.setText(cccd); }
+    public void setEmail(String email) { this.txtEmail.setText(email); }
+    public void setMaKhachHangChinh(String maKH) { this.txtMaKHChinh.setText(maKH); }
+    public void setTenKhachHangChinh(String tenKH) { this.txtTenKHChinh.setText(tenKH); }
+    
+    public void setGioiTinh(boolean isNu) {
+        if (isNu) {
+            this.rdoNu.setSelected(true);
+        } else {
+            this.rdoNam.setSelected(true);
+        }
     }
 }

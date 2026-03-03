@@ -4,14 +4,17 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+
+import com.nctu.quanlynhatro.view.component.*;
+
 import java.awt.*;
 
-public class ThemNhaTroView extends JFrame {
+public class ThemNhaTroView extends JDialog {
 
-    private JTextField txtTenNha, txtSoPhong, txtDiaChi;
+    private MyTextField txtTenNha, txtSoPhong, txtDiaChi;
     private JTextArea txtGhiChu;
-    private JComboBox<String> cboTrangThai;
-    private JButton btnThem, btnHuy;
+    private MyComboBox cboTrangThai;
+    private MyButton btnThem, btnHuy;
     private DefaultTableModel tableModel;
 
     public ThemNhaTroView(DefaultTableModel model) {
@@ -34,26 +37,26 @@ public class ThemNhaTroView extends JFrame {
 
         // Hàng 0: Tên & Số Phòng
         gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.EAST;
-        formPanel.add(new JLabel("Tên Nhà Trọ:"), gbc);
-        txtTenNha = new JTextField(15);
+        formPanel.add(new MyLabel("Tên Nhà Trọ:"), gbc);
+        txtTenNha = new MyTextField("",200,35);
         gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1.0; formPanel.add(txtTenNha, gbc);
 
         gbc.gridx = 2; gbc.gridy = 0; gbc.weightx = 0;
-        formPanel.add(new JLabel("Số Lượng Phòng:"), gbc);
-        txtSoPhong = new JTextField(15);
+        formPanel.add(new MyLabel("Số Lượng Phòng:"), gbc);
+        txtSoPhong = new MyTextField("",100,35);
         txtSoPhong.setToolTipText("Chỉ nhập số");
         gbc.gridx = 3; gbc.gridy = 0; gbc.weightx = 1.0; formPanel.add(txtSoPhong, gbc);
 
         // Hàng 1: Địa Chỉ & Trạng Thái
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
-        formPanel.add(new JLabel("Địa Chỉ:"), gbc);
-        txtDiaChi = new JTextField(15);
+        formPanel.add(new MyLabel("Địa Chỉ:"), gbc);
+        txtDiaChi = new MyTextField("",200,35);
         gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1.0; formPanel.add(txtDiaChi, gbc);
 
         gbc.gridx = 2; gbc.gridy = 1; gbc.weightx = 0;
-        formPanel.add(new JLabel("Trạng Thái:"), gbc);
+        formPanel.add(new MyLabel("Trạng Thái:"), gbc);
         String[] trangThai = {"Đang sửa chữa","Còn phòng", "Hết phòng"};
-        cboTrangThai = new JComboBox<>(trangThai);
+        cboTrangThai = new MyComboBox(trangThai,100,35);
         gbc.gridx = 3; gbc.gridy = 1; gbc.weightx = 1.0; formPanel.add(cboTrangThai, gbc);
 
         // Hàng 2: Ghi Chú
@@ -68,56 +71,24 @@ public class ThemNhaTroView extends JFrame {
 
         // Nút bấm
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        btnHuy = new JButton("Hủy");
-        btnHuy.setPreferredSize(new Dimension(100, 35));
-        btnHuy.setFont(new Font("Arial", Font.PLAIN, 13));
+        btnHuy = new MyButton("Hủy");
+        btnHuy.setButtonColor(Color.red);
         
-        btnThem = new JButton("Thêm");
-        btnThem.setPreferredSize(new Dimension(100, 35));
-        btnThem.setFont(new Font("Arial", Font.PLAIN, 13));
-
-        btnHuy.addActionListener(e -> this.dispose());
-        btnThem.addActionListener(e -> {
-            if(txtTenNha.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nhập tên nhà trọ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            if(txtSoPhong.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nhập số phòng nhà trọ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            if(txtDiaChi.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nhập địa chỉ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            try {
-                int sp = Integer.parseInt(txtSoPhong.getText().trim());
-                if(sp <= 0) throw new NumberFormatException();
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Số phòng phải lớn hơn 0!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // --- KHẮC PHỤC LỖI DỒN CỘT TẠI ĐÂY ---
-            // Thêm phần tử đầu tiên là "" (hoặc null) để giữ chỗ cho cột MaNT
-            tableModel.addRow(new Object[]{
-                "", // <--- GIỮ CHỖ CHO MÃ (Sau này DB tự sinh ID thì mình load lại bảng sau)
-                txtTenNha.getText(),
-                txtSoPhong.getText(),
-                txtDiaChi.getText(),
-                cboTrangThai.getSelectedItem(),
-                txtGhiChu.getText()
-            });
-            JOptionPane.showMessageDialog(this, "Thêm thành công!");
-            this.dispose();
-            
-        });
-
+        btnThem = new MyButton("Thêm");
+        btnThem.setButtonColor(Color.BLUE);
+        
         buttonPanel.add(btnHuy);
         buttonPanel.add(btnThem);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
+    
+    public MyTextField getTxtTenNha() { return txtTenNha; }
+    public MyTextField getTxtDiaChi() { return txtDiaChi; }
+    public MyTextField getTxtSoPhong() { return txtSoPhong; }
+    public JTextArea getTxtGhiChu() { return txtGhiChu; }
+    public MyComboBox getCbTrangThai() { return cboTrangThai; }
+    public MyButton getBtnHuy() { return btnHuy; }
+    public MyButton getBtnThem() { return btnThem; }
+    public DefaultTableModel getTableModel() { return tableModel; }
+
 }

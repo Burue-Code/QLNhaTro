@@ -6,7 +6,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class SuaHoaDonView extends JFrame {
+public class SuaHoaDonView extends JDialog {
 
     // --- Component KHU VỰC TRÁI ---
     private JTextField txtTenKH, txtNgayThanhToan;

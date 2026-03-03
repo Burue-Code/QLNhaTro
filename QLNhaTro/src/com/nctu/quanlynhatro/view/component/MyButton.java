@@ -20,7 +20,7 @@ public class MyButton extends JButton {
     public MyButton(String text) {
         super(text);
         settingButton();
-        setPreferredSize(new Dimension(50, 35));
+        setPreferredSize(new Dimension(100, 35));
     }
     public MyButton(String text, int width, int height) {
         super(text);
@@ -55,7 +55,7 @@ public class MyButton extends JButton {
             }
             @Override
             public void mouseReleased(MouseEvent me) {
-                setBackground(colorOver);
+                setBackground(color);
             }
         });
     }
@@ -71,7 +71,10 @@ public class MyButton extends JButton {
     
     // Hàm set màu nhanh nếu muốn nút màu đỏ/cam...
     public void setButtonColor(Color color) {
-        this.color = color;
-        this.setBackground(color);
+    	this.color = color;
+        this.colorOver = color.darker();
+        this.colorClick = color.darker().darker();
+        this.borderColor = color;
+        setBackground(color);
     }
 }

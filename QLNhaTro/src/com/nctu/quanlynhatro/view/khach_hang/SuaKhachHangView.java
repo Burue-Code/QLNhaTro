@@ -101,7 +101,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class SuaKhachHangView extends JFrame {
+public class SuaKhachHangView extends JDialog {
 
     // --- Component bên TRÁI (Form nhập liệu) ---
     private JTextField txtMaKH, txtTenKH, txtDiaChi, txtSDT;
@@ -154,7 +154,7 @@ public class SuaKhachHangView extends JFrame {
         txtMaKH.setPreferredSize(new Dimension(0, 30));
         txtMaKH.setEditable(false); // Không cho sửa mã
         // Lấy dữ liệu cũ (Giả sử Mã KH ở cột 0)
-        txtMaKH.setText(getValue(0)); 
+        
         pnlLeft.add(txtMaKH, gbc);
 
         // --- Hàng 1: Tên Khách Hàng ---
@@ -163,7 +163,7 @@ public class SuaKhachHangView extends JFrame {
         gbc.gridy = 3; 
         txtTenKH = new JTextField(20);
         txtTenKH.setPreferredSize(new Dimension(0, 30));
-        txtTenKH.setText(getValue(1)); // Cột 1 là Tên
+        // Cột 1 là Tên
         pnlLeft.add(txtTenKH, gbc);
 
         // --- Hàng 2: Địa Chỉ ---
@@ -171,8 +171,7 @@ public class SuaKhachHangView extends JFrame {
         pnlLeft.add(new JLabel("Địa Chỉ:"), gbc);
         gbc.gridy = 5; 
         txtDiaChi = new JTextField(20);
-        txtDiaChi.setPreferredSize(new Dimension(0, 30));
-        txtDiaChi.setText(getValue(4)); // Cột 4 là Địa chỉ (Ví dụ)
+        txtDiaChi.setPreferredSize(new Dimension(0, 30)); 
         pnlLeft.add(txtDiaChi, gbc);
 
         // --- Hàng 3: Ngày Sinh & SĐT ---
@@ -190,7 +189,6 @@ public class SuaKhachHangView extends JFrame {
         pnlSDT.add(new JLabel("Số Điện Thoại:"), BorderLayout.NORTH);
         txtSDT = new JTextField();
         txtSDT.setPreferredSize(new Dimension(0, 30));
-        txtSDT.setText(getValue(3)); // Cột 3 là SĐT
         pnlSDT.add(txtSDT, BorderLayout.CENTER);
 
         pnlRow3.add(pnlNgaySinh);
@@ -207,10 +205,6 @@ public class SuaKhachHangView extends JFrame {
         rdoNam = new JRadioButton("Nam");
         rdoNu = new JRadioButton("Nữ");
         
-        // Set giới tính cũ
-        String gender = getValue(5); // Cột 5 là giới tính
-        if("Nam".equalsIgnoreCase(gender)) rdoNam.setSelected(true);
-        else rdoNu.setSelected(true);
         
         btnGroupGioiTinh = new ButtonGroup();
         btnGroupGioiTinh.add(rdoNam);
@@ -228,7 +222,6 @@ public class SuaKhachHangView extends JFrame {
         gbc.gridy = 10;
         txtCCCD = new JTextField(20);
         txtCCCD.setPreferredSize(new Dimension(0, 30));
-        txtCCCD.setText(getValue(2)); // Cột 2 là CCCD
         pnlLeft.add(txtCCCD, gbc);
 
         // --- Hàng 6: Email ---
@@ -339,49 +332,49 @@ public class SuaKhachHangView extends JFrame {
         contentPane.add(pnlBottom, BorderLayout.SOUTH);
 
         // --- SỰ KIỆN NÚT ---
-        btnHuy.addActionListener(e -> this.dispose());
-
-        btnXacNhan.addActionListener(e -> {
-        	if (txtTenKH.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khách hàng!");
-                return;
-            }
-            
-            try {
-                // Đổi tên biến thành giaThue cho đỡ nhầm
-                int CCCD = Integer.parseInt(txtCCCD.getText().trim());
-                if(CCCD <= 0 || CCCD > 12) throw new NumberFormatException();
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "CCCD phải lớn hơn 0 và đủ 12 số!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
-                txtCCCD.requestFocus(); // Đưa trỏ chuột về ô này
-                return;
-            }
-            
-            try {
-                // Đổi tên biến thành giaThue cho đỡ nhầm
-                int SDT = Integer.parseInt(txtSDT.getText().trim());
-                if(SDT <= 0 || SDT > 10) throw new NumberFormatException();
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Giá thuê phải là số và lớn hơn 0!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
-                txtSDT.requestFocus(); // Đưa trỏ chuột về ô này
-                return;
-            }
-
-            
-            // Cập nhật lại vào bảng chính (Model cha)
-            // Lưu ý: Index cột phải khớp với KhachHangView.java
-            mainTableModel.setValueAt(txtTenKH.getText(), rowIndex, 1);
-            mainTableModel.setValueAt(txtCCCD.getText(), rowIndex, 2);
-            mainTableModel.setValueAt(txtSDT.getText(), rowIndex, 3);
-            mainTableModel.setValueAt(txtDiaChi.getText(), rowIndex, 4);
-
-            JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-            this.dispose();
-        });
+//        btnHuy.addActionListener(e -> this.dispose());
+//
+//        btnXacNhan.addActionListener(e -> {
+//        	if (txtTenKH.getText().isEmpty()) {
+//                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khách hàng!");
+//                return;
+//            }
+//            
+//            try {
+//                // Đổi tên biến thành giaThue cho đỡ nhầm
+//                int CCCD = Integer.parseInt(txtCCCD.getText().trim());
+//                if(CCCD <= 0 || CCCD > 12) throw new NumberFormatException();
+//            } catch (NumberFormatException ex) {
+//                JOptionPane.showMessageDialog(this, "CCCD phải lớn hơn 0 và đủ 12 số!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
+//                txtCCCD.requestFocus(); // Đưa trỏ chuột về ô này
+//                return;
+//            }
+//            
+//            try {
+//                // Đổi tên biến thành giaThue cho đỡ nhầm
+//                int SDT = Integer.parseInt(txtSDT.getText().trim());
+//                if(SDT <= 0 || SDT > 10) throw new NumberFormatException();
+//            } catch (NumberFormatException ex) {
+//                JOptionPane.showMessageDialog(this, "Giá thuê phải là số và lớn hơn 0!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
+//                txtSDT.requestFocus(); // Đưa trỏ chuột về ô này
+//                return;
+//            }
+//
+//            
+//            // Cập nhật lại vào bảng chính (Model cha)
+//            // Lưu ý: Index cột phải khớp với KhachHangView.java
+//            mainTableModel.setValueAt(txtTenKH.getText(), rowIndex, 1);
+//            mainTableModel.setValueAt(txtCCCD.getText(), rowIndex, 2);
+//            mainTableModel.setValueAt(txtSDT.getText(), rowIndex, 3);
+//            mainTableModel.setValueAt(txtDiaChi.getText(), rowIndex, 4);
+//
+//            JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+//            this.dispose();
+//        });
     }
 
-    private String getValue(int col) {
-        Object val = mainTableModel.getValueAt(rowIndex, col);
-        return val == null ? "" : val.toString();
-    }
+//    private String getValue(int col) {
+//        Object val = mainTableModel.getValueAt(rowIndex, col);
+//        return val == null ? "" : val.toString();
+//    }
 }

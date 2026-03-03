@@ -1,17 +1,15 @@
 package com.nctu.quanlynhatro.model;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 
 public class PhieuDienNuoc {
     private long maDN;
-    private LocalDate thangNam; // DB là kiểu DATE
+    private LocalDate thangNam;
     private float chiSoDienCu, chiSoDienMoi;
     private float chiSoNuocCu, chiSoNuocMoi;
     private double tienDien, tienNuoc, tongTien;
     private double giaDienTaiThoiDiem, giaNuocTaiThoiDiem;
-    private String trangThaiDN; // DB là varchar(50)
-    private boolean trangThaiXoa; // DB là bit(1)
+    private String trangThaiDN;
     private Phong phong;
 
     public PhieuDienNuoc() {
@@ -77,7 +75,7 @@ public class PhieuDienNuoc {
         this.chiSoNuocCu = chiSoNuocCu;
     }
 
-    public double getChiSoNuocMoi() {
+    public float getChiSoNuocMoi() {
         return chiSoNuocMoi;
     }
 

@@ -85,21 +85,6 @@ public class DashboardView extends JFrame {
     private void setupPanels() {
     	cardLayout = new CardLayout();
         cardsContainer = new JPanel(cardLayout);
-
-        // Thêm các view con vào và đặt TÊN ĐỊNH DANH (KEY)
-        cardsContainer.add(new ThongKeDoanhThuView(), "VIEW_THONGKEDOANHTHU");
-        cardsContainer.add(new NhaTroView(), "VIEW_NHATRO");
-        cardsContainer.add(new PhuPhiView(), "VIEW_PHUPHI");
-        cardsContainer.add(new HopDongView(), "VIEW_HOPDONG");
-        cardsContainer.add(new HoaDonView(), "VIEW_HOADON");
-        cardsContainer.add(new KhachHangView(), "VIEW_KHACHHANG");
-        cardsContainer.add(new PhongView(), "VIEW_PHONG");
-        cardsContainer.add(new PhuongThucThanhToanView(), "VIEW_PHUONGTHUCTHANHTOAN");
-        cardsContainer.add(new DienNuocView(), "VIEW_DIENNUOC");
-        cardsContainer.add(new GiaDienNuocView(), "VIEW_GIADIENNUOC");
-        
-
-        // Nội dung chính
         
         add(cardsContainer,BorderLayout.CENTER);
     }
@@ -118,6 +103,10 @@ public class DashboardView extends JFrame {
         mniPhuPhi.addActionListener(listener);
         mniPhuongThucTT.addActionListener(listener);
         mniGiaDienNuoc.addActionListener(listener);
+    }
+    
+    public void addCard(String name, JPanel panel) {
+    	cardsContainer.add(panel, name);
     }
 
     // 2. Phương thức để Controller yêu cầu chuyển trang
