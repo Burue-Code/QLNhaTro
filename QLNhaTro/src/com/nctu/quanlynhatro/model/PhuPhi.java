@@ -5,6 +5,9 @@ public class PhuPhi {
     private String tenPP;
     private double gia;
 
+    public PhuPhi() {
+    	
+    }
     public PhuPhi(long maPP, String tenPP, double gia) {
     	this.maPP = maPP;
     	this.tenPP = tenPP;

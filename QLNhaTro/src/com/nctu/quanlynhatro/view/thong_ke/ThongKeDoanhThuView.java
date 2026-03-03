@@ -2,163 +2,248 @@ package com.nctu.quanlynhatro.view.thong_ke;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
+// Import thư viện vẽ biểu đồ (JFreeChart)
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+// Import thư viện lịch (JCalendar)
+import com.toedter.calendar.JDateChooser;
+
+// Import các component riêng của dự án
 import com.nctu.quanlynhatro.view.component.*;
 
 public class ThongKeDoanhThuView extends JPanel {
 
-    private MyComboBox cboNam;
-    private MyButton btnThongKe, btnXuatExcel;
-    private MyTable tblDoanhThu;
-    private DefaultTableModel tableModel;
-    private MyLabel lblTongDoanhThu;
+    // Components giao diện
+    private JDateChooser dateTuNgay, dateDenNgay;
+    private MyButton btnThongKe;
+    
+    // Các Label hiển thị số liệu tổng
+    private JLabel lblDoanhThu, lblSoHoaDon, lblKhachMoi;
+    
+    // Panel chứa biểu đồ
+    private JPanel pnlChartContainer;
 
     public ThongKeDoanhThuView() {
-    	setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBackground(Color.WHITE);
 
         // =================================================================
-        // 1. KHU VỰC NORTH: TIÊU ĐỀ + BỘ LỌC
+        // 1. KHU VỰC NORTH: BỘ LỌC THỜI GIAN
         // =================================================================
-        JPanel pnlNorth = new JPanel(new BorderLayout(0, 10));
+        JPanel pnlTop = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        pnlTop.setBackground(Color.WHITE);
 
-        // 1.1 Tiêu đề
-        MyLabel lblTitle = new MyLabel("THỐNG KÊ DOANH THU NHÀ TRỌ", MyLabel.HEADER, SwingConstants.CENTER);
-        pnlNorth.add(lblTitle, BorderLayout.NORTH);
-
-        // 1.2 Panel Bộ Lọc (Chọn Năm)
-        JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        // Date Choosers
+        dateTuNgay = new JDateChooser();
+        dateTuNgay.setDateFormatString("dd/MM/yyyy");
+        dateTuNgay.setPreferredSize(new Dimension(150, 30));
         
-        MyLabel lblNam = new MyLabel("Chọn Năm:");
-       
-        List<String> dsNam = new ArrayList<String>();
-        // Load năm: từ 2020 đến năm hiện tại
-        int currentYear = LocalDate.now().getYear();
-        for (int i = currentYear; i >= 2020; i--) {
-        	dsNam.add(String.valueOf(i));
+        // Mặc định ngày đầu tháng
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        dateTuNgay.setDate(Date.from(firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+        dateDenNgay = new JDateChooser();
+        dateDenNgay.setDateFormatString("dd/MM/yyyy");
+        dateDenNgay.setPreferredSize(new Dimension(150, 30));
+        dateDenNgay.setDate(new Date()); // Mặc định hôm nay
+
+        // Button Xem Thống Kê (Dùng MyButton của bạn)
+        btnThongKe = new MyButton("Xem Báo Cáo", 150, 30);
+        btnThongKe.setButtonColor(new Color(0, 123, 255)); // Màu xanh dương
+        btnThongKe.setForeground(Color.WHITE);
+
+        // Add components vào Top Panel
+        pnlTop.add(new MyLabel("Từ ngày:"));
+        pnlTop.add(dateTuNgay);
+        pnlTop.add(new MyLabel("Đến ngày:"));
+        pnlTop.add(dateDenNgay);
+        pnlTop.add(btnThongKe);
+
+        add(pnlTop, BorderLayout.NORTH);
+
+        // =================================================================
+        // 2. CONTENT (CENTER): CARDS + CHART
+        // =================================================================
+        JPanel pnlCenter = new JPanel(new BorderLayout(0, 20));
+        pnlCenter.setBackground(Color.WHITE);
+
+        // 2a. Các Card thống kê (3 ô màu)
+        JPanel pnlCards = new JPanel(new GridLayout(1, 3, 20, 0)); // 1 hàng, 3 cột
+        pnlCards.setBackground(Color.WHITE);
+        
+        lblDoanhThu = new JLabel("0 đ", SwingConstants.CENTER);
+        lblSoHoaDon = new JLabel("0", SwingConstants.CENTER);
+        lblKhachMoi = new JLabel("0", SwingConstants.CENTER);
+
+        // Màu sắc: Cam (Doanh thu), Xanh lá (Hóa đơn), Xanh dương (Khách)
+        pnlCards.add(createCard("TỔNG DOANH THU", lblDoanhThu, new Color(255, 159, 67)));
+        pnlCards.add(createCard("SỐ HÓA ĐƠN", lblSoHoaDon, new Color(46, 204, 113)));
+        pnlCards.add(createCard("KHÁCH MỚI", lblKhachMoi, new Color(52, 152, 219)));
+
+        // 2b. Biểu đồ doanh thu
+        pnlChartContainer = new JPanel(new BorderLayout());
+        pnlChartContainer.setBackground(Color.WHITE);
+
+        pnlCenter.add(pnlCards, BorderLayout.NORTH);
+        pnlCenter.add(pnlChartContainer, BorderLayout.CENTER);
+
+        add(pnlCenter, BorderLayout.CENTER);
+
+        // =================================================================
+        // 3. SỰ KIỆN
+        // =================================================================
+        btnThongKe.addActionListener(e -> refreshData());
+        
+        // Load dữ liệu lần đầu
+        refreshData();
+    }
+
+    /**
+     * Hàm tạo giao diện cho 1 Card (Ô màu hiển thị số liệu)
+     */
+    private JPanel createCard(String title, JLabel valueLabel, Color bgColor) {
+        JPanel card = new JPanel(new BorderLayout());
+        card.setBackground(bgColor);
+        card.setBorder(BorderFactory.createLineBorder(bgColor.darker(), 1, true));
+
+        // Tiêu đề card
+        JLabel lblTitle = new JLabel(title.toUpperCase(), SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 14));
+        lblTitle.setForeground(Color.WHITE);
+        lblTitle.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
+
+        // Giá trị số liệu
+        valueLabel.setFont(new Font("Arial", Font.BOLD, 26));
+        valueLabel.setForeground(Color.WHITE);
+
+        card.add(lblTitle, BorderLayout.NORTH);
+        card.add(valueLabel, BorderLayout.CENTER);
+        
+        card.setPreferredSize(new Dimension(200, 120));
+        return card;
+    }
+
+    /**
+     * Hàm xử lý khi nhấn nút Xem Báo Cáo
+     */
+    private void refreshData() {
+        Date d1 = dateTuNgay.getDate();
+        Date d2 = dateDenNgay.getDate();
+
+        if (d1 == null || d2 == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn đầy đủ ngày!");
+            return;
         }
-		cboNam = new MyComboBox(dsNam.toArray(new String[0]));
-        // --- SỬA LỖI TẠI ĐÂY: Khởi tạo nút Thống Kê ---
-        btnThongKe = new MyButton("Xem Thống Kê",150,35);
-        btnThongKe.setButtonColor(new Color(0, 102, 204));
-        btnXuatExcel = new MyButton("Xuất Excel",130,35);
-        btnXuatExcel.setButtonColor(new Color(34, 139, 34));
 
-        pnlFilter.add(lblNam);
-        pnlFilter.add(cboNam);
-        pnlFilter.add(btnThongKe); // Add vào panel sau khi đã new
-        pnlFilter.add(btnXuatExcel);
+        // 1. Cập nhật số liệu trên Cards (Giả lập dữ liệu)
+        // Trong thực tế bạn sẽ gọi Service để lấy số liệu thật
+        double tongDoanhThu = 150500000;
+        int soHoaDon = 45;
+        int khachMoi = 12;
 
-        pnlNorth.add(pnlFilter, BorderLayout.SOUTH);
-        add(pnlNorth, BorderLayout.NORTH);
+        lblDoanhThu.setText(new DecimalFormat("#,###").format(tongDoanhThu) + " đ");
+        lblSoHoaDon.setText(String.valueOf(soHoaDon));
+        lblKhachMoi.setText(String.valueOf(khachMoi));
 
+        // 2. Vẽ biểu đồ
+        veBieuDoCot(d1, d2);
+    }
 
-        // =================================================================
-        // 2. BẢNG DỮ LIỆU (CENTER)
-        // =================================================================
-        String[] headers = {
-            "Tháng", "Số HĐ Đã Thu", "Tiền Phòng", "Tiền Điện Nước", "Phụ Phí", "Tổng Doanh Thu"
-        };
+    /**
+     * Hàm vẽ biểu đồ cột
+     */
+    private void veBieuDoCot(Date d1, Date d2) {
+        // Chuẩn bị Dataset
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         
-        tblDoanhThu = new MyTable(headers);
-        MyScrollTable scrollTable = new MyScrollTable(tblDoanhThu, "");
+        // Giả lập dữ liệu ngẫu nhiên để vẽ biểu đồ
+        Map<String, Double> data = taoDuLieuGia(10); 
         
-        add(scrollTable, BorderLayout.CENTER);
+        for (Map.Entry<String, Double> entry : data.entrySet()) {
+            dataset.addValue(entry.getValue(), "Doanh Thu", entry.getKey());
+        }
+
+        // Tạo biểu đồ
+        JFreeChart barChart = ChartFactory.createBarChart(
+                "BIỂU ĐỒ DOANH THU THEO NGÀY", 
+                "Thời gian", 
+                "Doanh thu (VNĐ)", 
+                dataset, 
+                PlotOrientation.VERTICAL, 
+                false, true, false);
+
+        // Tùy chỉnh giao diện biểu đồ
+        customizeChart(barChart);
+
+        ChartPanel chartPanel = new ChartPanel(barChart);
+        chartPanel.setMaximumDrawWidth(20000);
+        chartPanel.setMaximumDrawHeight(20000);
+        chartPanel.setMinimumDrawWidth(0);
+        chartPanel.setMinimumDrawHeight(0);
         
+        pnlChartContainer.removeAll();
+        pnlChartContainer.add(chartPanel, BorderLayout.CENTER);
+        pnlChartContainer.validate();
+        pnlChartContainer.repaint();
+    }
+
+    /**
+     * Tùy chỉnh giao diện biểu đồ cho đẹp
+     */
+    private void customizeChart(JFreeChart chart) {
+        chart.setBackgroundPaint(Color.WHITE);
         
-//        tableModel = new DefaultTableModel(headers, 0) {
-//            @Override
-//            public boolean isCellEditable(int row, int column) {
-//                return false; 
-//            }
-//        };
-//
-//        tblDoanhThu = new JTable(tableModel);
-//        tblDoanhThu.setRowHeight(30);
-//        tblDoanhThu.setFont(new Font("Arial", Font.PLAIN, 14));
-//        
-//        // Header font thường
-//        tblDoanhThu.getTableHeader().setFont(new Font("Arial", Font.PLAIN, 14));
-//        tblDoanhThu.getTableHeader().setBackground(new Color(230, 230, 230));
-//        tblDoanhThu.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//
-//        JScrollPane scrollPane = new JScrollPane(tblDoanhThu);
-//        scrollPane.getViewport().setBackground(Color.WHITE);
-//        tblDoanhThu.setFillsViewportHeight(true);
-//        
-//        add(scrollPane, BorderLayout.CENTER);
+        CategoryPlot plot = chart.getCategoryPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setSeriesPaint(0, new Color(70, 130, 180)); // Màu xanh
+        renderer.setBarPainter(new org.jfree.chart.renderer.category.StandardBarPainter()); // Flat style
+        renderer.setMaximumBarWidth(0.05);
 
-        // =================================================================
-        // 3. KHU VỰC SOUTH: TỔNG KẾT
-        // =================================================================
-        JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
-        pnlSouth.setBackground(new Color(245, 245, 245));
-        pnlSouth.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
+        // Hiển thị số tiền trên đầu cột
+        renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator("{2}", new DecimalFormat("#,###")));
+        renderer.setBaseItemLabelsVisible(true);
+        renderer.setBaseItemLabelPaint(Color.BLACK);
 
-        MyLabel lblTextTong = new MyLabel("TỔNG DOANH THU CẢ NĂM:", MyLabel.HEADER, SwingConstants.RIGHT);
-        
-        lblTongDoanhThu = new MyLabel("0 VNĐ",MyLabel.HEADER, SwingConstants.RIGHT);
-        lblTongDoanhThu.setForeground(Color.RED);
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setNumberFormatOverride(new DecimalFormat("#,###"));
+        rangeAxis.setUpperMargin(0.15);
+    }
 
-        pnlSouth.add(lblTextTong);
-        pnlSouth.add(lblTongDoanhThu);
+    /**
+     * Tạo dữ liệu giả để test biểu đồ
+     */
+    private Map<String, Double> taoDuLieuGia(int soNgay) {
+        Map<String, Double> data = new LinkedHashMap<>();
+        LocalDate currentDate = LocalDate.now().minusDays(soNgay); 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
+        Random rand = new Random();
 
-        add(pnlSouth, BorderLayout.SOUTH);
-
-        // =================================================================
-        // 4. SỰ KIỆN
-        // =================================================================
-        
-        // Load dữ liệu mẫu khi mở
-//        loadDummyData();
-//
-//        // Thêm sự kiện cho nút Thống Kê
-//        btnThongKe.addActionListener(e -> {
-//            int nam = (int) cboNam.getSelectedItem();
-//            JOptionPane.showMessageDialog(this, "Đang tải dữ liệu thống kê năm " + nam + "...");
-//            loadDummyData(); // Reload lại dữ liệu demo
-//        });
-//
-//        btnXuatExcel.addActionListener(e -> {
-//            JOptionPane.showMessageDialog(this, "Chức năng xuất báo cáo Excel đang phát triển!");
-//        });
-//    }
-//
-//    // Hàm tạo dữ liệu giả để test giao diện
-//    private void loadDummyData() {
-//        tableModel.setRowCount(0);
-//        DecimalFormat df = new DecimalFormat("#,###");
-//        long tongNam = 0;
-//
-//        // Giả lập 12 tháng
-//        for (int i = 1; i <= 12; i++) {
-//            long tienPhong = 10000000 + (i * 500000);
-//            long dienNuoc = 3000000 + (i * 100000);
-//            long phuPhi = 500000;
-//            long tongThang = tienPhong + dienNuoc + phuPhi;
-//            
-//            tongNam += tongThang;
-//
-//            tableModel.addRow(new Object[]{
-//                "Tháng " + i,
-//                "10", // Số HĐ
-//                df.format(tienPhong),
-//                df.format(dienNuoc),
-//                df.format(phuPhi),
-//                df.format(tongThang)
-//            });
-//        }
-//        
-//        // Cập nhật tổng
-//        lblTongDoanhThu.setText(df.format(tongNam) + " VNĐ");
-//    }
-
+        for (int i = 0; i < soNgay; i++) {
+            String keyNgay = currentDate.format(formatter);
+            double doanhThu = 1000000 + (4000000 * rand.nextDouble());
+            data.put(keyNgay, doanhThu);
+            currentDate = currentDate.plusDays(1);
+        }
+        return data;
     }
 }

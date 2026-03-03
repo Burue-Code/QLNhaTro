@@ -10,6 +10,8 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import com.nctu.quanlynhatro.controller.HopDongController;
 import com.nctu.quanlynhatro.view.component.*;
 
 public class HopDongView extends JPanel {
@@ -38,31 +40,27 @@ public class HopDongView extends JPanel {
         pnlNorth.add(lblTitle, BorderLayout.NORTH);
 
         // 1.2 Panel Tìm Kiếm (Mới bổ sung)
-        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        MyLabel lblTim = new MyLabel("Tìm kiếm: ");
+        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm.....",300,35); // Độ dài chuẩn
         
-        MyLabel lblSearch = new MyLabel("Tìm kiếm:");
-        
-        txtTimKiem = new MyTextField("Nhập từ khóa cần tìm");
-        txtTimKiem.setFont(new Font("Arial", Font.PLAIN, 14));
-        
-        pnlSearch.add(lblSearch);
-        pnlSearch.add(txtTimKiem);
-        
-        pnlNorth.add(pnlSearch, BorderLayout.SOUTH);
-        
+        searchPanel.add(lblTim);
+        searchPanel.add(txtTimKiem);
+        pnlNorth.add(searchPanel, BorderLayout.SOUTH);
         add(pnlNorth, BorderLayout.NORTH);
-
 
         // =================================================================
         // PHẦN 2: BẢNG DỮ LIỆU
         // =================================================================
         String[] headers = {
-            "MaHD", "Tên Khách Hàng", "Ngày Lập Hợp Đồng", "Ngày Kết Thúc Hợp Đồng", "Giá Thuê", "Trạng Thái Hợp Đồng", "Ghi Chú"
+            "MaHD", "Tên Khách Hàng", "Ngày Lập Hợp Đồng", "Ngày Kết Thúc Hợp Đồng", "Giá Thuê","Số Người Ở", "Trạng Thái Hợp Đồng", "Ghi Chú"
         };
         
         tblHopDong = new MyTable(headers);
         MyScrollTable scrollTable = new MyScrollTable(tblHopDong, "");
         add(scrollTable, BorderLayout.CENTER);
+        
+        new HopDongController(this);
         
 //        // --- CẤU HÌNH BỘ LỌC TÌM KIẾM ---
 //        rowSorter = new TableRowSorter<>(tableModel);
@@ -167,4 +165,6 @@ public class HopDongView extends JPanel {
 //            JOptionPane.showMessageDialog(this, "Đã làm mới danh sách!");
 //        });
     }
+    public MyTable getTable() { return tblHopDong; }
+    public MyTextField getTxtTimKiem() { return txtTimKiem; }
 }

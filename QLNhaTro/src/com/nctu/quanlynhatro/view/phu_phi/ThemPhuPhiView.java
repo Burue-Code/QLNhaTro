@@ -6,7 +6,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class ThemPhuPhiView extends JFrame {
+public class ThemPhuPhiView extends JDialog {
 
     private JTextField txtTenPP, txtGia;
     private JButton btnThoat, btnXacNhan;
@@ -16,7 +16,6 @@ public class ThemPhuPhiView extends JFrame {
         this.tableModel = model;
         
         setTitle("Thêm Phụ Phí Mới");
-        // setSize(500, 300); <-- BỎ DÒNG NÀY
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
@@ -80,39 +79,11 @@ public class ThemPhuPhiView extends JFrame {
         // =================================================================
         // 2. XỬ LÝ SỰ KIỆN
         // =================================================================
-        btnThoat.addActionListener(e -> this.dispose());
-
-        btnXacNhan.addActionListener(e -> {
-            if (txtTenPP.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên phụ phí!");
-                txtTenPP.requestFocus();
-                return;
-            }
-            if (txtGia.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập đơn giá!");
-                txtGia.requestFocus();
-                return;
-            }
-
-            try {
-                long gia = Long.parseLong(txtGia.getText().trim().replace(",", ""));
-                if (gia < 0) throw new NumberFormatException();
-                
-                String maMoi = "PP" + String.format("%03d", tableModel.getRowCount() + 1);
-                
-                tableModel.addRow(new Object[]{
-                    maMoi,
-                    txtTenPP.getText().trim(),
-                    txtGia.getText().trim()
-                });
-
-                JOptionPane.showMessageDialog(this, "Thêm phụ phí thành công!");
-                this.dispose();
-
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Giá phải là số và không âm!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
-                txtGia.requestFocus();
-            }
-        });
     }
+    public JTextField getTxtTenPP() { return txtTenPP; }
+    public JTextField getTxtGia() { return txtGia; }
+    public JButton getBtnThoat() { return btnThoat;}
+    public JButton getBtnXatNhan() { return btnXacNhan; }
+    public DefaultTableModel getTableModel() { return tableModel; }
+
 }

@@ -4,9 +4,10 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 
-public class ThemPhongView extends JFrame {
+public class ThemPhongView extends JDialog {
 
     // --- Component BÊN TRÁI ---
     private JComboBox<String> cboNhaTro, cboTrangThai;
@@ -23,8 +24,8 @@ public class ThemPhongView extends JFrame {
 
     private DefaultTableModel mainTableModel;
 
-    public ThemPhongView(DefaultTableModel model) {
-        this.mainTableModel = model;
+    public ThemPhongView( DefaultTableModel model) {
+    	this.mainTableModel = model;
         
         setTitle("Thêm Phòng Mới");
         setSize(950, 550); 
@@ -55,7 +56,7 @@ public class ThemPhongView extends JFrame {
         pnlLeft.add(new JLabel("Nhà Trọ"), gbc);
         
         gbc.gridy = 1;
-        cboNhaTro = new JComboBox<>(new String[]{"Nhà Trọ Hạnh Phúc", "Nhà Trọ Sinh Viên A"});
+        cboNhaTro = new JComboBox<>();
         cboNhaTro.setPreferredSize(new Dimension(0, 30));
         pnlLeft.add(cboNhaTro, gbc);
 
@@ -100,7 +101,7 @@ public class ThemPhongView extends JFrame {
         pnlLeft.add(new JLabel("Phòng Trống"), gbc);
         
         gbc.gridy = 11;
-        cboTrangThai = new JComboBox<>(new String[]{"Phòng Trống", "Đã Thuê", "Bảo Trì"});
+        cboTrangThai = new JComboBox<>(new String[]{"Còn Trống", "Đã Thuê", "Bảo Trì"});
         cboTrangThai.setPreferredSize(new Dimension(0, 30));
         pnlLeft.add(cboTrangThai, gbc);
 
@@ -127,7 +128,7 @@ public class ThemPhongView extends JFrame {
         // Phần trên: Combo + Button Thêm
         JPanel pnlAddPP = new JPanel(new BorderLayout(10, 0));
         
-        cboPhuPhi = new JComboBox<>(new String[]{"Wifi", "Vệ sinh"});
+        cboPhuPhi = new JComboBox<>();
         cboPhuPhi.setPreferredSize(new Dimension(0, 35));
         
         btnThemPhuPhi = new JButton("Thêm");
@@ -175,40 +176,19 @@ public class ThemPhongView extends JFrame {
         
         mainPanel.add(pnlBottom, BorderLayout.SOUTH);
 
-        // =================================================================
-        // SỰ KIỆN
-        // =================================================================
-        btnThoat.addActionListener(e -> this.dispose());
-
-        btnXacNhan.addActionListener(e -> {
-            if (txtSoPhong.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập số phòng!");
-                return;
-            }
-            // Thêm vào bảng cha
-            mainTableModel.addRow(new Object[]{
-                "P" + System.currentTimeMillis()%1000, 
-                txtSoPhong.getText(),
-                txtGiaPhong.getText(),
-                txtSoNguoi.getText(),
-                txtPhuThu.getText(),
-                cboTrangThai.getSelectedItem(),
-                txtGhiChu.getText()
-            });
-            JOptionPane.showMessageDialog(this, "Thêm phòng thành công!");
-            this.dispose();
-        });
-        
-        btnThemPhuPhi.addActionListener(e -> {
-            String sel = (String) cboPhuPhi.getSelectedItem();
-            if(sel != null && !sel.trim().isEmpty()) {
-                modelPhuPhi.addRow(new Object[]{"PP01", sel, "50,000"});
-            }
-        });
     }
 
-    public static void main(String[] args) {
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) {}
-        SwingUtilities.invokeLater(() -> new ThemPhongView(new DefaultTableModel()).setVisible(true));
-    }
+    public JTable getTblPhuPhi() { return tblPhuPhi; }
+    public JTextField getTxtSoPhong() { return txtSoPhong; }
+    public JTextField getTxtGiaPhong() { return txtGiaPhong; }
+    public JTextField getTxtSoNguoi() { return txtSoNguoi; }
+    public JTextField getTxtPhuThu() { return txtPhuThu; }
+    public JTextField getTxtGhiChu() { return txtGhiChu; }
+    public JComboBox<String> getCboNhaTro() { return cboNhaTro; }
+    public JComboBox<String> getCboTrangThai() { return cboTrangThai; }
+    public JComboBox<String> getCboPhuPhi() { return cboPhuPhi; }
+    public JButton getBtnThemPhuPhi() { return btnThemPhuPhi; }
+    public JButton getBtnThoat() { return btnThoat; }
+    public JButton getBtnXacNhan() { return btnXacNhan; }
+    public DefaultTableModel getModelPhuPhi() { return modelPhuPhi; }
 }

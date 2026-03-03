@@ -6,7 +6,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class ThemPhuongThucThanhToanView extends JFrame {
+public class ThemPhuongThucThanhToanView extends JDialog {
 
     private JTextField txtTenPT;
     private JButton btnThoat, btnThem;
@@ -74,26 +74,10 @@ public class ThemPhuongThucThanhToanView extends JFrame {
         // =================================================================
         // 2. XỬ LÝ SỰ KIỆN
         // =================================================================
-        btnThoat.addActionListener(e -> this.dispose());
-
-        btnThem.addActionListener(e -> {
-            if (txtTenPT.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên phương thức thanh toán!");
-                txtTenPT.requestFocus();
-                return;
-            }
-
-            // Tự động sinh mã PT (Ẩn khỏi giao diện nhưng vẫn thêm vào bảng)
-            String autoID = "PT" + String.format("%02d", tableModel.getRowCount() + 1);
-
-            // Thêm vào bảng
-            tableModel.addRow(new Object[]{
-                autoID,
-                txtTenPT.getText().trim()
-            });
-
-            JOptionPane.showMessageDialog(this, "Thêm thành công!");
-            this.dispose();
-        });
     }
+    public JTextField getTxtTenPT() { return txtTenPT;}
+    public JButton getBtnHuy() { return btnThoat; }
+    public JButton getBtnThem() { return btnThem; }
+    public DefaultTableModel getTableModel() { return tableModel; }
+
 }

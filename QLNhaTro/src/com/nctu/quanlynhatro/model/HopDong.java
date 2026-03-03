@@ -9,13 +9,29 @@ public class HopDong {
     private LocalDate ngayKetThuc;
     private double giaThue;
     private int soNguoiO;
-    private String trangThai;
+    private String trangThaiHD;
     private String ghiChu;
+    private String tenKH;
 
     private Phong phong;
     private List<KhachHang> danhSachKhachHang;
     private List<HoaDon> danhSachHoaDon;
+    
+    public HopDong() {
+    	
+    }
 
+    public HopDong(long maHD,String tenKH, LocalDate ngayLap, LocalDate ngayKT, double giaThue, int soNguoiO, String trangThaiHD, String ghiChu) {
+    	this.maHD = maHD;
+    	this.tenKH = tenKH;
+    	this.ngayLap = ngayLap;
+    	this.ngayKetThuc = ngayKT;
+    	this.giaThue = giaThue;
+    	this.soNguoiO = soNguoiO;
+    	this.trangThaiHD = trangThaiHD;
+    	this.ghiChu = ghiChu;
+    }
+    
     public long getMaHD() {
         return maHD;
     }
@@ -57,13 +73,21 @@ public class HopDong {
     }
 
     public String getTrangThai() {
-        return trangThai;
+        return trangThaiHD;
     }
 
-    public void setTrangThai(String trangThai) {
-        this.trangThai = trangThai;
+    public void setTrangThai(String trangThaiHD) {
+        this.trangThaiHD = trangThaiHD;
+    }
+    
+    public void setTenKH(String tenKH) {
+        this.tenKH = tenKH;
     }
 
+    public String getTenKH() {
+        return tenKH;
+    }
+    
     public String getGhiChu() {
         return ghiChu;
     }

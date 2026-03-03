@@ -6,11 +6,29 @@ public class HoaDon {
     private long maHoaDon;
     private LocalDateTime ngayThanhToan;
     private double tongTien;
+    private double tongTienPP;
     private String loaiThanhToan;
     private String ghiChu;
-
+    
+    private HopDong hopDong;
     private PhieuDienNuoc phieuDienNuoc;
     private PhuongThucThanhToan phuongThucThanhToan;
+    
+    public HoaDon() {
+    	this.hopDong = new HopDong();
+    	this.phuongThucThanhToan = new PhuongThucThanhToan();
+    }
+    
+    public HoaDon(long maHoaDon, LocalDateTime ngayTT, double tongTien, double tongTienPP, String loaiTT, String ghiChu) {
+    	this.hopDong = new HopDong();
+    	this.phuongThucThanhToan = new PhuongThucThanhToan();
+    	this.maHoaDon = maHoaDon;
+    	this.ngayThanhToan = ngayTT;
+    	this.tongTien = tongTien;
+    	this.tongTienPP = tongTienPP;
+    	this.loaiThanhToan = loaiTT;
+    	this.ghiChu = ghiChu;
+    }
 
     public long getMaHoaDon() {
         return maHoaDon;
@@ -34,6 +52,14 @@ public class HoaDon {
 
     public void setTongTien(double tongTien) {
         this.tongTien = tongTien;
+    }
+    
+    public double getTongTienPP() {
+        return tongTienPP;
+    }
+
+    public void setTongTienPP(double tongTienPP) {
+        this.tongTienPP = tongTienPP;
     }
 
     public String getLoaiThanhToan() {
@@ -66,5 +92,13 @@ public class HoaDon {
 
     public void setPhuongThucThanhToan(PhuongThucThanhToan phuongThucThanhToan) {
         this.phuongThucThanhToan = phuongThucThanhToan;
+    }
+    
+    public HopDong getHopDong() {
+        return hopDong;
+    }
+
+    public void setHopDong(HopDong hopDong) {
+        this.hopDong = hopDong;
     }
 }

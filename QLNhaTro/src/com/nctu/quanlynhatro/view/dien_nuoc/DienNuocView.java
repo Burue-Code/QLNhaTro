@@ -2,14 +2,8 @@ package com.nctu.quanlynhatro.view.dien_nuoc;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
 
 import com.nctu.quanlynhatro.controller.DienNuocController;
 import com.nctu.quanlynhatro.view.component.*;

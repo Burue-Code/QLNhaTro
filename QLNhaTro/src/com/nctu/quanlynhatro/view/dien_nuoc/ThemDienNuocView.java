@@ -10,7 +10,7 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 
-public class ThemDienNuocView extends JFrame {
+public class ThemDienNuocView extends JDialog {
 
     // Các thành phần giao diện
     private JTextField txtMaDN; 

@@ -6,7 +6,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class SuaPhongView extends JFrame {
+public class SuaPhongView extends JDialog {
 
     // --- Component BÊN TRÁI (Form Nhập) ---
     private JComboBox<String> cboNhaTro, cboTrangThai;
@@ -215,4 +215,17 @@ public class SuaPhongView extends JFrame {
         Object val = mainTableModel.getValueAt(rowIndex, col);
         return val == null ? "" : val.toString();
     }
+    
+    public JTable getTblPhuPhi() { return tblPhuPhi; }
+    public JTextField getTxtSoPhong() { return txtSoPhong; }
+    public JTextField getTxtGiaPhong() { return txtGiaPhong; }
+    public JTextField getTxtSoNguoi() { return txtSoNguoi; }
+    public JTextField getTxtPhuThu() { return txtPhuThu; }
+    public JTextField getTxtGhiChu() { return txtGhiChu; }
+    public JComboBox<String> getCboNhaTro() { return cboNhaTro; }
+    public JComboBox<String> getCboTrangThai() { return cboTrangThai; }
+    public JComboBox<String> getCboPhuPhi() { return cboPhuPhi; }
+    public JButton getBtnThemPhuPhi() { return btnThemPhuPhi; }
+    public JButton getBtnThoat() { return btnThoat; }
+    public JButton getBtnLuu() { return btnLuu; }
 }

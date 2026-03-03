@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class SuaHopDongView extends JFrame {
+public class SuaHopDongView extends JDialog {
 
     // --- Component TRÁI (Form Hợp Đồng) ---
     private JTextField txtMaKH, txtTenKH; // Read-only, lấy từ bên phải hoặc dữ liệu cũ

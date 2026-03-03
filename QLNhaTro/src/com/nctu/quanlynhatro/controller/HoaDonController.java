@@ -1,55 +1,54 @@
 package com.nctu.quanlynhatro.controller;
 
-import com.nctu.quanlynhatro.view.dien_nuoc.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JMenuItem;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
 import com.nctu.quanlynhatro.dao.DatabaseConnection;
-import com.nctu.quanlynhatro.dao.DienNuocDAO;
-import com.nctu.quanlynhatro.model.PhieuDienNuoc;
+import com.nctu.quanlynhatro.dao.HoaDonDAO;
+import com.nctu.quanlynhatro.model.HoaDon;
 import com.nctu.quanlynhatro.view.component.*;
+import com.nctu.quanlynhatro.view.hoa_don.*;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.event.*;
-
-
-public class DienNuocController {
-	private DienNuocView view;
-    private MyTable table;
-    private DefaultTableModel model;
+public class HoaDonController {
+	private HoaDonView view;
+	private MyTable table;
+	private DefaultTableModel model;
     private TableRowSorter<DefaultTableModel> sorter;
-    private DienNuocDAO dienNuocDAO;
-
-    public DienNuocController(DienNuocView view) {
-        this.view = view;
-        this.table = view.getTable();
-        this.model = table.getTableModel();
-        dienNuocDAO = new DienNuocDAO(DatabaseConnection.getConnection());
-
-        initData();
+    private HoaDonDAO hoaDonDAO;
+    
+    public HoaDonController(HoaDonView view) {
+    	this.view = view;
+    	this.table = view.getTable();
+    	this.model = table.getTableModel();
+    	hoaDonDAO = new HoaDonDAO(DatabaseConnection.getConnection());
+    	
+    	initData();
         initSearch();
         initPopupMenu();
     }
-
-   
-
+    
     private void initData() {
 
-    	table.clear(); // clear table
+        table.clear(); // clear table
 
-        for (PhieuDienNuoc dn : dienNuocDAO.getAll()) {
+        for (HoaDon hd : hoaDonDAO.getAll()) {
         	table.addRow(new Object[]{
-                    dn.getMaDN(),
-                    // Truy cập vào đối tượng Phong để lấy số phòng
-                    (dn.getPhong() != null) ? dn.getPhong().getSoPhong() : "N/A",
-                    dn.getThangNam(), // Trong Model bạn đặt là thangNam chứ không phải thoiGian
-                    dn.getTienDien(), // Hoặc getGiaDienTaiThoiDiem() tùy mục đích hiển thị
-                    dn.getTienNuoc(),
-                    dn.getTongTien(),
-                    // Hiển thị trạng thái dưới dạng chữ cho người dùng dễ đọc
-                    dn.getTrangThaiDN()
+        			hd.getMaHoaDon(),
+        			hd.getNgayThanhToan(),
+        			hd.getTongTien(),
+        			hd.getLoaiThanhToan(),
+        			hd.getPhuongThucThanhToan(),
+        			hd.getGhiChu()
+                    
             });
         }
     }
-
+	
     /* ================= TÌM KIẾM ================= */
     private void initSearch() {
         sorter = new TableRowSorter<>(model);
@@ -80,14 +79,14 @@ public class DienNuocController {
 
         // ==== ACTION ====
         mnuThem.addActionListener(e ->
-                new ThemDienNuocView(model).setVisible(true)
+                new ThemHoaDonView(model).setVisible(true)
         );
 
         mnuSua.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row >= 0) {
                 int modelRow = table.convertRowIndexToModel(row);
-                new SuaDienNuocView(model, modelRow).setVisible(true);
+                new SuaHoaDonView(model, modelRow).setVisible(true);
             }
         });
 
@@ -103,5 +102,4 @@ public class DienNuocController {
             sorter.setRowFilter(null);
         });
     }
-
 }
