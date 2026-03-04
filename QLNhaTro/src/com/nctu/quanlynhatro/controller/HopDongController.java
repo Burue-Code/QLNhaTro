@@ -88,9 +88,10 @@ public class HopDongController {
 			int row = table.getSelectedRow();
 			if (row >= 0) {
 				int modelRow = table.convertRowIndexToModel(row);
+				long maHopDong = Long.parseLong(model.getValueAt(modelRow, 0).toString());
 				ThemHopDongView suaHopDongView = new ThemHopDongView(model);
 				suaHopDongView.setModal(true);
-				new SuaHopDongController(suaHopDongView, this, modelRow);
+				new SuaHopDongController(suaHopDongView, this, maHopDong);
 				suaHopDongView.setVisible(true);
 			} else {
 				JOptionPane.showMessageDialog(view, "Vui lòng chọn một khách hàng để sửa!", "Cảnh báo",
