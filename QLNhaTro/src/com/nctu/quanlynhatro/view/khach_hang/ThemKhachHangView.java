@@ -36,7 +36,7 @@ public class ThemKhachHangView extends JDialog {
     public ThemKhachHangView(DefaultTableModel model) {
         this.mainTableModel = model;
         setTitle("Thêm Khách Hàng / Sinh Viên");
-        setSize(1000, 550); 
+        setSize(1000, 580); 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
