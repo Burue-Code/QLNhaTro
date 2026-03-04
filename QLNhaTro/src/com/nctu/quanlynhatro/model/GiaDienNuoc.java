@@ -1,55 +1,50 @@
 package com.nctu.quanlynhatro.model;
-import java.util.List;
 
 public class GiaDienNuoc {
-    private long maGiaDN;
-    private String giaDien;
-    private String giaNuoc;
+	private long maGiaDN; // [QUAN TRỌNG] Đổi từ int sang long cho khớp với bigint trong DB
+	private double giaDien;
+	private double giaNuoc;
+	private boolean trangThaiXoa;
 
-    
-    private List<GiaDienNuoc> danhSachGiaDienNuoc;
-    
-    
-    public GiaDienNuoc() {
- 
-    }
-    
-    public GiaDienNuoc(long maGiaDN, String giaDien, String giaNuoc) {
-    	this.maGiaDN = maGiaDN;
-    	this.giaDien = giaDien;
-    	this.giaNuoc = giaNuoc;
-    }
+	public GiaDienNuoc() {
+	}
 
-    public long getMaGiaDN() {
-        return maGiaDN;
-    }
+	// Constructor khớp với DAO
+	public GiaDienNuoc(long maGiaDN, double giaDien, double giaNuoc) {
+		this.maGiaDN = maGiaDN;
+		this.giaDien = giaDien;
+		this.giaNuoc = giaNuoc;
+	}
 
-    public void setMaGiaDN(long maGiaDN) {
-        this.maGiaDN = maGiaDN;
-    }
+	public long getMaGiaDN() {
+		return maGiaDN;
+	}
 
-    public String getGiaDien() {
-        return giaDien;
-    }
+	public void setMaGiaDN(long maGiaDN) {
+		this.maGiaDN = maGiaDN;
+	}
 
-    public void setGiaDien(String giaDien) {
-        this.giaDien = giaDien;
-    }
+	public double getGiaDien() {
+		return giaDien;
+	}
 
-    public String getGiaNuoc() {
-        return giaNuoc;
-    }
+	public void setGiaDien(double giaDien) {
+		this.giaDien = giaDien;
+	}
 
-    public void setGiaNuoc(String giaNuoc) {
-        this.giaNuoc = giaNuoc;
-    }
+	public double getGiaNuoc() {
+		return giaNuoc;
+	}
 
+	public void setGiaNuoc(double giaNuoc) {
+		this.giaNuoc = giaNuoc;
+	}
 
-    public List<GiaDienNuoc> getDanhSachGiaDN() {
-        return danhSachGiaDienNuoc;
-    }
+	public boolean isTrangThaiXoa() {
+		return trangThaiXoa;
+	}
 
-    public void setDanhSachGiaDN(List<GiaDienNuoc> danhSachGiaDienNuoc) {
-        this.danhSachGiaDienNuoc = danhSachGiaDienNuoc;
-    }
+	public void setTrangThaiXoa(boolean trangThaiXoa) {
+		this.trangThaiXoa = trangThaiXoa;
+	}
 }

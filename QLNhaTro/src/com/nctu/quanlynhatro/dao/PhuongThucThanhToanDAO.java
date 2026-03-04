@@ -5,122 +5,136 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.nctu.quanlynhatro.model.PhuongThucThanhToan;
 
 public class PhuongThucThanhToanDAO {
 	private Connection conn;
 
-    public PhuongThucThanhToanDAO(Connection conn) {
-        this.conn = conn;
-    }
+	public PhuongThucThanhToanDAO(Connection conn) {
+		this.conn = conn;
+	}
 
-    public List<PhuongThucThanhToan> getAll() {
-        List<PhuongThucThanhToan> list = new ArrayList<>();
-        String sql = "SELECT MaPT, TenPT FROM PTThanhToan WHERE TrangThaiXoa = 0";
+	public List<PhuongThucThanhToan> getAll() {
+		List<PhuongThucThanhToan> list = new ArrayList<>();
+		String sql = "SELECT MaPT, TenPT FROM PTThanhToan WHERE TrangThaiXoa = 0";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+		try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-            	PhuongThucThanhToan pt = new PhuongThucThanhToan(
-                        rs.getLong("MaPT"),
-                        rs.getString("TenPT")
-                    );
-            	list.add(pt);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-    
-    /* =========================
-    KIỂM TRA TRÙNG TÊN (UPDATE)
-    ========================= */
-    public boolean isTenPTExistForUpdate(int maPT, String tenPT) {
+			while (rs.next()) {
+				PhuongThucThanhToan pt = new PhuongThucThanhToan(rs.getLong("MaPT"), rs.getString("TenPT"));
+				list.add(pt);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
-        String sql = "SELECT 1 FROM PTThanhToan WHERE TenPT = ? AND MaPT <> ?";
+	// =================================================================
+	// LẤY DANH SÁCH PHƯƠNG THỨC THANH TOÁN
+	// =================================================================
+	public Map<Integer, String> getPhuongThucThanhToan() {
+		Map<Integer, String> list = new HashMap<>();
+		String sql = "SELECT MaPT, TenPT FROM PTThanhToan WHERE TrangThaiXoa = 0";
 
-        try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+		try (java.sql.PreparedStatement ps = conn.prepareStatement(sql); java.sql.ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				list.put(rs.getInt("MaPT"), rs.getString("TenPT"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
-            ps.setString(1, tenPT);
-            ps.setInt(2, maPT);
-            return ps.executeQuery().next();
+	/*
+	 * ========================= KIỂM TRA TRÙNG TÊN (UPDATE)
+	 * =========================
+	 */
+	public boolean isTenPTExistForUpdate(int maPT, String tenPT) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    public boolean isTenPTExist(String tenPT) {
+		String sql = "SELECT 1 FROM PTThanhToan WHERE TenPT = ? AND MaPT <> ?";
 
-        String sql = "SELECT 1 FROM PTThanhToan WHERE TenPT = ? AND TrangThaiXoa = 0";
+		try (Connection con = DatabaseConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-        try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+			ps.setString(1, tenPT);
+			ps.setInt(2, maPT);
+			return ps.executeQuery().next();
 
-            ps.setString(1, tenPT);
-            return ps.executeQuery().next();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    public boolean insert(String tenPT) {
+	public boolean isTenPTExist(String tenPT) {
 
-        String sql = "INSERT INTO PTThanhToan(TenPT, TrangThaiXoa) VALUES (?, 0)";
-        
-        if(isTenPTExist(tenPT)) {
-        	return false;
-        }
+		String sql = "SELECT 1 FROM PTThanhToan WHERE TenPT = ? AND TrangThaiXoa = 0";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection con = DatabaseConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, tenPT);
-            return ps.executeUpdate() > 0;
+			ps.setString(1, tenPT);
+			return ps.executeQuery().next();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    /* =========================
-    UPDATE PHƯƠNG THỨC TT
-    ========================= */
-    public boolean update(PhuongThucThanhToan pt) {
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-        String sql = "UPDATE PTThanhToan SET TenPT = ? WHERE MaPT = ?";
+	public boolean insert(String tenPT) {
 
-        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+		String sql = "INSERT INTO PTThanhToan(TenPT, TrangThaiXoa) VALUES (?, 0)";
 
-            ps.setString(1, pt.getTenPT());
-            ps.setLong(2, pt.getMaPT());
+		if (isTenPTExist(tenPT)) {
+			return false;
+		}
 
-            return ps.executeUpdate() > 0;
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    public boolean deleteSoft(long tenPT) {
-    	String sql = "UPDATE PTThanhToan SET TrangThaiXoa = 1 WHERE MaPT = ?";
-    	
-    	try(PreparedStatement ps = conn.prepareStatement(sql)){
-    		ps.setLong(1, tenPT);
-    		return ps.executeUpdate()>0;
-    		
-    	} catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+			ps.setString(1, tenPT);
+			return ps.executeUpdate() > 0;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/*
+	 * ========================= UPDATE PHƯƠNG THỨC TT =========================
+	 */
+	public boolean update(PhuongThucThanhToan pt) {
+
+		String sql = "UPDATE PTThanhToan SET TenPT = ? WHERE MaPT = ?";
+
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, pt.getTenPT());
+			ps.setLong(2, pt.getMaPT());
+
+			return ps.executeUpdate() > 0;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean deleteSoft(long tenPT) {
+		String sql = "UPDATE PTThanhToan SET TrangThaiXoa = 1 WHERE MaPT = ?";
+
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setLong(1, tenPT);
+			return ps.executeUpdate() > 0;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

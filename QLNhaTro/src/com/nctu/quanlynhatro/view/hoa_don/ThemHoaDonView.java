@@ -13,13 +13,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -27,11 +30,19 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.nctu.quanlynhatro.model.KhachHangGoiY;
+
 public class ThemHoaDonView extends JDialog {
 
 	// --- Component KHU VỰC TRÁI ---
 	private JTextField txtTenKH, txtNgayThanhToan;
-	private JTextField txtMaHopDong, txtNhaTro, txtPhong;
+	private JTextField txtMaHopDong;
+	// Thay đổi: Nhà trọ & Phòng thành ComboBox
+	private JTextField txtNhaTro, txtPhong; // Đổi từ ComboBox về JTextField
+	private JPopupMenu popupMenu;
+	private JList<KhachHangGoiY> listGoiY;
+	private DefaultListModel<KhachHangGoiY> listModel;
+
 	private JTextField txtGiaThue, txtGhiChu;
 
 	private JComboBox<String> cboChonDienNuoc;
@@ -51,7 +62,6 @@ public class ThemHoaDonView extends JDialog {
 	public ThemHoaDonView(DefaultTableModel model) {
 		this.mainTableModel = model;
 		setTitle("Lập Hóa Đơn Thanh Toán");
-		// setSize(1100, 700); <-- Dùng pack() ở cuối
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		JPanel contentPane = new JPanel(new BorderLayout(10, 10));
@@ -75,7 +85,6 @@ public class ThemHoaDonView extends JDialog {
 		addLabel(pnlLeftForm, "Ngày Thanh Toán:", 1, 0);
 
 		txtTenKH = createTextField();
-		txtTenKH.setEditable(false); // Tự động load từ Hợp đồng
 		addComponent(pnlLeftForm, txtTenKH, 0, 1);
 
 		txtNgayThanhToan = createTextField();
@@ -83,16 +92,14 @@ public class ThemHoaDonView extends JDialog {
 		txtNgayThanhToan.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		addComponent(pnlLeftForm, txtNgayThanhToan, 1, 1);
 
-		// Hàng 2: Mã Hợp Đồng (Đã bỏ nút ...) & Điện Nước
+		// Hàng 2: Mã Hợp Đồng & Điện Nước
 		addLabel(pnlLeftForm, "Mã Hợp Đồng:", 0, 2);
 		addLabel(pnlLeftForm, "Hóa Đơn Điện Nước:", 1, 2);
 
-		// Ô Mã Hợp Đồng: Chỉ là Textbox Read-only
 		txtMaHopDong = createTextField();
 		txtMaHopDong.setEditable(false);
 		addComponent(pnlLeftForm, txtMaHopDong, 0, 3);
 
-		// Panel Điện nước
 		JPanel pnlDienNuocOption = new JPanel(new BorderLayout(5, 0));
 		cboChonDienNuoc = new JComboBox<>(new String[] { "-- Chọn phiếu --" });
 		btnCongDN = new JButton("+");
@@ -107,34 +114,40 @@ public class ThemHoaDonView extends JDialog {
 
 		addComponent(pnlLeftForm, pnlDienNuocOption, 1, 3);
 
-		// Hàng 3
+		// Hàng 3: Nhà Trọ & Giá Thuê
 		addLabel(pnlLeftForm, "Nhà Trọ:", 0, 4);
 		addLabel(pnlLeftForm, "Giá Thuê:", 1, 4);
 
 		txtNhaTro = createTextField();
-		txtNhaTro.setEditable(false); // Tự động load
+		txtNhaTro.setEditable(false);
 		addComponent(pnlLeftForm, txtNhaTro, 0, 5);
 
 		txtGiaThue = createTextField();
-		txtGiaThue.setEditable(false); // Tự động load
+		txtGiaThue.setEditable(false);
 		addComponent(pnlLeftForm, txtGiaThue, 1, 5);
 
-		// Hàng 4
+		// Hàng 4: Phòng & Ghi Chú
 		addLabel(pnlLeftForm, "Phòng:", 0, 6);
 		addLabel(pnlLeftForm, "Ghi Chú:", 1, 6);
 
 		txtPhong = createTextField();
-		txtPhong.setEditable(false); // Tự động load
+		txtPhong.setEditable(false);
 		addComponent(pnlLeftForm, txtPhong, 0, 7);
 
 		txtGhiChu = createTextField();
 		addComponent(pnlLeftForm, txtGhiChu, 1, 7);
 
+//		Khởi tạo Popup Menu cho gợi ý
+		popupMenu = new JPopupMenu();
+		listModel = new DefaultListModel<>();
+		listGoiY = new JList<>(listModel);
+		popupMenu.add(new JScrollPane(listGoiY));
+		popupMenu.setFocusable(false); // Quan trọng để không mất focus khỏi txtTenKH
+
 		// Hàng 5
 		addLabel(pnlLeftForm, "Phương Thức Thanh Toán:", 0, 8);
 		addLabel(pnlLeftForm, "Loại Thanh Toán:", 1, 8);
-
-		cboPhuongThuc = new JComboBox<>(new String[] { "Tiền mặt", "Chuyển khoản", "MoMo" });
+		cboPhuongThuc = new JComboBox<>();
 		cboPhuongThuc.setPreferredSize(new Dimension(0, 30));
 		addComponent(pnlLeftForm, cboPhuongThuc, 0, 9);
 
@@ -158,7 +171,6 @@ public class ThemHoaDonView extends JDialog {
 		tblPhuPhi = new JTable(modelPhuPhi);
 		tblPhuPhi.setRowHeight(25);
 		tblPhuPhi.setPreferredScrollableViewportSize(new Dimension(450, 100));
-		// Không add dữ liệu demo
 		pnlPhuPhi.add(new JScrollPane(tblPhuPhi), BorderLayout.CENTER);
 
 		// Bảng Điện Nước
@@ -174,18 +186,16 @@ public class ThemHoaDonView extends JDialog {
 		pnlRightTables.add(pnlPhuPhi);
 		pnlRightTables.add(pnlDienNuoc);
 
-		// Add vào Center
 		pnlCenter.add(pnlLeftForm);
 		pnlCenter.add(pnlRightTables);
 		contentPane.add(pnlCenter, BorderLayout.CENTER);
 
 		// =================================================================
-		// 2. PHẦN DƯỚI: FOOTER (TỔNG TIỀN + NÚT BẤM)
+		// 2. PHẦN DƯỚI: FOOTER
 		// =================================================================
 		JPanel pnlFooter = new JPanel(new GridLayout(1, 2, 20, 0));
 		pnlFooter.setBorder(new EmptyBorder(10, 0, 0, 0));
 
-		// --- CỘT TRÁI FOOTER: TỔNG TIỀN ---
 		JPanel pnlTotalContainer = new JPanel(new BorderLayout());
 		pnlTotalContainer.setBorder(new TitledBorder("Tổng Tiền"));
 
@@ -201,7 +211,6 @@ public class ThemHoaDonView extends JDialog {
 		pnlTotalContainer.add(pnlTotalFields, BorderLayout.CENTER);
 		pnlFooter.add(pnlTotalContainer);
 
-		// --- CỘT PHẢI FOOTER: NÚT BẤM ---
 		JPanel pnlButtonsContainer = new JPanel(new BorderLayout());
 		JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
 
@@ -223,9 +232,8 @@ public class ThemHoaDonView extends JDialog {
 
 		contentPane.add(pnlFooter, BorderLayout.SOUTH);
 
-		pack(); // Tự động co giãn
+		pack();
 		setLocationRelativeTo(null);
-
 	}
 
 	// --- Helper Functions ---
@@ -258,7 +266,7 @@ public class ThemHoaDonView extends JDialog {
 		JTextField txt = new JTextField("0");
 		txt.setEditable(false);
 		txt.setBackground(new Color(230, 230, 230));
-		txt.setForeground(Color.RED); // Chữ màu ĐỎ
+		txt.setForeground(Color.RED);
 		txt.setHorizontalAlignment(JTextField.RIGHT);
 		txt.setFont(new Font("Arial", Font.BOLD, 14));
 		txt.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
@@ -272,5 +280,138 @@ public class ThemHoaDonView extends JDialog {
 		p.add(lbl, BorderLayout.WEST);
 		p.add(txt, BorderLayout.CENTER);
 		return p;
+	}
+
+	// =================================================================
+	// CÁC HÀM GETTER (Để Controller lấy dữ liệu từ giao diện)
+	// =================================================================
+
+	public JTextField getTxtTenKH() {
+		return txtTenKH;
+	}
+
+	public JTextField getTxtNgayThanhToan() {
+		return txtNgayThanhToan;
+	}
+
+	public JTextField getTxtMaHopDong() {
+		return txtMaHopDong;
+	}
+
+	// Getter mới cho ComboBox
+	public JTextField getTxtNhaTro() {
+		return txtNhaTro;
+	}
+
+	public JTextField getTxtPhong() {
+		return txtPhong;
+	}
+
+	public JPopupMenu getPopupMenu() {
+		return popupMenu;
+	}
+
+	public JList<KhachHangGoiY> getListGoiY() {
+		return listGoiY;
+	}
+
+	public DefaultListModel<KhachHangGoiY> getListModel() {
+		return listModel;
+	}
+
+	public JTextField getTxtGiaThue() {
+		return txtGiaThue;
+	}
+
+	public JTextField getTxtGhiChu() {
+		return txtGhiChu;
+	}
+
+	public JComboBox<String> getCboChonDienNuoc() {
+		return cboChonDienNuoc;
+	}
+
+	public JComboBox<String> getCboPhuongThuc() {
+		return cboPhuongThuc;
+	}
+
+	public JComboBox<String> getCboLoaiThanhToan() {
+		return cboLoaiThanhToan;
+	}
+
+	public JButton getBtnCongDN() {
+		return btnCongDN;
+	}
+
+	public JButton getBtnThemPhieuMoi() {
+		return btnThemPhieuMoi;
+	}
+
+	public JButton getBtnHuy() {
+		return btnHuy;
+	}
+
+	public JButton getBtnXacNhan() {
+		return btnXacNhan;
+	}
+
+	public JButton getBtnIn() {
+		return btnIn;
+	}
+
+	public DefaultTableModel getModelPhuPhi() {
+		return modelPhuPhi;
+	}
+
+	public DefaultTableModel getModelDienNuoc() {
+		return modelDienNuoc;
+	}
+
+	public JTable getTblPhuPhi() {
+		return tblPhuPhi;
+	}
+
+	public JTable getTblDienNuoc() {
+		return tblDienNuoc;
+	}
+
+	public JTextField getTxtTongTienDN() {
+		return txtTongTienDN;
+	}
+
+	public JTextField getTxtTongTienPhuPhi() {
+		return txtTongTienPhuPhi;
+	}
+
+	public JTextField getTxtTongThanhToan() {
+		return txtTongThanhToan;
+	}
+
+	// =================================================================
+	// CÁC HÀM SETTER (Để Controller đổ dữ liệu lên giao diện)
+	// =================================================================
+
+	public void setTenKH(String tenKH) {
+		this.txtTenKH.setText(tenKH);
+	}
+
+	public void setMaHopDong(String maHD) {
+		this.txtMaHopDong.setText(maHD);
+	}
+
+	public void setGiaThue(String giaThue) {
+		this.txtGiaThue.setText(giaThue);
+	}
+
+	public void setTongTienDN(String tongTien) {
+		this.txtTongTienDN.setText(tongTien);
+	}
+
+	public void setTongTienPhuPhi(String tongTien) {
+		this.txtTongTienPhuPhi.setText(tongTien);
+	}
+
+	public void setTongThanhToan(String tongTien) {
+		this.txtTongThanhToan.setText(tongTien);
 	}
 }
