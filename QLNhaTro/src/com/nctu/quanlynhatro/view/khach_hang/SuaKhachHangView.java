@@ -129,7 +129,7 @@ public class SuaKhachHangView extends JDialog {
         this.rowIndex = row;
         
         setTitle("Cập Nhật Thông Tin Khách Hàng");
-        setSize(1000, 550); 
+        setSize(1000, 580); 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
