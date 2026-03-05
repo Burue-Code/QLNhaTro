@@ -164,14 +164,14 @@ public class XemPhong extends JDialog {
     // MAIN: chạy giao diện xem phòng
     // =============================
     
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ignored) {}
-
-            XemPhong dlg = new XemPhong(null);
-            dlg.setVisible(true);
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> {
+//            try {
+//                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//            } catch (Exception ignored) {}
+//
+//            XemPhong dlg = new XemPhong(null);
+//            dlg.setVisible(true);
+//        });
+//    }
 }
