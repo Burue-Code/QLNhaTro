@@ -17,6 +17,7 @@ import com.nctu.quanlynhatro.view.component.MyPopupMenu;
 import com.nctu.quanlynhatro.view.component.MyTable;
 import com.nctu.quanlynhatro.view.khach_hang.KhachHangView;
 import com.nctu.quanlynhatro.view.khach_hang.ThemKhachHangView;
+import com.nctu.quanlynhatro.view.khach_hang.XemKhachHangView;
 
 public class KhachHangController {
 	private KhachHangView view;
@@ -52,6 +53,10 @@ public class KhachHangController {
 		initData();
 	}
 
+	public DefaultTableModel getModel() {
+		return model;
+	}
+
 	/* ================= TÌM KIẾM ================= */
 	private void initSearch() {
 		sorter = new TableRowSorter<>(model);
@@ -73,6 +78,7 @@ public class KhachHangController {
 		JMenuItem mnuThem = popup.addItem("Thêm Khách Hàng");
 		JMenuItem mnuSua = popup.addItem("Sửa Khách Hàng");
 		JMenuItem mnuXoa = popup.addItem("Xóa Khách Hàng");
+		JMenuItem mnuXem = popup.addItem("Xem Khách Hàng");
 		popup.addSeparator();
 		JMenuItem mnuLamMoi = popup.addItem("Làm mới");
 
@@ -90,8 +96,8 @@ public class KhachHangController {
 				int modelRow = table.convertRowIndexToModel(row);
 				ThemKhachHangView suaKhachHangView = new ThemKhachHangView(model);
 				suaKhachHangView.setModal(true);
-				KhachHang khachHangCanSua = listKhachHang.get(modelRow);
-				new SuaKhachHangController(suaKhachHangView, this, khachHangCanSua);
+				long maKH = Long.parseLong(model.getValueAt(modelRow, 0).toString());
+				new SuaKhachHangController(suaKhachHangView, this, maKH);
 			} else {
 				JOptionPane.showMessageDialog(view, "Vui lòng chọn một khách hàng để sửa!", "Cảnh báo",
 						JOptionPane.WARNING_MESSAGE);
@@ -123,6 +129,20 @@ public class KhachHangController {
 				}
 			} else {
 				JOptionPane.showMessageDialog(view, "Vui lòng chọn một khách hàng để xóa!", "Cảnh báo",
+						JOptionPane.WARNING_MESSAGE);
+			}
+		});
+
+		mnuXem.addActionListener(e -> {
+			int row = table.getSelectedRow();
+			if (row >= 0) {
+				int modelRow = table.convertRowIndexToModel(row);
+				long maKH = Long.parseLong(model.getValueAt(modelRow, 0).toString());
+				XemKhachHangView xemKhachHangView = new XemKhachHangView(null);
+				xemKhachHangView.setModal(true);
+				new XemKhachHangController(xemKhachHangView, maKH, this);
+			} else {
+				JOptionPane.showMessageDialog(view, "Vui lòng chọn một khách hàng để xem!", "Cảnh báo",
 						JOptionPane.WARNING_MESSAGE);
 			}
 		});
