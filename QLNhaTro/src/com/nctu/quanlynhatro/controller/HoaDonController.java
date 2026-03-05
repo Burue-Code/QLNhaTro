@@ -16,6 +16,7 @@ import com.nctu.quanlynhatro.view.component.MyPopupMenu;
 import com.nctu.quanlynhatro.view.component.MyTable;
 import com.nctu.quanlynhatro.view.hoa_don.HoaDonView;
 import com.nctu.quanlynhatro.view.hoa_don.ThemHoaDonView;
+import com.nctu.quanlynhatro.view.hoa_don.XemHoaDonView;
 
 public class HoaDonController {
 	private HoaDonView view;
@@ -51,6 +52,10 @@ public class HoaDonController {
 		initData();
 	}
 
+	public DefaultTableModel getModel() {
+		return model;
+	}
+
 	/* ================= TÌM KIẾM ================= */
 	private void initSearch() {
 		sorter = new TableRowSorter<>(model);
@@ -72,6 +77,7 @@ public class HoaDonController {
 		JMenuItem mnuThem = popup.addItem("Thêm Phiếu");
 		JMenuItem mnuSua = popup.addItem("Sửa Phiếu");
 		JMenuItem mnuXoa = popup.addItem("Xóa Phiếu");
+		JMenuItem mnuXem = popup.addItem("Xem Phiếu");
 		popup.addSeparator();
 		JMenuItem mnuLamMoi = popup.addItem("Làm mới");
 
@@ -119,6 +125,21 @@ public class HoaDonController {
 				}
 			} else {
 				JOptionPane.showMessageDialog(view, "Vui lòng chọn một dòng để xóa!", "Thông báo",
+						JOptionPane.WARNING_MESSAGE);
+			}
+		});
+
+		mnuXem.addActionListener(e -> {
+			int row = table.getSelectedRow();
+			if (row >= 0) {
+				int modelRow = table.convertRowIndexToModel(row);
+				long maHoaDon = Long.parseLong(model.getValueAt(modelRow, 0).toString());
+				XemHoaDonView xemHoaDonView = new XemHoaDonView();
+				xemHoaDonView.setModal(true);
+				new XemHoaDonController(xemHoaDonView, maHoaDon, this);
+				xemHoaDonView.setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(view, "Vui lòng chọn một hóa đơn để xem!", "Cảnh báo",
 						JOptionPane.WARNING_MESSAGE);
 			}
 		});

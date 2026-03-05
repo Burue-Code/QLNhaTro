@@ -138,6 +138,8 @@ public class ThemHopDongView extends JDialog {
 		pnlLeft.add(new JLabel("Số Lượng Người Ở:"), gbc);
 		gbc.gridy = 10;
 		txtSoNguoi = new JTextField("1");
+		txtSoNguoi.setEditable(false); // không cho gõ
+		txtSoNguoi.setFocusable(false);
 		txtSoNguoi.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtSoNguoi, gbc);
 
@@ -146,6 +148,8 @@ public class ThemHopDongView extends JDialog {
 		pnlLeft.add(new JLabel("Giá Thuê:"), gbc);
 		gbc.gridy = 12;
 		txtGiaThue = new JTextField();
+		txtGiaThue.setEditable(false); // không cho gõ
+		txtGiaThue.setFocusable(false);
 		txtGiaThue.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtGiaThue, gbc);
 

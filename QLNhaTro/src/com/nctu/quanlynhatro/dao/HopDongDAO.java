@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.nctu.quanlynhatro.model.HopDong;
 import com.nctu.quanlynhatro.model.KhachHang;
@@ -414,5 +416,73 @@ public class HopDongDAO {
 			} catch (Exception ex) {
 			}
 		}
+	}
+
+	// =================================================================
+	// 1. LẤY CHI TIẾT 1 HỢP ĐỒNG (Bao gồm Tên KH, Phòng, Nhà trọ...)
+	// =================================================================
+	public Map<String, Object> getChiTietHopDong(long maHD) {
+		Map<String, Object> map = new HashMap<>();
+
+		// Lấy đúng tên cột từ ERD: hd.NgayKT, hd.GiaThue
+		String sql = "SELECT hd.MaHD, kh.TenKH, hd.NgayLapHD, hd.NgayKT, "
+				+ "nt.TenNT, p.SoPhong, hd.SoNguoiO, hd.GiaThue, hd.TrangThaiHD, hd.GhiChu " + "FROM HopDong hd "
+				+ "INNER JOIN KhachHang kh ON hd.MaKH = kh.MaKH " + "INNER JOIN Phong p ON hd.MaPhong = p.MaPhong "
+				+ "INNER JOIN NhaTro nt ON p.MaNT = nt.MaNT " + "WHERE hd.MaHD = ?";
+
+		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setLong(1, maHD);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					map.put("MaHD", rs.getLong("MaHD"));
+					map.put("TenKH", rs.getString("TenKH"));
+					map.put("NgayLapHD", rs.getDate("NgayLapHD"));
+					map.put("NgayKT", rs.getDate("NgayKT")); // Lấy từ cột NgayKT
+					map.put("TenNT", rs.getString("TenNT"));
+					map.put("SoPhong", rs.getString("SoPhong"));
+					map.put("SoNguoiO", rs.getInt("SoNguoiO"));
+					map.put("Gia", rs.getDouble("GiaThue")); // Lấy từ cột GiaThue của HopDong
+					map.put("TrangThaiHD", rs.getString("TrangThaiHD"));
+					map.put("GhiChu", rs.getString("GhiChu"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+
+	// =================================================================
+	// 2. LẤY DANH SÁCH KHÁCH HÀNG PHỤ THUỘC (Ở GHÉP) THEO MÃ HỢP ĐỒNG
+	// =================================================================
+	public List<Map<String, Object>> getKhachHangPhuThuoc(long maHD) {
+		List<Map<String, Object>> list = new ArrayList<>();
+
+		// Lấy khách hàng dựa vào MaPhong của Hợp Đồng
+		String sql = "SELECT kh.MaKH, kh.TenKH, kh.DiaChi, kh.GioiTinh, kh.NgaySinh, kh.SDT " + "FROM KhachHang kh "
+				+ "INNER JOIN HopDong hd ON kh.MaPhong = hd.MaPhong " + "WHERE hd.MaHD = ?";
+
+		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setLong(1, maHD);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Map<String, Object> kh = new HashMap<>();
+					kh.put("MaKH", rs.getLong("MaKH"));
+					kh.put("TenKH", rs.getString("TenKH"));
+					kh.put("DiaChi", rs.getString("DiaChi"));
+					// Trong ERD GioiTinh là dạng Bit (0/1), bạn có thể cần chuyển đổi hiển thị nếu
+					// cần
+					kh.put("GioiTinh", rs.getBoolean("GioiTinh") ? "Nam" : "Nữ");
+					kh.put("NgaySinh", rs.getDate("NgaySinh"));
+					kh.put("SDT", rs.getString("SDT"));
+					list.add(kh);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.nctu.quanlynhatro.model.KhachHang;
 
@@ -328,6 +330,73 @@ public class KhachHangDAO {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	// 1. LẤY CHI TIẾT 1 KHÁCH HÀNG
+	public Map<String, Object> getChiTietKhachHang(long maKH) {
+		Map<String, Object> map = new HashMap<>();
+
+		// Sử dụng LEFT JOIN phòng trường hợp khách hàng chưa xếp phòng/hợp đồng
+		String sql = "SELECT kh.MaKH, kh.TenKH, kh.DiaChi, kh.GioiTinh, kh.NgaySinh, "
+				+ "kh.SDT, kh.Gmail, kh.SoCCCD, p.SoPhong, hd.MaHD, "
+				+ "(SELECT TenKH FROM KhachHang WHERE MaKH = hd.MaKH) AS TenKhachChinh " + "FROM KhachHang kh "
+				+ "LEFT JOIN Phong p ON kh.MaPhong = p.MaPhong "
+				+ "LEFT JOIN HopDong hd ON p.MaPhong = hd.MaPhong AND hd.TrangThaiXoa = 0 " + "WHERE kh.MaKH = ?";
+
+		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setLong(1, maKH);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					map.put("MaKH", rs.getLong("MaKH"));
+					map.put("TenKH", rs.getString("TenKH"));
+					map.put("DiaChi", rs.getString("DiaChi"));
+					map.put("GioiTinh", rs.getBoolean("GioiTinh")); // boolean (0/1)
+					map.put("NgaySinh", rs.getDate("NgaySinh"));
+					map.put("SDT", rs.getString("SDT"));
+					map.put("Gmail", rs.getString("Gmail"));
+					map.put("SoCCCD", rs.getString("SoCCCD"));
+					map.put("SoPhong", rs.getString("SoPhong"));
+					map.put("MaHD", rs.getString("MaHD"));
+					map.put("TenKhachChinh", rs.getString("TenKhachChinh"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+
+	// 2. LẤY KHÁCH HÀNG PHỤ THUỘC (Ở chung phòng, ngoại trừ người đang xem)
+	public List<Map<String, Object>> getKhachHangPhuThuocTheoPhong(String maPhong, long maKHHienTai) {
+		List<Map<String, Object>> list = new ArrayList<>();
+		if (maPhong == null || maPhong.isEmpty()) {
+			return list;
+		}
+
+		String sql = "SELECT MaKH, TenKH, DiaChi, GioiTinh, NgaySinh, SDT "
+				+ "FROM KhachHang WHERE MaPhong = ? AND MaKH != ? AND TrangThaiXoa = 0";
+
+		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, maPhong);
+			ps.setLong(2, maKHHienTai);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Map<String, Object> kh = new HashMap<>();
+					kh.put("MaKH", rs.getLong("MaKH"));
+					kh.put("TenKH", rs.getString("TenKH"));
+					kh.put("DiaChi", rs.getString("DiaChi"));
+					kh.put("GioiTinh", rs.getBoolean("GioiTinh") ? "Nam" : "Nữ");
+					kh.put("NgaySinh", rs.getDate("NgaySinh"));
+					kh.put("SDT", rs.getString("SDT"));
+					list.add(kh);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 }

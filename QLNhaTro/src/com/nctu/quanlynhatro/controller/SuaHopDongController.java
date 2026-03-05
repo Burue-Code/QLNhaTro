@@ -28,6 +28,7 @@ import com.nctu.quanlynhatro.model.HopDong;
 import com.nctu.quanlynhatro.model.KhachHang;
 import com.nctu.quanlynhatro.model.Phong;
 import com.nctu.quanlynhatro.view.hop_dong.ThemHopDongView;
+import com.nctu.quanlynhatro.view.khach_hang.ThemKhachHangView;
 
 public class SuaHopDongController {
 
@@ -292,6 +293,14 @@ public class SuaHopDongController {
 					}
 				}
 			}
+		});
+		view.getBtnThemKH().addActionListener(e -> {
+			ThemKhachHangView themKhachHangView = new ThemKhachHangView(modelKH);
+			themKhachHangView.setModal(true);
+			new ThemKhachHangController(themKhachHangView, null);
+			themKhachHangView.setVisible(true);
+			initBaseData();
+			loadContractData();
 		});
 
 		initPopupMenuKH();
