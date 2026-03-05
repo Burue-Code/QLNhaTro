@@ -449,4 +449,60 @@ public class HoaDonDAO {
 		}
 	}
 
+	// 1. LẤY CHI TIẾT 1 HÓA ĐƠN
+	public Map<String, Object> getChiTietHoaDon(long maHD) {
+		Map<String, Object> map = new HashMap<>();
+
+		String sql = "SELECT hd.MaHoaDon, hd.NgayTT, hd.SoTienTT, hd.TongTienPP, hd.LoaiTT, hd.GhiChu, "
+				+ "hop.MaHD AS MaHopDong, kh.TenKH, nt.TenNT, p.SoPhong, p.Gia, pt.TenPT " + "FROM HoaDon hd "
+				+ "INNER JOIN HopDong hop ON hd.MaHD = hop.MaHD " + "INNER JOIN KhachHang kh ON hop.MaKH = kh.MaKH "
+				+ "INNER JOIN Phong p ON hop.MaPhong = p.MaPhong " + "INNER JOIN NhaTro nt ON p.MaNT = nt.MaNT "
+				+ "LEFT JOIN PTThanhToan pt ON hd.MaPT = pt.MaPT " + "WHERE hd.MaHoaDon = ?";
+
+		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setLong(1, maHD);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					map.put("MaHoaDon", rs.getLong("MaHoaDon"));
+					map.put("NgayTT", rs.getTimestamp("NgayTT"));
+					map.put("SoTienTT", rs.getDouble("SoTienTT"));
+					map.put("TongTienPP", rs.getDouble("TongTienPP"));
+					map.put("LoaiTT", rs.getString("LoaiTT"));
+					map.put("GhiChu", rs.getString("GhiChu"));
+					map.put("MaHopDong", rs.getLong("MaHopDong"));
+					map.put("TenKH", rs.getString("TenKH"));
+					map.put("TenNT", rs.getString("TenNT"));
+					map.put("SoPhong", rs.getString("SoPhong"));
+					map.put("Gia", rs.getDouble("Gia"));
+					map.put("TenPT", rs.getString("TenPT"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+
+	// 2. LẤY DANH SÁCH ĐIỆN NƯỚC THUỘC HÓA ĐƠN
+	public List<Map<String, Object>> getDienNuocMaHoaDon(long maHoaDon) {
+		List<Map<String, Object>> list = new ArrayList<>();
+		String sql = "SELECT MaDN, ThangNam, TongTien FROM PhieuDienNuoc WHERE MaHoaDon = ?";
+		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setLong(1, maHoaDon);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Map<String, Object> dn = new HashMap<>();
+					dn.put("MaDN", rs.getLong("MaDN"));
+					dn.put("ThangNam", rs.getDate("ThangNam"));
+					dn.put("TongTien", rs.getDouble("TongTien"));
+					list.add(dn);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 }

@@ -17,6 +17,7 @@ import com.nctu.quanlynhatro.view.component.MyPopupMenu;
 import com.nctu.quanlynhatro.view.component.MyTable;
 import com.nctu.quanlynhatro.view.hop_dong.HopDongView;
 import com.nctu.quanlynhatro.view.hop_dong.ThemHopDongView;
+import com.nctu.quanlynhatro.view.hop_dong.XemHopDongView;
 
 public class HopDongController {
 
@@ -66,6 +67,10 @@ public class HopDongController {
 		});
 	}
 
+	public DefaultTableModel getModel() {
+		return model;
+	}
+
 	/* ================= POPUP MENU ================= */
 	private void initPopupMenu() {
 		MyPopupMenu popup = new MyPopupMenu(table);
@@ -73,6 +78,7 @@ public class HopDongController {
 		JMenuItem mnuThem = popup.addItem("Thêm Phiếu");
 		JMenuItem mnuSua = popup.addItem("Sửa Phiếu");
 		JMenuItem mnuXoa = popup.addItem("Xóa Phiếu");
+		JMenuItem mnuXem = popup.addItem("Xem Chi Tiết Phiếu");
 		popup.addSeparator();
 		JMenuItem mnuLamMoi = popup.addItem("Làm mới");
 
@@ -130,6 +136,26 @@ public class HopDongController {
 			}
 		});
 
+		mnuXem.addActionListener(e -> {
+
+			// Giả sử bạn lấy được dòng người dùng chọn
+			int row = table.getSelectedRow();
+			if (row >= 0) {
+				int modelRow = table.convertRowIndexToModel(row);
+				// Giả sử cột 0 chứa Mã Hợp Đồng
+				long maHD = Long.parseLong(table.getModel().getValueAt(modelRow, 0).toString());
+
+				// Mở form Xem
+				XemHopDongView viewXem = new XemHopDongView();
+				viewXem.setModal(true); // Khóa form cha lại
+				new XemHopDongController(viewXem, maHD, this);
+				viewXem.setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(view, "Vui lòng chọn hợp đồng cần xem!", "Thông báo",
+						JOptionPane.WARNING_MESSAGE);
+			}
+		});
+
 		mnuLamMoi.addActionListener(e -> {
 			view.getTxtTimKiem().setText("");
 			if (sorter != null) {
@@ -138,4 +164,5 @@ public class HopDongController {
 			refreshData();
 		});
 	}
+
 }
