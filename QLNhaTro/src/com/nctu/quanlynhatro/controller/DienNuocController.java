@@ -36,20 +36,10 @@ public class DienNuocController {
 	}
 
 	private void initData() {
-
-		table.clear(); // clear table
-
+		table.clear();
 		for (PhieuDienNuoc dn : dienNuocDAO.getAll()) {
-			table.addRow(new Object[] { dn.getMaDN(),
-					// Truy cập vào đối tượng Phong để lấy số phòng
-					(dn.getPhong() != null) ? dn.getPhong().getSoPhong() : "N/A", dn.getThangNam(), // Trong Model bạn
-																									// đặt là thangNam
-																									// chứ không phải
-																									// thoiGian
-					dn.getTienDien(), // Hoặc getGiaDienTaiThoiDiem() tùy mục đích hiển thị
-					dn.getTienNuoc(), dn.getTongTien(),
-					// Hiển thị trạng thái dưới dạng chữ cho người dùng dễ đọc
-					dn.getTrangThaiDN() });
+			table.addRow(new Object[] { dn.getMaDN(), (dn.getPhong() != null) ? dn.getPhong().getSoPhong() : "N/A",
+					dn.getThangNam(), dn.getTienDien(), dn.getTienNuoc(), dn.getTongTien(), dn.getTrangThaiDN() });
 		}
 	}
 
@@ -57,7 +47,6 @@ public class DienNuocController {
 		initData();
 	}
 
-	/* ================= TÌM KIẾM ================= */
 	private void initSearch() {
 		sorter = new TableRowSorter<>(model);
 		table.setRowSorter(sorter);
@@ -71,7 +60,6 @@ public class DienNuocController {
 		});
 	}
 
-	/* ================= POPUP MENU ================= */
 	private void initPopupMenu() {
 		MyPopupMenu popup = new MyPopupMenu(table);
 
@@ -81,23 +69,20 @@ public class DienNuocController {
 		popup.addSeparator();
 		JMenuItem mnuLamMoi = popup.addItem("Làm mới");
 
-		// ==== ACTION ====
 		mnuThem.addActionListener(e -> {
 			ThemDienNuocView themDienNuocView = new ThemDienNuocView(model);
 			themDienNuocView.setModal(true);
 			new ThemDienNuocController(themDienNuocView, this);
 			themDienNuocView.setVisible(true);
-		}
-
-		);
+		});
 
 		mnuSua.addActionListener(e -> {
 			int row = table.getSelectedRow();
 			if (row >= 0) {
-				int modelRow = table.convertRowIndexToModel(row);
+				long maDN = Long.parseLong(table.getValueAt(row, 0).toString());
 				ThemDienNuocView suaDienNuocView = new ThemDienNuocView(model);
 				suaDienNuocView.setModal(true);
-				new SuaDienNuocController(suaDienNuocView, this, modelRow);
+				new SuaDienNuocController(suaDienNuocView, this, maDN);
 				suaDienNuocView.setVisible(true);
 			} else {
 				JOptionPane.showMessageDialog(view, "Vui lòng chọn một phiếu để sửa!", "Cảnh báo",
@@ -109,16 +94,14 @@ public class DienNuocController {
 			int row = table.getSelectedRow();
 			if (row >= 0) {
 				long maDN = Long.parseLong(table.getValueAt(row, 0).toString());
-
 				int confirm = JOptionPane.showConfirmDialog(view,
 						"Bạn có chắc chắn muốn xóa phiếu điện nước này không?", "Xác nhận xóa",
 						JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
 				if (confirm == JOptionPane.YES_OPTION) {
-					// Gọi DAO để xóa mềm
 					if (dienNuocDAO.delete(maDN)) {
 						JOptionPane.showMessageDialog(view, "Xóa thành công!");
-						refreshData(); // Load lại dữ liệu từ CSDL lên bảng
+						refreshData();
 					} else {
 						JOptionPane.showMessageDialog(view, "Xóa thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
 					}
@@ -137,5 +120,4 @@ public class DienNuocController {
 			refreshData();
 		});
 	}
-
 }

@@ -17,8 +17,8 @@ public class SuaDienNuocController {
 	private ThemDienNuocView view;
 	private DienNuocDAO dao;
 	private DienNuocController parentController;
-	private long maDNCur; // ID phiếu đang sửa
-	private DecimalFormat df = new DecimalFormat("#,###");
+	private long maDNCur;
+	private DecimalFormat df = new DecimalFormat("#,###.##");
 
 	public SuaDienNuocController(ThemDienNuocView view, DienNuocController parentController, long maDN) {
 		this.view = view;
@@ -27,11 +27,9 @@ public class SuaDienNuocController {
 
 		this.dao = new DienNuocDAO(DatabaseConnection.getConnection());
 
-		// Cấu hình giao diện chế độ Sửa
 		view.setTitle("Cập Nhật Phiếu Điện Nước - Mã: " + maDN);
 		view.getBtnThem().setText("Lưu Cập Nhật");
 
-		// Khóa các trường không được sửa (Để bảo toàn dữ liệu)
 		view.getCboNhaTro().setEnabled(false);
 		view.getCboSoPhong().setEnabled(false);
 		view.getCboThang().setEnabled(false);
@@ -39,6 +37,7 @@ public class SuaDienNuocController {
 		loadDataOld();
 		initEvents();
 
+		view.setVisible(true);
 	}
 
 	private void loadDataOld() {
@@ -49,33 +48,31 @@ public class SuaDienNuocController {
 			return;
 		}
 
-		// 1. Đổ dữ liệu hiển thị (Fake item vào combobox vì ta đã disable nó)
-		view.getCboNhaTro().addItem(p.getGhiChu()); // Tên NT lấy từ DAO
+		view.getCboNhaTro().addItem(p.getGhiChu());
 		view.getCboNhaTro().setSelectedIndex(0);
 
 		view.getCboSoPhong().addItem(String.valueOf(p.getPhong().getSoPhong()));
 		view.getCboSoPhong().setSelectedIndex(0);
 
-		String thangNam = "Tháng " + p.getThangNam().getMonthValue() + "/" + p.getThangNam().getYear();
-		view.getCboThang().addItem(thangNam);
-		view.getCboThang().setSelectedItem(thangNam);
+		if (p.getThangNam() != null) {
+			String thangNam = "Tháng " + p.getThangNam().getMonthValue() + "/" + p.getThangNam().getYear();
+			view.getCboThang().addItem(thangNam);
+			view.getCboThang().setSelectedItem(thangNam);
+		}
 
-		// 2. Đổ chỉ số và giá
-		view.getTxtGiaDien().setText(df.format(p.getGiaDienTaiThoiDiem()));
-		view.getTxtGiaNuoc().setText(df.format(p.getGiaNuocTaiThoiDiem()));
+		view.getTxtGiaDien().setText(String.valueOf(p.getGiaDienTaiThoiDiem()));
+		view.getTxtGiaNuoc().setText(String.valueOf(p.getGiaNuocTaiThoiDiem()));
 
-		view.getTxtDienCu().setText(df.format(p.getChiSoDienCu()));
-		view.getTxtDienMoi().setText(df.format(p.getChiSoDienMoi()));
+		view.getTxtDienCu().setText(String.valueOf(p.getChiSoDienCu()));
+		view.getTxtDienMoi().setText(String.valueOf(p.getChiSoDienMoi()));
 
-		view.getTxtNuocCu().setText(df.format(p.getChiSoNuocCu()));
-		view.getTxtNuocMoi().setText(df.format(p.getChiSoNuocMoi()));
+		view.getTxtNuocCu().setText(String.valueOf(p.getChiSoNuocCu()));
+		view.getTxtNuocMoi().setText(String.valueOf(p.getChiSoNuocMoi()));
 
-		// 3. Tính toán lại tiền để hiển thị khớp
 		tinhTien();
 	}
 
 	private void initEvents() {
-		// Sự kiện tự động tính tiền khi sửa số mới
 		DocumentListener docListener = new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -94,18 +91,37 @@ public class SuaDienNuocController {
 		};
 		view.getTxtDienMoi().getDocument().addDocumentListener(docListener);
 		view.getTxtNuocMoi().getDocument().addDocumentListener(docListener);
-		view.getTxtDienCu().getDocument().addDocumentListener(docListener); // Cho phép sửa cả số cũ nếu nhập sai
+		view.getTxtDienCu().getDocument().addDocumentListener(docListener);
 		view.getTxtNuocCu().getDocument().addDocumentListener(docListener);
 
-		// Nút Lưu
-		// Xóa action cũ nếu có (đề phòng)
 		for (ActionListener al : view.getBtnThem().getActionListeners()) {
 			view.getBtnThem().removeActionListener(al);
 		}
 		view.getBtnThem().addActionListener(e -> xuLyCapNhat());
 
-		// Nút Hủy (Giả sử view có nút Hủy, nếu chưa có thì thôi)
-		// view.getBtnHuy().addActionListener(e -> view.dispose());
+		if (view.getBtnDong() != null) {
+			view.getBtnDong().addActionListener(e -> view.dispose());
+		}
+
+		setChiNhapSoThuc(view.getTxtDienCu());
+		setChiNhapSoThuc(view.getTxtDienMoi());
+		setChiNhapSoThuc(view.getTxtNuocCu());
+		setChiNhapSoThuc(view.getTxtNuocMoi());
+	}
+
+	private void setChiNhapSoThuc(javax.swing.JTextField txt) {
+		txt.addKeyListener(new java.awt.event.KeyAdapter() {
+			@Override
+			public void keyTyped(java.awt.event.KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!Character.isDigit(c) && c != java.awt.event.KeyEvent.VK_BACK_SPACE && c != '.') {
+					e.consume();
+				}
+				if (c == '.' && txt.getText().contains(".")) {
+					e.consume();
+				}
+			}
+		});
 	}
 
 	private void tinhTien() {
@@ -132,7 +148,10 @@ public class SuaDienNuocController {
 
 	private double parseDouble(String s) {
 		try {
-			return Double.parseDouble(s.replace(",", "").replace(".", "").trim());
+			if (s == null || s.isEmpty()) {
+				return 0;
+			}
+			return Double.parseDouble(s.replace(",", "").trim());
 		} catch (Exception e) {
 			return 0;
 		}
@@ -140,22 +159,38 @@ public class SuaDienNuocController {
 
 	private void xuLyCapNhat() {
 		try {
-			// Validate
+			if (view.getTxtDienMoi().getText().trim().isEmpty() || view.getTxtNuocMoi().getText().trim().isEmpty()
+					|| view.getTxtDienCu().getText().trim().isEmpty()
+					|| view.getTxtNuocCu().getText().trim().isEmpty()) {
+				JOptionPane.showMessageDialog(view, "Vui lòng nhập đầy đủ các chỉ số điện nước!", "Cảnh báo",
+						JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+
 			double dMoi = parseDouble(view.getTxtDienMoi().getText());
 			double dCu = parseDouble(view.getTxtDienCu().getText());
 			if (dMoi < dCu) {
-				JOptionPane.showMessageDialog(view, "Số điện mới phải >= số cũ!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(view, "Số điện mới phải lớn hơn hoặc bằng số cũ!", "Lỗi",
+						JOptionPane.WARNING_MESSAGE);
+				view.getTxtDienMoi().requestFocus();
 				return;
 			}
 
 			double nMoi = parseDouble(view.getTxtNuocMoi().getText());
 			double nCu = parseDouble(view.getTxtNuocCu().getText());
 			if (nMoi < nCu) {
-				JOptionPane.showMessageDialog(view, "Số nước mới phải >= số cũ!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(view, "Số nước mới phải lớn hơn hoặc bằng số cũ!", "Lỗi",
+						JOptionPane.WARNING_MESSAGE);
+				view.getTxtNuocMoi().requestFocus();
 				return;
 			}
 
-			// Tạo object cập nhật
+			int confirm = JOptionPane.showConfirmDialog(view, "Bạn có chắc chắn muốn lưu thay đổi phiếu này?",
+					"Xác nhận", JOptionPane.YES_NO_OPTION);
+			if (confirm != JOptionPane.YES_OPTION) {
+				return;
+			}
+
 			PhieuDienNuoc p = new PhieuDienNuoc();
 			p.setMaDN(maDNCur);
 			p.setChiSoDienCu((float) dCu);
@@ -170,27 +205,21 @@ public class SuaDienNuocController {
 			p.setTienNuoc(parseDouble(view.getTxtTienNuoc().getText()));
 			p.setTongTien(parseDouble(view.getTxtTongTien().getText()));
 
-			int confirm = JOptionPane.showConfirmDialog(view, "Lưu thay đổi?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-			if (confirm != JOptionPane.YES_OPTION) {
-				return;
-			}
-
 			if (dao.updatePhieu(p)) {
 				JOptionPane.showMessageDialog(view, "Cập nhật thành công!");
 
-				// Cập nhật lại model bảng bên ngoài (nếu view cha có truyền model vào)
-				if (view.getTableModel() != null) {
-					// Cần tìm dòng có MaDN tương ứng để update, hoặc đơn giản là reload table cha
-					// view.getTableModel().setValueAt(...);
+				if (parentController != null) {
+					parentController.refreshData();
 				}
-
 				view.dispose();
 			} else {
 				JOptionPane.showMessageDialog(view, "Cập nhật thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
 			}
 
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(view, "Lỗi dữ liệu nhập!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+			ex.printStackTrace();
+			JOptionPane.showMessageDialog(view, "Lỗi dữ liệu nhập: " + ex.getMessage(), "Lỗi",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

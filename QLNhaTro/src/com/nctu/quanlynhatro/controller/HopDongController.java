@@ -41,7 +41,7 @@ public class HopDongController {
 
 	private void initData() {
 
-		table.clear();// clear table
+		table.clear();
 		listHopDong = hopDongDAO.getAll();
 		for (HopDong hd : listHopDong) {
 			table.addRow(new Object[] { hd.getMaHD(), hd.getTenKH(), hd.getNgayLap(), hd.getNgayKetThuc(),
@@ -53,7 +53,6 @@ public class HopDongController {
 		initData();
 	}
 
-	/* ================= TÌM KIẾM ================= */
 	private void initSearch() {
 		sorter = new TableRowSorter<>(model);
 		table.setRowSorter(sorter);
@@ -71,7 +70,6 @@ public class HopDongController {
 		return model;
 	}
 
-	/* ================= POPUP MENU ================= */
 	private void initPopupMenu() {
 		MyPopupMenu popup = new MyPopupMenu(table);
 
@@ -82,7 +80,6 @@ public class HopDongController {
 		popup.addSeparator();
 		JMenuItem mnuLamMoi = popup.addItem("Làm mới");
 
-		// ==== ACTION ====
 		mnuThem.addActionListener(e -> {
 			ThemHopDongView themHopDongView = new ThemHopDongView(model);
 			themHopDongView.setModal(true);
@@ -109,9 +106,7 @@ public class HopDongController {
 			int row = table.getSelectedRow();
 			if (row >= 0) {
 				long maHD = Long.parseLong(table.getValueAt(row, 0).toString());
-				String tenKH = table.getValueAt(row, 1).toString(); // Giả sử cột 1 là tên KH
-
-				// Hỏi xác nhận kỹ trước khi xóa
+				String tenKH = table.getValueAt(row, 1).toString();
 				int confirm = JOptionPane.showConfirmDialog(view,
 						"Bạn có chắc chắn muốn XÓA hợp đồng của khách: " + tenKH + "?\n" + "Lưu ý: \n"
 								+ "- Hợp đồng sẽ bị ẩn khỏi danh sách.\n"
@@ -138,16 +133,13 @@ public class HopDongController {
 
 		mnuXem.addActionListener(e -> {
 
-			// Giả sử bạn lấy được dòng người dùng chọn
 			int row = table.getSelectedRow();
 			if (row >= 0) {
 				int modelRow = table.convertRowIndexToModel(row);
-				// Giả sử cột 0 chứa Mã Hợp Đồng
 				long maHD = Long.parseLong(table.getModel().getValueAt(modelRow, 0).toString());
 
-				// Mở form Xem
 				XemHopDongView viewXem = new XemHopDongView();
-				viewXem.setModal(true); // Khóa form cha lại
+				viewXem.setModal(true);
 				new XemHopDongController(viewXem, maHD, this);
 				viewXem.setVisible(true);
 			} else {

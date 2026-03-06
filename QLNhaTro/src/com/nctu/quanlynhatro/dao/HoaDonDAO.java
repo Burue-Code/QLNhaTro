@@ -24,7 +24,6 @@ public class HoaDonDAO {
 
 	public List<HoaDon> getAll() {
 		List<HoaDon> list = new ArrayList<>();
-
 		String sql = """
 				    SELECT
 				        TT.MaHoaDon,
@@ -41,9 +40,7 @@ public class HoaDonDAO {
 				""";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
 			while (rs.next()) {
-
 				HoaDon hd = new HoaDon(rs.getLong("MaHoaDon"), rs.getTimestamp("NgayTT").toLocalDateTime(),
 						rs.getDouble("SoTienTT"), rs.getDouble("TongTienPP"), rs.getString("LoaiTT"),
 						rs.getString("GhiChu"));
@@ -61,14 +58,8 @@ public class HoaDonDAO {
 		return list;
 	}
 
-	// Thêm
-
-	// =================================================================
-	// 1. LẤY DANH SÁCH KHÁCH HÀNG GỢI Ý (KÈM MÃ HỢP ĐỒNG)
-	// =================================================================
 	public Map<String, String> getKhachHangGoiY() {
 		Map<String, String> mapKH = new HashMap<>();
-		// Query lấy Tên KH và Mã HĐ
 		String sql = """
 				    SELECT hd.MaHD, kh.TenKH
 				    FROM HopDong hd
@@ -78,7 +69,6 @@ public class HoaDonDAO {
 
 		try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				// Key: MaHD, Value: TenKH (Hoặc ngược lại tùy nhu cầu tìm kiếm)
 				mapKH.put(rs.getString("MaHD"), rs.getString("TenKH"));
 			}
 		} catch (Exception e) {
@@ -87,9 +77,6 @@ public class HoaDonDAO {
 		return mapKH;
 	}
 
-	// =================================================================
-	// 2. LẤY THÔNG TIN HỢP ĐỒNG (NHÀ TRỌ, PHÒNG, GIÁ THUÊ...)
-	// =================================================================
 	public Map<String, Object> getThongTinHopDong(long maHD) {
 		Map<String, Object> info = new HashMap<>();
 		String sql = """
@@ -117,9 +104,6 @@ public class HoaDonDAO {
 		return info;
 	}
 
-	// =================================================================
-	// 3. LẤY DANH SÁCH PHỤ PHÍ THEO HỢP ĐỒNG
-	// =================================================================
 	public List<Map<String, Object>> getPhuPhiByHopDong(long maHD) {
 		List<Map<String, Object>> listPP = new ArrayList<>();
 		String sql = """
@@ -148,12 +132,8 @@ public class HoaDonDAO {
 		return listPP;
 	}
 
-	// =================================================================
-	// 4. LẤY DANH SÁCH ĐIỆN NƯỚC CHƯA THANH TOÁN (Của HĐ đó)
-	// =================================================================
 	public List<Map<String, Object>> getDienNuocChuaThanhToan(long maHD) {
 		List<Map<String, Object>> listDN = new ArrayList<>();
-		// Lưu ý: DATE_FORMAT là hàm của MySQL, nếu dùng SQL Server thì là FORMAT
 		String sql = """
 				    SELECT dn.MaDN, DATE_FORMAT(dn.ThangNam, '%m/%Y') AS ThangNam, dn.TongTien
 				    FROM PhieuDienNuoc dn
@@ -181,48 +161,32 @@ public class HoaDonDAO {
 		return listDN;
 	}
 
-	// =================================================================
-	// 5. THÊM HÓA ĐƠN MỚI (TRANSACTION)
-	// =================================================================
 	public String insertHoaDon(HoaDon hd, List<Long> listMaDN_DaChon) {
 		try {
-			conn.setAutoCommit(false); // Bắt đầu Transaction
-
-			// --- BƯỚC 1: INSERT BẢNG HOADON ---
+			conn.setAutoCommit(false);
 			String sqlInsertHD = """
 					    INSERT INTO HoaDon (NgayTT, SoTienTT, MaHD, MaPT, GhiChu, TrangThaiXoa, LoaiTT, TongTienPP)
 					    VALUES (?, ?, ?, ?, ?, 0, ?, ?)
 					""";
 
 			long maHoaDonMoi = 0;
-
 			try (PreparedStatement ps = conn.prepareStatement(sqlInsertHD, Statement.RETURN_GENERATED_KEYS)) {
 				ps.setTimestamp(1, java.sql.Timestamp.valueOf(hd.getNgayThanhToan()));
 				ps.setDouble(2, hd.getTongTien());
 				ps.setLong(3, hd.getHopDong().getMaHD());
-				ps.setLong(4, hd.getPhuongThucThanhToan().getMaPT()); // Cần thêm field này trong Model HoaDon
+				ps.setLong(4, hd.getPhuongThucThanhToan().getMaPT());
 				ps.setString(5, hd.getGhiChu());
-				ps.setString(6, hd.getLoaiThanhToan()); // "Tất Cả", "Tiền Trọ", "Điện Nước"
+				ps.setString(6, hd.getLoaiThanhToan());
 				ps.setDouble(7, hd.getTongTienPP());
 
-				int affectedRows = ps.executeUpdate();
-				if (affectedRows == 0) {
-					throw new Exception("Insert Hóa Đơn thất bại!");
-				}
-
-				// Lấy ID tự sinh (MaHoaDon)
+				ps.executeUpdate();
 				try (ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next()) {
 						maHoaDonMoi = rs.getLong(1);
-					} else {
-						throw new Exception("Không lấy được ID hóa đơn mới!");
 					}
 				}
 			}
 
-			// --- BƯỚC 2: CẬP NHẬT MÃ HÓA ĐƠN VÀO PHIẾU ĐIỆN NƯỚC (Nếu có chọn) ---
-			// Chỉ cập nhật nếu loại thanh toán KHÔNG PHẢI là "Tiền Trọ" (tức là có trả tiền
-			// điện)
 			if (!"Tiền Trọ".equals(hd.getLoaiThanhToan()) && listMaDN_DaChon != null && !listMaDN_DaChon.isEmpty()) {
 				String sqlUpdateDN = "UPDATE PhieuDienNuoc SET MaHoaDon = ? WHERE MaDN = ?";
 				try (PreparedStatement psDN = conn.prepareStatement(sqlUpdateDN)) {
@@ -234,15 +198,13 @@ public class HoaDonDAO {
 				}
 			}
 
-			conn.commit(); // Xác nhận thành công
+			conn.commit();
 			return "SUCCESS";
-
 		} catch (Exception e) {
-			e.printStackTrace();
 			try {
 				conn.rollback();
 			} catch (Exception ex) {
-			} // Quay lui nếu lỗi
+			}
 			return "Lỗi: " + e.getMessage();
 		} finally {
 			try {
@@ -252,7 +214,6 @@ public class HoaDonDAO {
 		}
 	}
 
-	// Tìm kiếm khách hàng (cho chức năng gợi ý)
 	public List<KhachHangGoiY> searchKhachHang(String keyword) {
 		List<KhachHangGoiY> list = new ArrayList<>();
 		String sql = """
@@ -268,7 +229,6 @@ public class HoaDonDAO {
 			String key = "%" + keyword + "%";
 			ps.setString(1, key);
 			ps.setString(2, key);
-
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					list.add(new KhachHangGoiY(rs.getLong("MaHD"), rs.getLong("MaKH"), rs.getString("TenKH")));
@@ -280,26 +240,21 @@ public class HoaDonDAO {
 		return list;
 	}
 
-	// updete
-	// 1. Lấy thông tin Hóa Đơn theo ID (để đổ lên form sửa)
 	public HoaDon getHoaDonById(long maHD) {
 		String sql = "SELECT * FROM HoaDon WHERE MaHoaDon = ?";
-		try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setLong(1, maHD);
-			try (java.sql.ResultSet rs = ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					HoaDon hd = new HoaDon();
 					hd.setMaHoaDon(rs.getLong("MaHoaDon"));
 					hd.getHopDong().setMaHD(rs.getLong("MaHD"));
-
-					// Lấy ngày giờ (Timestamp)
 					java.sql.Timestamp ts = rs.getTimestamp("NgayTT");
 					if (ts != null) {
 						hd.setNgayThanhToan(ts.toLocalDateTime());
 					}
-
-					hd.setTongTien(maHD);
-					hd.setTongTienPP(maHD);
+					hd.setTongTien(rs.getDouble("SoTienTT"));
+					hd.setTongTienPP(rs.getDouble("TongTienPP"));
 					hd.getPhuongThucThanhToan().setMaPT(rs.getInt("MaPT"));
 					hd.setGhiChu(rs.getString("GhiChu"));
 					hd.setLoaiThanhToan(rs.getString("LoaiTT"));
@@ -312,14 +267,12 @@ public class HoaDonDAO {
 		return null;
 	}
 
-	// 2. Lấy danh sách Điện Nước ĐÃ CÓ trong hóa đơn (để hiển thị lại)
 	public List<Map<String, Object>> getDienNuocByMaHoaDon(long maHoaDon) {
 		List<Map<String, Object>> listDN = new ArrayList<>();
-		// Lưu ý: Cú pháp DATE_FORMAT cho MySQL, SQL Server dùng FORMAT
 		String sql = "SELECT MaDN, DATE_FORMAT(ThangNam, '%m/%Y') as ThangNam, TongTien FROM PhieuDienNuoc WHERE MaHoaDon = ?";
-		try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setLong(1, maHoaDon);
-			try (java.sql.ResultSet rs = ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Map<String, Object> row = new HashMap<>();
 					row.put("MaDN", rs.getLong("MaDN"));
@@ -334,12 +287,11 @@ public class HoaDonDAO {
 		return listDN;
 	}
 
-	// 3. Helper: Lấy tên khách hàng từ mã hợp đồng
 	public String getTenKhachHangByMaHD(long maHD) {
 		String sql = "SELECT k.TenKH FROM KhachHang k JOIN HopDong h ON k.MaKH = h.MaKH WHERE h.MaHD = ?";
-		try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setLong(1, maHD);
-			java.sql.ResultSet rs = ps.executeQuery();
+			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				return rs.getString("TenKH");
 			}
@@ -348,14 +300,11 @@ public class HoaDonDAO {
 		return "";
 	}
 
-	// 4. CẬP NHẬT HÓA ĐƠN (TRANSACTION QUAN TRỌNG)
 	public String updateHoaDon(HoaDon hd, List<Long> listMaDN_Moi) {
 		try {
 			conn.setAutoCommit(false);
-
-			// B1: Update thông tin bảng HoaDon
 			String sqlUpdateHD = "UPDATE HoaDon SET SoTienTT=?, MaPT=?, GhiChu=?, LoaiTT=?, TongTienPP=?, NgayTT=? WHERE MaHoaDon=?";
-			try (java.sql.PreparedStatement ps = conn.prepareStatement(sqlUpdateHD)) {
+			try (PreparedStatement ps = conn.prepareStatement(sqlUpdateHD)) {
 				ps.setDouble(1, hd.getTongTien());
 				ps.setLong(2, hd.getPhuongThucThanhToan().getMaPT());
 				ps.setString(3, hd.getGhiChu());
@@ -366,18 +315,15 @@ public class HoaDonDAO {
 				ps.executeUpdate();
 			}
 
-			// B2: Reset các phiếu điện nước cũ của hóa đơn này về NULL (Trả lại trạng thái
-			// chưa thanh toán)
 			String sqlResetDN = "UPDATE PhieuDienNuoc SET MaHoaDon = NULL WHERE MaHoaDon = ?";
-			try (java.sql.PreparedStatement psReset = conn.prepareStatement(sqlResetDN)) {
+			try (PreparedStatement psReset = conn.prepareStatement(sqlResetDN)) {
 				psReset.setLong(1, hd.getMaHoaDon());
 				psReset.executeUpdate();
 			}
 
-			// B3: Cập nhật danh sách phiếu điện nước mới
 			if (!"Tiền Trọ".equals(hd.getLoaiThanhToan()) && listMaDN_Moi != null && !listMaDN_Moi.isEmpty()) {
 				String sqlUpdateDN = "UPDATE PhieuDienNuoc SET MaHoaDon = ? WHERE MaDN = ?";
-				try (java.sql.PreparedStatement psDN = conn.prepareStatement(sqlUpdateDN)) {
+				try (PreparedStatement psDN = conn.prepareStatement(sqlUpdateDN)) {
 					for (Long maDN : listMaDN_Moi) {
 						psDN.setLong(1, hd.getMaHoaDon());
 						psDN.setLong(2, maDN);
@@ -393,7 +339,6 @@ public class HoaDonDAO {
 				conn.rollback();
 			} catch (Exception ex) {
 			}
-			e.printStackTrace();
 			return "Lỗi: " + e.getMessage();
 		} finally {
 			try {
@@ -401,41 +346,31 @@ public class HoaDonDAO {
 			} catch (Exception ex) {
 			}
 		}
-
 	}
 
-	// =================================================================
-	// XÓA HÓA ĐƠN (XÓA MỀM + TRẢ LẠI PHIẾU ĐIỆN NƯỚC)
-	// =================================================================
 	public boolean deleteHoaDon(long maHoaDon) {
 		String sqlDeleteHD = "UPDATE HoaDon SET TrangThaiXoa = 1 WHERE MaHoaDon = ?";
 		String sqlResetDN = "UPDATE PhieuDienNuoc SET MaHoaDon = NULL WHERE MaHoaDon = ?";
 
 		try {
-			conn.setAutoCommit(false); // Bắt đầu Transaction
-
-			// Bước 1: Trả tự do cho các phiếu điện nước (Gỡ MaHoaDon ra)
+			conn.setAutoCommit(false);
 			try (PreparedStatement psDN = conn.prepareStatement(sqlResetDN)) {
 				psDN.setLong(1, maHoaDon);
 				psDN.executeUpdate();
 			}
 
-			// Bước 2: Xóa mềm hóa đơn
 			try (PreparedStatement psHD = conn.prepareStatement(sqlDeleteHD)) {
 				psHD.setLong(1, maHoaDon);
 				int rowEffect = psHD.executeUpdate();
-
 				if (rowEffect > 0) {
-					conn.commit(); // Xác nhận
+					conn.commit();
 					return true;
 				} else {
 					conn.rollback();
 					return false;
 				}
 			}
-
 		} catch (Exception e) {
-			e.printStackTrace();
 			try {
 				conn.rollback();
 			} catch (Exception ex) {
@@ -449,18 +384,15 @@ public class HoaDonDAO {
 		}
 	}
 
-	// 1. LẤY CHI TIẾT 1 HÓA ĐƠN
 	public Map<String, Object> getChiTietHoaDon(long maHD) {
 		Map<String, Object> map = new HashMap<>();
-
 		String sql = "SELECT hd.MaHoaDon, hd.NgayTT, hd.SoTienTT, hd.TongTienPP, hd.LoaiTT, hd.GhiChu, "
 				+ "hop.MaHD AS MaHopDong, kh.TenKH, nt.TenNT, p.SoPhong, p.Gia, pt.TenPT " + "FROM HoaDon hd "
 				+ "INNER JOIN HopDong hop ON hd.MaHD = hop.MaHD " + "INNER JOIN KhachHang kh ON hop.MaKH = kh.MaKH "
 				+ "INNER JOIN Phong p ON hop.MaPhong = p.MaPhong " + "INNER JOIN NhaTro nt ON p.MaNT = nt.MaNT "
 				+ "LEFT JOIN PTThanhToan pt ON hd.MaPT = pt.MaPT " + "WHERE hd.MaHoaDon = ?";
 
-		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setLong(1, maHD);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
@@ -484,11 +416,10 @@ public class HoaDonDAO {
 		return map;
 	}
 
-	// 2. LẤY DANH SÁCH ĐIỆN NƯỚC THUỘC HÓA ĐƠN
 	public List<Map<String, Object>> getDienNuocMaHoaDon(long maHoaDon) {
 		List<Map<String, Object>> list = new ArrayList<>();
 		String sql = "SELECT MaDN, ThangNam, TongTien FROM PhieuDienNuoc WHERE MaHoaDon = ?";
-		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setLong(1, maHoaDon);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
@@ -504,5 +435,4 @@ public class HoaDonDAO {
 		}
 		return list;
 	}
-
 }

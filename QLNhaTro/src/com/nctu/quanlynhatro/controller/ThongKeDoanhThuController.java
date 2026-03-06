@@ -36,16 +36,14 @@ public class ThongKeDoanhThuController {
 		this.dao = new ThongKeDoanhThuDAO(DatabaseConnection.getConnection());
 
 		initEvents();
-		loadThongKe(); // Load dữ liệu mặc định khi mở
+		loadThongKe();
 	}
 
 	private void initEvents() {
-		// Gán sự kiện cho nút "Xem Báo Cáo"
 		view.getBtnThongKe().addActionListener(e -> loadThongKe());
 	}
 
 	private void loadThongKe() {
-		// 1. Lấy ngày từ View
 		Date d1 = view.getDateTuNgay().getDate();
 		Date d2 = view.getDateDenNgay().getDate();
 
@@ -60,31 +58,25 @@ public class ThongKeDoanhThuController {
 			return;
 		}
 
-		// Chuyển đổi sang LocalDate để dùng cho DAO
 		LocalDate from = d1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate to = d2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-		// 2. Gọi DAO lấy số liệu tổng hợp
 		double tongDoanhThu = dao.getTongDoanhThu(from, to);
 		int soHoaDon = dao.getSoLuongHoaDon(from, to);
 		int khachMoi = dao.getSoKhachMoi(from, to);
 
-		// 3. Cập nhật lên View (Cards)
 		view.getLblDoanhThu().setText(df.format(tongDoanhThu) + " đ");
 		view.getLblSoHoaDon().setText(String.valueOf(soHoaDon));
 		view.getLblKhachMoi().setText(String.valueOf(khachMoi));
 
-		// 4. Vẽ biểu đồ
 		Map<String, Double> dataBieuDo = dao.getDoanhThuTheoNgay(from, to);
 		veBieuDoCot(dataBieuDo);
 	}
 
 	private void veBieuDoCot(Map<String, Double> data) {
-		// Chuẩn bị Dataset
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
 		if (data.isEmpty()) {
-			// Nếu không có dữ liệu thì thêm cột rỗng để chart không bị lỗi
 			dataset.addValue(0, "Doanh Thu", "Không có dữ liệu");
 		} else {
 			for (Map.Entry<String, Double> entry : data.entrySet()) {
@@ -92,14 +84,11 @@ public class ThongKeDoanhThuController {
 			}
 		}
 
-		// Tạo Chart
 		JFreeChart barChart = ChartFactory.createBarChart("BIỂU ĐỒ DOANH THU THEO NGÀY", "Thời gian", "Doanh thu (VNĐ)",
 				dataset, PlotOrientation.VERTICAL, false, true, false);
 
-		// Customize Chart (Giống code trong View cũ của bạn)
 		customizeChart(barChart);
 
-		// Đẩy Chart vào Panel
 		ChartPanel chartPanel = new ChartPanel(barChart);
 		chartPanel.setMaximumDrawWidth(20000);
 		chartPanel.setMaximumDrawHeight(20000);
@@ -107,7 +96,7 @@ public class ThongKeDoanhThuController {
 		JPanel pnlContainer = view.getPnlChartContainer();
 		pnlContainer.removeAll();
 		pnlContainer.add(chartPanel, BorderLayout.CENTER);
-		pnlContainer.revalidate(); // Quan trọng để refresh giao diện
+		pnlContainer.revalidate();
 		pnlContainer.repaint();
 	}
 
@@ -118,10 +107,8 @@ public class ThongKeDoanhThuController {
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
-		renderer.setSeriesPaint(0, new Color(70, 130, 180)); // Màu xanh
-		renderer.setBarPainter(new org.jfree.chart.renderer.category.StandardBarPainter()); // Flat style
-
-		// Hiển thị số trên cột
+		renderer.setSeriesPaint(0, new Color(70, 130, 180));
+		renderer.setBarPainter(new org.jfree.chart.renderer.category.StandardBarPainter());
 		renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator("{2}", df));
 		renderer.setBaseItemLabelsVisible(true);
 		renderer.setBaseItemLabelPaint(Color.BLACK);

@@ -41,7 +41,7 @@ public class KhachHangController {
 
 	private void initData() {
 
-		table.clear(); // clear table
+		table.clear();
 		listKhachHang = khachHangDAO.getAll();
 		for (KhachHang kh : listKhachHang) {
 			table.addRow(new Object[] { kh.getMaKH(), kh.getTenKH(), kh.getDiaChi(),
@@ -57,7 +57,6 @@ public class KhachHangController {
 		return model;
 	}
 
-	/* ================= TÌM KIẾM ================= */
 	private void initSearch() {
 		sorter = new TableRowSorter<>(model);
 		table.setRowSorter(sorter);
@@ -71,7 +70,6 @@ public class KhachHangController {
 		});
 	}
 
-	/* ================= POPUP MENU ================= */
 	private void initPopupMenu() {
 		MyPopupMenu popup = new MyPopupMenu(table);
 
@@ -82,7 +80,6 @@ public class KhachHangController {
 		popup.addSeparator();
 		JMenuItem mnuLamMoi = popup.addItem("Làm mới");
 
-		// ==== ACTION ====
 		mnuThem.addActionListener(e -> {
 			ThemKhachHangView themKhachHangView = new ThemKhachHangView(model);
 			themKhachHangView.setModal(true);
@@ -120,7 +117,7 @@ public class KhachHangController {
 					if (kq) {
 						JOptionPane.showMessageDialog(view, "Xóa khách hàng thành công!", "Thông báo",
 								JOptionPane.INFORMATION_MESSAGE);
-						initData(); // Tải lại bảng ngay lập tức
+						initData();
 					} else {
 						JOptionPane.showMessageDialog(view,
 								"Xóa thất bại. Khách hàng này có thể đang liên kết với Hợp đồng/Phòng!", "Lỗi",

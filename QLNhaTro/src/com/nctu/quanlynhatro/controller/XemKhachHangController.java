@@ -11,15 +11,14 @@ import com.nctu.quanlynhatro.dao.DatabaseConnection;
 import com.nctu.quanlynhatro.dao.KhachHangDAO;
 import com.nctu.quanlynhatro.view.khach_hang.ThemKhachHangView;
 import com.nctu.quanlynhatro.view.khach_hang.XemKhachHangView;
-// import com.nctu.quanlynhatro.view.khach_hang.ThemKhachHangView;
 
 public class XemKhachHangController {
 
 	private XemKhachHangView view;
 	private KhachHangDAO dao;
 	private long maKH;
-	private KhachHangController parentController; // Để refresh bảng danh sách bên ngoài
-	private String maPhongLuuTam = null; // Để gọi lấy danh sách người ở ghép
+	private KhachHangController parentController;
+	private String maPhongLuuTam = null;
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -38,7 +37,6 @@ public class XemKhachHangController {
 	}
 
 	private void loadData() {
-		// 1. Lấy thông tin chính
 		Map<String, Object> kh = dao.getChiTietKhachHang(maKH);
 		if (kh.isEmpty()) {
 			JOptionPane.showMessageDialog(view, "Không tìm thấy dữ liệu khách hàng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -56,7 +54,6 @@ public class XemKhachHangController {
 		java.sql.Date ngaySinh = (java.sql.Date) kh.get("NgaySinh");
 		view.setTxtNgaySinh(ngaySinh != null ? sdf.format(ngaySinh) : "");
 
-		// Xử lý Phòng & Hợp đồng
 		maPhongLuuTam = (String) kh.get("SoPhong");
 		view.setTxtOPHong(maPhongLuuTam != null ? maPhongLuuTam : "Chưa xếp phòng");
 
@@ -66,7 +63,6 @@ public class XemKhachHangController {
 		String tenKhachChinh = (String) kh.get("TenKhachChinh");
 		view.setTxtTenKhachHangChinh(tenKhachChinh != null ? tenKhachChinh : "Là khách chính");
 
-		// 2. Load danh sách phụ thuộc (nếu có phòng)
 		if (maPhongLuuTam != null) {
 			List<Map<String, Object>> phuThuoc = dao.getKhachHangPhuThuocTheoPhong(maPhongLuuTam, maKH);
 			DefaultTableModel model = view.getModelPhuThuoc();
@@ -95,7 +91,7 @@ public class XemKhachHangController {
 			if (dao.delete(maKH)) {
 				JOptionPane.showMessageDialog(view, "Đã xóa khách hàng!");
 				if (parentController != null) {
-					parentController.refreshData(); // Load lại bảng KH bên ngoài
+					parentController.refreshData();
 				}
 				view.dispose();
 			} else {
@@ -108,12 +104,16 @@ public class XemKhachHangController {
 		try {
 			view.dispose();
 
-			ThemKhachHangView suaView = new ThemKhachHangView(parentController.getModel());
+			DefaultTableModel model = (parentController != null) ? parentController.getModel() : null;
+
+			ThemKhachHangView suaView = new ThemKhachHangView(model);
 			suaView.setModal(true);
 			new SuaKhachHangController(suaView, parentController, maKH);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Lỗi khi mở form sửa: " + ex.getMessage(), "Lỗi",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

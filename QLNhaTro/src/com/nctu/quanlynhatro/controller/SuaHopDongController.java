@@ -64,7 +64,7 @@ public class SuaHopDongController {
 		this.modelKH = view.getModelKH();
 
 		this.view.setTitle("Cập Nhật Hợp Đồng - Mã: " + maHD);
-		this.view.getBtnThem().setText("Lưu Thay Đổi"); // Nút btnXacNhan
+		this.view.getBtnThem().setText("Lưu Thay Đổi");
 
 		initBaseData();
 		loadContractData();
@@ -72,9 +72,6 @@ public class SuaHopDongController {
 		initEvents();
 	}
 
-	// =================================================================
-	// 1. INIT DATA (Tương đương LayDanhSachKH & LoadNhaTro)
-	// =================================================================
 	private void initBaseData() {
 		modelKH.setRowCount(0);
 		List<KhachHang> listKH = khachHangDAO.getAll();
@@ -83,7 +80,6 @@ public class SuaHopDongController {
 					kh.getNgaySinh() != null ? kh.getNgaySinh().toString() : "" });
 		}
 
-		// Load ComboBox Nhà Trọ
 		view.getCboNhaTro().removeAllItems();
 		mapNhaTro.clear();
 		Map<Integer, String> dataNhaTro = nhaTroDAO.getNhaTroConPhong();
@@ -93,12 +89,7 @@ public class SuaHopDongController {
 		}
 	}
 
-	// =================================================================
-	// 2. LOAD CONTRACT DATA (Tương đương LoadThongTin & LoadPhong &
-	// LayDanhSachKHPT)
-	// =================================================================
 	private void loadContractData() {
-		// Gọi DAO lấy chi tiết hợp đồng
 		HopDong hd = hopDongDAO.getHopDongById(maHDCur);
 
 		if (hd == null) {
@@ -110,7 +101,6 @@ public class SuaHopDongController {
 			view.setMaKH(String.valueOf(chuHo.getMaKH()));
 		}
 
-		// --- B. Đổ dữ liệu Ngày tháng & Tiền ---
 		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		if (hd.getNgayLap() != null) {
 			view.getTxtNgayLap().setText(hd.getNgayLap().format(fmt));
@@ -119,7 +109,6 @@ public class SuaHopDongController {
 			view.setNgayKetThuc(hd.getNgayKetThuc().format(fmt));
 		}
 
-		// Tính số tháng (Logic C# dùng DateTimePicker range, ở đây ta tính toán)
 		if (hd.getNgayLap() != null && hd.getNgayKetThuc() != null) {
 			try {
 				long months = ChronoUnit.MONTHS.between(hd.getNgayLap().withDayOfMonth(1),
@@ -134,29 +123,23 @@ public class SuaHopDongController {
 		view.setGiaThue(String.valueOf((long) hd.getGiaThue()));
 		view.setGhiChu(hd.getGhiChu());
 
-		// --- C. Xử lý Phòng & Nhà Trọ (Logic LoadMaNT, LoadPhong) ---
 		Phong p = hd.getPhong();
 		if (p != null) {
 			this.maPhongCu = (int) p.getMaPhong();
 			this.tenPhongCu = String.valueOf(p.getSoPhong());
 
 			if (p.getNhaTro() != null) {
-				this.maNhaTroCu = (int) p.getNhaTro().getMaNT(); // _maNT
+				this.maNhaTroCu = (int) p.getNhaTro().getMaNT();
 
-				// Chọn Nhà Trọ (cmbNhaTro.SelectedValue)
 				String tenNhaTro = p.getNhaTro().getTenNT();
 				view.getCboNhaTro().setSelectedItem(tenNhaTro);
 
-				// Load Phòng (Tương đương LoadPhong trong C#)
-				// Logic: Load các phòng trống + Phòng hiện tại đang thuê
 				loadDataPhong(true);
 
-				// Chọn Phòng cũ
 				view.getCboPhong().setSelectedItem(tenPhongCu);
 			}
 		}
 
-		// --- D. Danh sách Người ở ghép (Tương đương LayDanhSachKHPT) ---
 		view.getModelPhuThuoc().setRowCount(0);
 		long maChuHoID = -1;
 		try {
@@ -166,7 +149,6 @@ public class SuaHopDongController {
 
 		if (hd.getDanhSachKhachHang() != null) {
 			for (KhachHang kh : hd.getDanhSachKhachHang()) {
-				// Chỉ hiển thị người KHÔNG PHẢI là chủ hộ (phụ thuộc)
 				if (kh.getMaKH() != maChuHoID) {
 					view.getModelPhuThuoc()
 							.addRow(new Object[] { kh.getMaKH(), kh.getTenKH(), kh.getDiaChi(),
@@ -176,11 +158,9 @@ public class SuaHopDongController {
 			}
 		}
 
-		// Tương đương hàm TinhSLNguoiO()
 		capNhatSoLuongNguoi();
 	}
 
-	// Hàm phụ trợ load phòng (Thay thế LoadPhong trong C#)
 	private void loadDataPhong(boolean includeCurrentRoom) {
 		view.getCboNhaTro().setEnabled(false);
 		try {
@@ -193,10 +173,8 @@ public class SuaHopDongController {
 			}
 
 			int maNT = mapNhaTro.get(selectedNT);
-			// Lấy danh sách phòng trống từ DB
 			Map<Integer, String> dataPhong = phongDAO.getPhongTrongByMaNT(maNT);
 
-			// Nếu đang chọn Nhà cũ, phải thêm phòng cũ vào list (dù nó đang Bận)
 			if (includeCurrentRoom && maNT == maNhaTroCu) {
 				if (!dataPhong.containsKey(maPhongCu)) {
 					dataPhong.put(maPhongCu, tenPhongCu);
@@ -212,11 +190,7 @@ public class SuaHopDongController {
 		}
 	}
 
-	// =================================================================
-	// 3. SỰ KIỆN (EVENTS)
-	// =================================================================
 	private void initEvents() {
-		// Nút Hủy (btnHuy_Click)
 		view.getBtnThoat().addActionListener(e -> {
 			int dg = JOptionPane.showConfirmDialog(view, "Chấp Nhận Thoát?", "Thông Báo", JOptionPane.YES_NO_OPTION);
 			if (dg == JOptionPane.YES_OPTION) {
@@ -224,10 +198,8 @@ public class SuaHopDongController {
 			}
 		});
 
-		// Nút Xác Nhận (btnXacNhan_Click)
 		view.getBtnThem().addActionListener(e -> xuLyCapNhat());
 
-		// Sự kiện thay đổi ngày tháng -> Tính ngày KT
 		view.getTxtSoThang().getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -258,19 +230,13 @@ public class SuaHopDongController {
 		view.getTblKhachHang().addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override
 			public void mouseClicked(java.awt.event.MouseEvent e) {
-				// Chỉ xử lý khi click chuột trái
 				if (e.getButton() == java.awt.event.MouseEvent.BUTTON1) {
 					int row = view.getTblKhachHang().getSelectedRow();
 					if (row >= 0) {
-						// 1. Lấy thông tin khách hàng MỚI vừa click vào
 						String newMaKH = view.getTblKhachHang().getValueAt(row, 0).toString();
 						String newTenKH = view.getTblKhachHang().getValueAt(row, 1).toString();
-
-						// 2. Lấy thông tin khách hàng CŨ đang hiện trên form
 						String currentMaKH = view.getMaKH();
 
-						// 3. KIỂM TRA RÀNG BUỘC:
-						// Nếu form đang có dữ liệu (không rỗng) VÀ Người mới khác Người cũ
 						if (!currentMaKH.isEmpty() && !currentMaKH.equals(newMaKH)) {
 							int confirm = JOptionPane.showConfirmDialog(view,
 									"Bạn đang chọn khách hàng: " + view.getTenKH() + ".\n"
@@ -278,17 +244,14 @@ public class SuaHopDongController {
 											+ "Danh sách người ở ghép sẽ bị thay đổi!",
 									"Xác nhận thay đổi", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-							// Nếu người dùng chọn NO (Không đổi) -> Dừng lại ngay
 							if (confirm != JOptionPane.YES_OPTION) {
 								return;
 							}
 						}
 
-						// 4. NẾU ĐƯỢC PHÉP -> THỰC HIỆN CẬP NHẬT DỮ LIỆU
 						view.setMaKH(newMaKH);
 						view.setTenKH(newTenKH);
 
-						// Load lại danh sách phụ thuộc của người mới
 						loadKhachHangPhu(Long.parseLong(newMaKH));
 					}
 				}
@@ -303,10 +266,23 @@ public class SuaHopDongController {
 			loadContractData();
 		});
 
+		setChiNhapSoNguyen(view.getTxtSoThang());
+
 		initPopupMenuKH();
 	}
 
-	// Logic tính ngày kết thúc
+	private void setChiNhapSoNguyen(javax.swing.JTextField txt) {
+		txt.addKeyListener(new java.awt.event.KeyAdapter() {
+			@Override
+			public void keyTyped(java.awt.event.KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!Character.isDigit(c) && c != java.awt.event.KeyEvent.VK_BACK_SPACE) {
+					e.consume();
+				}
+			}
+		});
+	}
+
 	private void tinhNgayKT() {
 		try {
 			String textThang = view.getSoThang();
@@ -322,7 +298,6 @@ public class SuaHopDongController {
 		}
 	}
 
-	// Logic tính giá thuê (TinhGiaThue)
 	private void tinhGiaThue() {
 		try {
 			String selectedPhong = (String) view.getCboPhong().getSelectedItem();
@@ -348,7 +323,6 @@ public class SuaHopDongController {
 		}
 	}
 
-	// Logic load khách phụ (LayDanhSachKHPT)
 	private void loadKhachHangPhu(long maKHChinh) {
 		DefaultTableModel model = view.getModelPhuThuoc();
 		model.setRowCount(0);
@@ -359,13 +333,11 @@ public class SuaHopDongController {
 		capNhatSoLuongNguoi();
 	}
 
-	// Logic tính số lượng (TinhSLNguoiO)
 	private void capNhatSoLuongNguoi() {
 		view.setSoNguoi(String.valueOf(1 + view.getModelPhuThuoc().getRowCount()));
 		tinhGiaThue();
 	}
 
-	// Tìm kiếm (txtNVPhuThuoc_TextChanged)
 	private void initSearch() {
 		sorterKH = new TableRowSorter<>(modelKH);
 		view.getTblKhachHang().setRowSorter(sorterKH);
@@ -378,9 +350,7 @@ public class SuaHopDongController {
 		});
 	}
 
-	// Menu chuột phải (ToolStripMenuIThemPhuThuoc & toolStripMenulXoa)
 	private void initPopupMenuKH() {
-		// --- Menu Thêm ---
 		JPopupMenu popupAdd = new JPopupMenu();
 		JMenuItem mnuAdd = new JMenuItem("Thêm vào danh sách ở ghép");
 		popupAdd.add(mnuAdd);
@@ -424,7 +394,6 @@ public class SuaHopDongController {
 			}
 		});
 
-		// --- Menu Xóa ---
 		JPopupMenu popupRemove = new JPopupMenu();
 		JMenuItem mnuRemove = new JMenuItem("Xóa khỏi danh sách");
 		popupRemove.add(mnuRemove);
@@ -451,12 +420,8 @@ public class SuaHopDongController {
 		});
 	}
 
-	// =================================================================
-	// 4. XỬ LÝ LƯU (Update_HopDong)
-	// =================================================================
 	private void xuLyCapNhat() {
 		try {
-			// Lấy dữ liệu
 			String maKHStr = view.getMaKH();
 			String selectedPhong = (String) view.getCboPhong().getSelectedItem();
 
@@ -488,7 +453,6 @@ public class SuaHopDongController {
 				return;
 			}
 
-			// Gọi DAO (Tương đương transaction trong C#)
 			String kq = hopDongDAO.updateHopDong(maHDCur, maKHChinh, maPhongMoi, maPhongCu, ngayBD, ngayKT, giaThue,
 					soNguoiO, ghiChu, listMaKHPhu);
 

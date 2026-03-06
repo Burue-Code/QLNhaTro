@@ -14,6 +14,7 @@ import com.nctu.quanlynhatro.dao.DatabaseConnection;
 import com.nctu.quanlynhatro.dao.HoaDonDAO;
 import com.nctu.quanlynhatro.dao.PhuongThucThanhToanDAO;
 import com.nctu.quanlynhatro.model.HoaDon;
+import com.nctu.quanlynhatro.view.dien_nuoc.ThemDienNuocView;
 import com.nctu.quanlynhatro.view.hoa_don.ThemHoaDonView;
 
 public class SuaHoaDonController {
@@ -23,9 +24,8 @@ public class SuaHoaDonController {
 	private HoaDonDAO hoaDonDAO;
 	private PhuongThucThanhToanDAO ptttDAO;
 
-	private long maHoaDonCur; // ID hóa đơn đang sửa
+	private long maHoaDonCur;
 
-	// Map lưu trữ dữ liệu tính toán
 	private Map<String, Long> mapDienNuoc = new HashMap<>();
 	private Map<String, Double> mapGiaPhuPhi = new HashMap<>();
 	private Map<String, Integer> mapPhuongThuc = new HashMap<>();
@@ -35,27 +35,21 @@ public class SuaHoaDonController {
 		this.parentController = parentController;
 		this.maHoaDonCur = maHoaDon;
 
-		// Khởi tạo DAO
 		this.hoaDonDAO = new HoaDonDAO(DatabaseConnection.getConnection());
 		this.ptttDAO = new PhuongThucThanhToanDAO(DatabaseConnection.getConnection());
 
-		// Cấu hình giao diện cho chế độ Sửa
 		view.setTitle("Cập Nhật Hóa Đơn - Mã: " + maHoaDon);
 		view.getBtnXacNhan().setText("Lưu Thay Đổi");
 
-		// [QUAN TRỌNG] Khóa ô tìm kiếm khách hàng để tránh đổi sai hợp đồng
 		view.getTxtTenKH().setEditable(false);
-		view.getTxtTenKH().setFocusable(false); // Không cho focus để tránh hiện popup gợi ý
+		view.getTxtTenKH().setFocusable(false);
 
 		initData();
-		loadOldData(); // Load dữ liệu cũ lên
+		loadOldData();
 		initEvents();
 
 	}
 
-	// =================================================================
-	// 1. KHỞI TẠO DỮ LIỆU NỀN (Phương thức thanh toán)
-	// =================================================================
 	private void initData() {
 		loadPhuongThucThanhToan();
 	}
@@ -64,7 +58,7 @@ public class SuaHoaDonController {
 		view.getCboPhuongThuc().removeAllItems();
 		mapPhuongThuc.clear();
 
-		Map<Integer, String> data = ptttDAO.getPhuongThucThanhToan(); // Gọi từ DAO riêng
+		Map<Integer, String> data = ptttDAO.getPhuongThucThanhToan();
 
 		for (Map.Entry<Integer, String> entry : data.entrySet()) {
 			int maPT = entry.getKey();
@@ -74,11 +68,7 @@ public class SuaHoaDonController {
 		}
 	}
 
-	// =================================================================
-	// 2. LOAD DỮ LIỆU HÓA ĐƠN CŨ
-	// =================================================================
 	private void loadOldData() {
-		// Lấy thông tin hóa đơn từ DB
 		HoaDon hd = hoaDonDAO.getHoaDonById(maHoaDonCur);
 
 		if (hd == null) {
@@ -87,7 +77,6 @@ public class SuaHoaDonController {
 			return;
 		}
 
-		// --- A. Đổ thông tin cơ bản ---
 		view.getTxtMaHopDong().setText(String.valueOf(hd.getHopDong().getMaHD()));
 		view.getTxtGhiChu().setText(hd.getGhiChu());
 		view.getCboLoaiThanhToan().setSelectedItem(hd.getLoaiThanhToan());
@@ -96,8 +85,6 @@ public class SuaHoaDonController {
 			view.getTxtNgayThanhToan().setText(hd.getNgayThanhToan().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		}
 
-		// Set ComboBox Phương thức thanh toán (dựa vào Map để tìm index hoặc set item)
-		// Cách đơn giản: Duyệt Map để tìm tên tương ứng với MaPT
 		for (Map.Entry<String, Integer> entry : mapPhuongThuc.entrySet()) {
 			if (entry.getValue() == hd.getPhuongThucThanhToan().getMaPT()) {
 				view.getCboPhuongThuc().setSelectedItem(entry.getKey());
@@ -105,18 +92,10 @@ public class SuaHoaDonController {
 			}
 		}
 
-		// --- B. Load thông tin chi tiết từ Hợp Đồng (Phòng, Nhà, Giá, Tên KH) ---
 		loadThongTinChiTiet(hd.getHopDong().getMaHD());
 
-		// --- C. Load danh sách Điện Nước ĐÃ CÓ trong hóa đơn này (vào bảng) ---
 		loadDienNuocDaCo(maHoaDonCur);
 
-		// --- D. Load danh sách Điện Nước CHƯA THANH TOÁN (vào ComboBox để chọn thêm)
-		// ---
-		// (Hàm loadThongTinChiTiet đã gọi hàm này, nhưng ta cần gọi lại để lọc bỏ những
-		// cái đã có trong bảng)
-
-		// Tính lại tổng tiền lần cuối để khớp hiển thị
 		tinhTongTien();
 	}
 
@@ -127,18 +106,16 @@ public class SuaHoaDonController {
 			view.getTxtPhong().setText((String) info.get("SoPhong"));
 			view.getTxtGiaThue().setText(String.format("%.0f", info.get("GiaThue")));
 
-			// Lấy tên khách hàng (Cần hàm getTenKhachHangByMaHD trong DAO)
 			view.getTxtTenKH().setText(hoaDonDAO.getTenKhachHangByMaHD(maHD));
 		}
 
 		loadPhuPhi(maHD);
-		loadDienNuocChuaThanhToan(maHD); // Load vào ComboBox
+		loadDienNuocChuaThanhToan(maHD);
 	}
 
 	private void loadDienNuocDaCo(long maHoaDon) {
 		List<Map<String, Object>> listDaCo = hoaDonDAO.getDienNuocByMaHoaDon(maHoaDon);
 		DefaultTableModel model = view.getModelDienNuoc();
-		// Không clear bảng ở đây vì có thể đã có dữ liệu (dù init bảng rỗng)
 
 		for (Map<String, Object> dn : listDaCo) {
 			long maDN = (Long) dn.get("MaDN");
@@ -148,10 +125,6 @@ public class SuaHoaDonController {
 			model.addRow(new Object[] { maDN, thangNam, String.format("%.0f", tongTien) });
 		}
 	}
-
-	// =================================================================
-	// 3. CÁC HÀM HỖ TRỢ (GIỐNG CONTROLLER THÊM)
-	// =================================================================
 
 	private void loadPhuPhi(long maHD) {
 		DefaultTableModel model = view.getModelPhuPhi();
@@ -182,18 +155,11 @@ public class SuaHoaDonController {
 		}
 	}
 
-	// =================================================================
-	// 4. XỬ LÝ SỰ KIỆN
-	// =================================================================
 	private void initEvents() {
 		view.getBtnHuy().addActionListener(e -> view.dispose());
 
-		// KHÔNG CẦN CÁC SỰ KIỆN TÌM KIẾM VÌ ĐÃ KHÓA TXTTENKH
-
 		view.getBtnCongDN().addActionListener(e -> xuLyThemDienNuocVaoBang());
 		view.getCboLoaiThanhToan().addActionListener(e -> tinhTongTien());
-
-		// Nút Lưu Cập Nhật
 		view.getBtnXacNhan().addActionListener(e -> xuLyCapNhatHoaDon());
 		view.getBtnThemPhieuMoi().addActionListener(e -> xuLyThemPhieuMoi());
 	}
@@ -207,7 +173,6 @@ public class SuaHoaDonController {
 		long maDN = mapDienNuoc.get(selected);
 		DefaultTableModel model = view.getModelDienNuoc();
 
-		// Check trùng
 		for (int i = 0; i < model.getRowCount(); i++) {
 			if (Long.parseLong(model.getValueAt(i, 0).toString()) == maDN) {
 				JOptionPane.showMessageDialog(view, "Phiếu này đã được thêm!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
@@ -216,7 +181,6 @@ public class SuaHoaDonController {
 		}
 
 		String[] parts = selected.split(" - ");
-		// parts[0] = "Kỳ: 10/2023", parts[1] = "500000 VND"
 		String ky = parts[0].replace("Kỳ: ", "");
 		String giaStr = parts[1].replace(" VND", "");
 
@@ -268,13 +232,10 @@ public class SuaHoaDonController {
 		view.setTongThanhToan(String.format("%.0f", tongThanhToan));
 	}
 
-	// =================================================================
-	// 5. LƯU CẬP NHẬT (UPDATE)
-	// =================================================================
 	private void xuLyCapNhatHoaDon() {
 		try {
 			HoaDon hd = new HoaDon();
-			hd.setMaHoaDon(maHoaDonCur); // Quan trọng
+			hd.setMaHoaDon(maHoaDonCur);
 
 			String tongTienStr = view.getTxtTongThanhToan().getText().replace(",", "");
 			hd.setTongTien(Double.parseDouble(tongTienStr));
@@ -285,17 +246,15 @@ public class SuaHoaDonController {
 			hd.setGhiChu(view.getTxtGhiChu().getText());
 			hd.setLoaiThanhToan((String) view.getCboLoaiThanhToan().getSelectedItem());
 
-			// Lấy MaPT từ Map
 			String tenPT = (String) view.getCboPhuongThuc().getSelectedItem();
 			if (tenPT != null && mapPhuongThuc.containsKey(tenPT)) {
 				hd.getPhuongThucThanhToan().setMaPT(mapPhuongThuc.get(tenPT));
 			} else {
-				hd.getPhuongThucThanhToan().setMaPT(1); // Default
+				hd.getPhuongThucThanhToan().setMaPT(1);
 			}
 
-			hd.setNgayThanhToan(LocalDateTime.now()); // Update ngày sửa mới nhất
+			hd.setNgayThanhToan(LocalDateTime.now());
 
-			// Lấy danh sách Mã Điện Nước mới
 			List<Long> listMaDN = new ArrayList<>();
 			DefaultTableModel modelDN = view.getModelDienNuoc();
 			for (int i = 0; i < modelDN.getRowCount(); i++) {
@@ -327,7 +286,6 @@ public class SuaHoaDonController {
 	}
 
 	private void xuLyThemPhieuMoi() {
-		// 1. Kiểm tra đã có Hợp đồng chưa
 		String maHDStr = view.getTxtMaHopDong().getText();
 		if (maHDStr.isEmpty()) {
 			JOptionPane.showMessageDialog(view, "Vui lòng tìm và chọn khách hàng trước!", "Cảnh báo",
@@ -337,8 +295,6 @@ public class SuaHoaDonController {
 
 		long maHD = Long.parseLong(maHDStr);
 
-		// 2. Lấy Mã Phòng từ thông tin hợp đồng (để truyền sang form điện nước)
-		// Hàm getThongTinHopDong đã được viết trong DAO ở các bước trước
 		Map<String, Object> info = hoaDonDAO.getThongTinHopDong(maHD);
 		if (info == null || !info.containsKey("MaPhong")) {
 			JOptionPane.showMessageDialog(view, "Không tìm thấy thông tin phòng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -346,25 +302,15 @@ public class SuaHoaDonController {
 		}
 
 		long maPhong = (Long) info.get("MaPhong");
-		String tenPhong = (String) info.get("SoPhong"); // Lấy thêm số phòng để hiển thị title nếu cần
-//
-//        ThemDienNuocView dnView = new ThemDienNuocView(); // Khởi tạo View
-//        dnView.setModal(true); // QUAN TRỌNG: Chặn tương tác form cha để chờ form con đóng
-//        dnView.setTitle("Thêm Điện Nước - Phòng " + tenPhong);
-//        
-//        new ThemDienNuocController(dnView, maPhong); 
-//        
-//        dnView.setVisible(true); // Hiển thị lên
-//        
+		String tenPhong = (String) info.get("SoPhong");
+		ThemDienNuocView dnView = new ThemDienNuocView(null);
+		dnView.setModal(true);
+		dnView.setTitle("Thêm Điện Nước - Phòng " + tenPhong);
 
-		// Demo thông báo (Xóa dòng này khi đã có form thật)
-		JOptionPane.showMessageDialog(view,
-				"Đang mở form thêm điện nước cho Phòng: " + tenPhong + " (Mã: " + maPhong + ")\n"
-						+ "Sau khi thêm xong, danh sách bên cạnh sẽ tự cập nhật.",
-				"Giả lập", JOptionPane.INFORMATION_MESSAGE);
+		new ThemDienNuocController(dnView, maPhong);
 
-		// 4. Load lại ComboBox điện nước sau khi form kia đóng
-		// Để người dùng thấy ngay phiếu vừa tạo
+		dnView.setVisible(true);
+
 		loadDienNuocChuaThanhToan(maHD);
 	}
 }

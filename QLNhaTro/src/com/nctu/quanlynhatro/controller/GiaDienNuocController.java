@@ -24,13 +24,10 @@ public class GiaDienNuocController {
 	}
 
 	private void initData() {
-		// Load giá hiện tại từ CSDL
 		GiaDienNuoc gia = dao.getGiaHienTai();
 		if (gia != null) {
 			view.getTxtGiaDienCu().setText(df.format(gia.getGiaDien()));
 			view.getTxtGiaNuocCu().setText(df.format(gia.getGiaNuoc()));
-
-			// Gợi ý giá mới bằng giá cũ (để người dùng dễ sửa)
 			view.getTxtGiaDienMoi().setText(df.format(gia.getGiaDien()));
 			view.getTxtGiaNuocMoi().setText(df.format(gia.getGiaNuoc()));
 		} else {
@@ -46,25 +43,21 @@ public class GiaDienNuocController {
 
 	private void xuLyLuu() {
 		try {
-			// Parse dữ liệu đầu vào (xóa dấu phẩy nếu có)
 			double giaDienMoi = parseDouble(view.getTxtGiaDienMoi().getText());
 			double giaNuocMoi = parseDouble(view.getTxtGiaNuocMoi().getText());
 
-			// Validate
 			if (giaDienMoi <= 0 || giaNuocMoi <= 0) {
 				JOptionPane.showMessageDialog(view, "Giá điện và nước phải lớn hơn 0!", "Cảnh báo",
 						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
-			// Xác nhận
 			int confirm = JOptionPane.showConfirmDialog(view,
 					"Bạn có chắc muốn cập nhật đơn giá mới?\n"
 							+ "Lưu ý: Giá mới sẽ được áp dụng cho các phiếu lập sau thời điểm này.",
 					"Xác nhận", JOptionPane.YES_NO_OPTION);
 
 			if (confirm == JOptionPane.YES_OPTION) {
-				// Gọi DAO insert giá mới
 				if (dao.insertGiaMoi(giaDienMoi, giaNuocMoi)) {
 					JOptionPane.showMessageDialog(view, "Cập nhật giá thành công!");
 					view.dispose();
@@ -79,7 +72,6 @@ public class GiaDienNuocController {
 		}
 	}
 
-	// Hàm hỗ trợ chuyển đổi chuỗi sang số (xử lý dấu phẩy nghìn)
 	private double parseDouble(String s) {
 		try {
 			if (s == null || s.trim().isEmpty()) {
@@ -87,7 +79,7 @@ public class GiaDienNuocController {
 			}
 			return Double.parseDouble(s.replace(",", "").replace(".", "").trim());
 		} catch (Exception e) {
-			throw e; // Ném lỗi ra để hàm xuLyLuu bắt
+			throw e;
 		}
 	}
 }

@@ -26,7 +26,6 @@ public class PhongDAO {
 		String sql = "SELECT * FROM phong WHERE TrangThaiXoa = 0";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
 			while (rs.next()) {
 				Phong p = new Phong(rs.getLong("MaPhong"), rs.getInt("SoPhong"), rs.getDouble("Gia"),
 						rs.getInt("SLNguoiMax"), rs.getDouble("PhuThu"), rs.getString("TrangThaiPhong"),
@@ -34,7 +33,6 @@ public class PhongDAO {
 				NhaTro nt = new NhaTro();
 				nt.setMaNT(rs.getInt("MaNT"));
 				p.setNhaTro(nt);
-
 				list.add(p);
 			}
 		} catch (Exception e) {
@@ -43,11 +41,8 @@ public class PhongDAO {
 		return list;
 	}
 
-	// Trả về Map chứa Mã Phòng và Số Phòng dựa vào Mã Nhà Trọ
 	public Map<Integer, String> getPhongTrongByMaNT(int maNT) {
 		Map<Integer, String> map = new HashMap<>();
-
-		// Chỉ lấy những phòng thuộc Nhà trọ được chọn, chưa bị xóa và đang TRỐNG
 		String sql = "SELECT MaPhong, SoPhong FROM phong WHERE MaNT = ? AND TrangThaiXoa = 0 AND TrangThaiPhong = 'Còn Trống'";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -63,9 +58,7 @@ public class PhongDAO {
 		return map;
 	}
 
-	// Lấy thông tin chi tiết phòng để tính tiền
 	public Phong getThongTinPhong(int maPhong) {
-		// SQL lấy đúng tên cột trong Database
 		String sql = "SELECT MaPhong, SoPhong, Gia, SLNguoiMax, PhuThu FROM Phong WHERE MaPhong = ?";
 		Phong p = null;
 
@@ -74,12 +67,11 @@ public class PhongDAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					p = new Phong();
-					// Map dữ liệu khớp với Model Phong của bạn
 					p.setMaPhong(rs.getLong("MaPhong"));
 					p.setSoPhong(rs.getInt("SoPhong"));
-					p.setGia(rs.getDouble("Gia")); // Cột Gia -> setGia
-					p.setSoNguoiToiDa(rs.getInt("SLNguoiMax")); // Cột SLNguoiMax -> setSoNguoiToiDa
-					p.setPhuThu(rs.getDouble("PhuThu")); // Cột PhuThu -> setPhuThu
+					p.setGia(rs.getDouble("Gia"));
+					p.setSoNguoiToiDa(rs.getInt("SLNguoiMax"));
+					p.setPhuThu(rs.getDouble("PhuThu"));
 				}
 			}
 		} catch (Exception e) {
@@ -88,14 +80,8 @@ public class PhongDAO {
 		return p;
 	}
 
-	// =================================================================
-	// LẤY CHI TIẾT PHÒNG KÈM THÔNG TIN NHÀ TRỌ
-	// (Dùng cho Sửa Hợp Đồng để set ComboBox Nhà Trọ)
-	// =================================================================
 	public Phong getPhongById(long maPhong) {
-		// Cần JOIN sang bảng NhaTro để lấy TenNhaTro và MaNT
-		String sql = "SELECT p.*, n.TenNT, n.MaNT FROM Phong p " + "JOIN NhaTro n ON p.MaNT = n.MaNT "
-				+ "WHERE p.MaPhong = ?";
+		String sql = "SELECT p.*, n.TenNT, n.MaNT FROM Phong p JOIN NhaTro n ON p.MaNT = n.MaNT WHERE p.MaPhong = ?";
 		Phong p = null;
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setLong(1, maPhong);
@@ -108,10 +94,9 @@ public class PhongDAO {
 					p.setSoNguoiToiDa(rs.getInt("SLNguoiMax"));
 					p.setPhuThu(rs.getDouble("PhuThu"));
 
-					// Map thông tin Nhà Trọ vào đối tượng Phong
 					NhaTro nt = new NhaTro();
-					nt.setMaNT(rs.getInt("MaNT")); // Lấy từ bảng NhaTro hoặc Phong đều được
-					nt.setTenNT(rs.getString("TenNT")); // Lấy từ bảng NhaTro
+					nt.setMaNT(rs.getInt("MaNT"));
+					nt.setTenNT(rs.getString("TenNT"));
 					p.setNhaTro(nt);
 				}
 			}
@@ -121,7 +106,6 @@ public class PhongDAO {
 		return p;
 	}
 
-	/* ================= UPDATE TRẠNG THÁI PHÒNG ================= */
 	public void updateTrangThaiPhong() {
 		String sql = """
 				    UPDATE phong
@@ -139,13 +123,10 @@ public class PhongDAO {
 		}
 	}
 
-	/* ================= TÌM KIẾM ================= */
 	public List<Phong> search(String keyword, boolean daThue, boolean conTrong, boolean baoTri) {
-
 		List<Phong> list = new ArrayList<>();
 		StringBuilder sql = new StringBuilder(
-				"SELECT * FROM phong WHERE TrangThaiXoa = 0 " + "AND (MaPhong LIKE ? OR SoPhong LIKE ?)");
-
+				"SELECT * FROM phong WHERE TrangThaiXoa = 0 AND (MaPhong LIKE ? OR SoPhong LIKE ?)");
 		List<String> conditions = new ArrayList<>();
 		if (daThue) {
 			conditions.add("TrangThaiPhong = 'Đã thuê'");
@@ -163,7 +144,6 @@ public class PhongDAO {
 
 		try (Connection con = DatabaseConnection.getConnection();
 				PreparedStatement ps = con.prepareStatement(sql.toString())) {
-
 			String key = "%" + keyword + "%";
 			ps.setString(1, key);
 			ps.setString(2, key);
@@ -180,23 +160,18 @@ public class PhongDAO {
 		return list;
 	}
 
-	/* ================= BẬT / TẮT BẢO TRÌ ================= */
 	public void updateBaoTri(long maPhong, boolean baoTri) {
 		String sql = "UPDATE phong SET BaoTri = ? WHERE MaPhong = ?";
-
 		try (Connection con = DatabaseConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-
 			ps.setInt(1, baoTri ? 1 : 0);
 			ps.setLong(2, maPhong);
 			ps.executeUpdate();
-
 			updateTrangThaiPhong();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	/* ================= XÓA MỀM ================= */
 	public boolean deleteSoft(long maPhong) {
 		String sql = "UPDATE phong SET TrangThaiXoa = 1 WHERE MaPhong = ?";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -208,7 +183,6 @@ public class PhongDAO {
 		return false;
 	}
 
-	/* ================= KIỂM TRA TRÙNG PHÒNG ================= */
 	public boolean isExistSoPhong(int soPhong, long maNT) throws SQLException {
 		String sql = "SELECT 1 FROM phong WHERE SoPhong = ? AND MaNT = ? AND TrangThaiXoa = 0";
 		try (Connection con = DatabaseConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -218,29 +192,19 @@ public class PhongDAO {
 		}
 	}
 
-	/* ================= THÊM PHÒNG + PHỤ PHÍ (TRANSACTION) ================= */
 	public boolean insertPhong(int soPhong, double gia, int slNguoiMax, double phuThu, String trangThai, String ghiChu,
 			int maNT, List<Integer> listMaPP) {
-
-		String insertPhong = """
-				    INSERT INTO phong
-				    (SoPhong, Gia, SLNguoiMax, PhuThu, GhiChu, TrangThaiPhong, MaNT, TrangThaiXoa, BaoTri)
-				    VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0)
-				""";
-
+		String insertPhong = "INSERT INTO phong (SoPhong, Gia, SLNguoiMax, PhuThu, GhiChu, TrangThaiPhong, MaNT, TrangThaiXoa, BaoTri) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0)";
 		String insertCTPP = "INSERT INTO chitietphuphi (MaPhong, MaPP) VALUES (?, ?)";
 
 		try (Connection con = DatabaseConnection.getConnection()) {
 			con.setAutoCommit(false);
-
-			// kiểm tra trùng
 			if (isExistSoPhong(soPhong, maNT)) {
 				return false;
 			}
 
 			int maPhongMoi;
 			try (PreparedStatement ps = con.prepareStatement(insertPhong, Statement.RETURN_GENERATED_KEYS)) {
-
 				ps.setInt(1, soPhong);
 				ps.setDouble(2, gia);
 				ps.setInt(3, slNguoiMax);
@@ -262,26 +226,17 @@ public class PhongDAO {
 					psCT.executeUpdate();
 				}
 			}
-
 			con.commit();
 			return true;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
 
-	/*
-	 * ========================= KIỂM TRA TRÙNG SỐ PHÒNG (SỬA)
-	 * =========================
-	 */
 	public boolean isSoPhongExistForUpdate(long maPhong, int soPhong, int maNT) throws Exception {
-
 		String sql = "SELECT 1 FROM Phong WHERE SoPhong = ? AND MaNT = ? AND MaPhong <> ?";
-
 		try (Connection con = DatabaseConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-
 			ps.setInt(1, soPhong);
 			ps.setInt(2, maNT);
 			ps.setLong(3, maPhong);
@@ -289,24 +244,14 @@ public class PhongDAO {
 		}
 	}
 
-	/*
-	 * ========================= 5️⃣ UPDATE PHÒNG + DELETE/INSERT CTPP
-	 * =========================
-	 */
 	public boolean updatePhong(Phong phong, List<Integer> dsMaPP) {
-
-		String sqlUpdatePhong = "UPDATE Phong SET SoPhong=?, Gia=?, SLNguoiMax=?, PhuThu=?, "
-				+ "GhiChu=?, TrangThaiPhong=?, MaNT=?, TrangThaiXoa=0 " + "WHERE MaPhong=?";
-
+		String sqlUpdatePhong = "UPDATE Phong SET SoPhong=?, Gia=?, SLNguoiMax=?, PhuThu=?, GhiChu=?, TrangThaiPhong=?, MaNT=?, TrangThaiXoa=0 WHERE MaPhong=?";
 		String sqlDeleteCTPP = "DELETE FROM chitietphuphi WHERE MaPhong=?";
-
 		String sqlInsertCTPP = "INSERT INTO chitietphuphi(MaPhong, MaPP) VALUES (?, ?)";
 
 		try (Connection con = DatabaseConnection.getConnection()) {
 			con.setAutoCommit(false);
-
 			try (PreparedStatement ps = con.prepareStatement(sqlUpdatePhong)) {
-
 				ps.setInt(1, phong.getSoPhong());
 				ps.setDouble(2, phong.getGia());
 				ps.setInt(3, phong.getSoNguoiToiDa());
@@ -330,10 +275,8 @@ public class PhongDAO {
 					ps.executeUpdate();
 				}
 			}
-
 			con.commit();
 			return true;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

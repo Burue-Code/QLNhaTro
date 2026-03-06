@@ -12,14 +12,13 @@ import com.nctu.quanlynhatro.dao.DatabaseConnection;
 import com.nctu.quanlynhatro.dao.HoaDonDAO;
 import com.nctu.quanlynhatro.view.hoa_don.ThemHoaDonView;
 import com.nctu.quanlynhatro.view.hoa_don.XemHoaDonView;
-// import com.nctu.quanlynhatro.view.hoa_don.ThemHoaDonView;
 
 public class XemHoaDonController {
 
 	private XemHoaDonView view;
 	private HoaDonDAO dao;
 	private long maHoaDon;
-	private HoaDonController parentController; // Để refresh bảng chính sau khi xóa/sửa
+	private HoaDonController parentController;
 
 	private DecimalFormat df = new DecimalFormat("#,###");
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -38,7 +37,6 @@ public class XemHoaDonController {
 	}
 
 	private void loadData() {
-		// 1. Load Thông Tin Cơ Bản
 		Map<String, Object> hd = dao.getChiTietHoaDon(maHoaDon);
 		if (hd.isEmpty()) {
 			JOptionPane.showMessageDialog(view, "Không tìm thấy dữ liệu hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -63,7 +61,6 @@ public class XemHoaDonController {
 		java.sql.Timestamp ngayTT = (java.sql.Timestamp) hd.get("NgayTT");
 		view.setTxtNgayThanhToan(ngayTT != null ? sdf.format(ngayTT) : "Chưa thanh toán");
 
-		// 2. Load Bảng Điện Nước
 		List<Map<String, Object>> listDN = dao.getDienNuocMaHoaDon(maHoaDon);
 		DefaultTableModel modelDN = view.getModelDienNuoc();
 		modelDN.setRowCount(0);
@@ -81,7 +78,6 @@ public class XemHoaDonController {
 		}
 		view.setTxtHoaDonDienNuoc(countDN + " phiếu đính kèm");
 
-		// 3. Load Bảng Phụ Phí (Lấy qua Hợp Đồng giống form Sửa)
 		long maHD = (Long) hd.get("MaHopDong");
 		List<Map<String, Object>> listPP = dao.getPhuPhiByHopDong(maHD);
 		DefaultTableModel modelPP = view.getModelPhuPhi();
@@ -91,7 +87,6 @@ public class XemHoaDonController {
 			modelPP.addRow(new Object[] { pp.get("MaPP"), pp.get("TenPP"), df.format(pp.get("Gia")) });
 		}
 
-		// 4. Load Tổng Tiền
 		Double tongPP_DB = (Double) hd.get("TongTienPP");
 		Double tongThanhToan_DB = (Double) hd.get("SoTienTT");
 
@@ -114,7 +109,7 @@ public class XemHoaDonController {
 			if (dao.deleteHoaDon(maHoaDon)) {
 				JOptionPane.showMessageDialog(view, "Đã xóa hóa đơn!");
 				if (parentController != null) {
-					parentController.refreshData(); // Load lại bảng ngoài
+					parentController.refreshData();
 				}
 				view.dispose();
 			} else {
@@ -125,7 +120,7 @@ public class XemHoaDonController {
 
 	private void xuLySua() {
 		try {
-			view.dispose(); // Đóng form Xem hiện tại
+			view.dispose();
 
 			ThemHoaDonView suaView = new ThemHoaDonView(parentController.getModel());
 			suaView.setModal(true);

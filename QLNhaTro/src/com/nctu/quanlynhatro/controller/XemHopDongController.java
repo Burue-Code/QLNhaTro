@@ -35,7 +35,6 @@ public class XemHopDongController {
 	}
 
 	private void loadData() {
-		// 1. Load thông tin chung của hợp đồng
 		Map<String, Object> chiTiet = dao.getChiTietHopDong(maHD);
 
 		if (chiTiet.isEmpty()) {
@@ -44,7 +43,6 @@ public class XemHopDongController {
 			return;
 		}
 
-		// Set dữ liệu lên TextField thông qua Setter
 		view.setTxtMaHopDong(String.valueOf(chiTiet.get("MaHD")));
 		view.setTxtTenKhachHang((String) chiTiet.get("TenKH"));
 		view.setTxtNhaTro((String) chiTiet.get("TenNT"));
@@ -55,21 +53,18 @@ public class XemHopDongController {
 		String ghiChu = (String) chiTiet.get("GhiChu");
 		view.setTxtGhiChu(ghiChu != null ? ghiChu : "");
 
-		// Xử lý Ngày tháng
 		java.sql.Date ngayLap = (java.sql.Date) chiTiet.get("NgayLapHD");
 		view.setTxtNgayBatDau(ngayLap != null ? sdf.format(ngayLap) : "");
 
 		java.sql.Date ngayTra = (java.sql.Date) chiTiet.get("NgayKT");
 		view.setTxtNgayKetThuc(ngayTra != null ? sdf.format(ngayTra) : "Chưa xác định");
 
-		// Xử lý Tiền tệ
 		Double giaThue = (Double) chiTiet.get("Gia");
 		view.setTxtGiaThue(giaThue != null ? df.format(giaThue) + " VNĐ" : "0 VNĐ");
 
-		// 2. Load danh sách khách hàng phụ thuộc (Người ở ghép)
 		List<Map<String, Object>> listKhach = dao.getKhachHangPhuThuoc(maHD);
 		DefaultTableModel model = view.getModelPhuThuoc();
-		model.setRowCount(0); // Xóa dữ liệu cũ trên bảng
+		model.setRowCount(0);
 
 		for (Map<String, Object> kh : listKhach) {
 			java.sql.Date ngaySinh = (java.sql.Date) kh.get("NgaySinh");
@@ -80,13 +75,8 @@ public class XemHopDongController {
 	}
 
 	private void initEvents() {
-		// Nút Thoát
 		view.getBtnThoat().addActionListener(e -> view.dispose());
-
-		// Nút Xóa
 		view.getBtnXoa().addActionListener(e -> xuLyXoa());
-
-		// Nút Sửa
 		view.getBtnSua().addActionListener(e -> xuLySua());
 	}
 
@@ -99,12 +89,10 @@ public class XemHopDongController {
 			if (dao.deleteHopDong(maHD)) {
 				JOptionPane.showMessageDialog(view, "Xóa hợp đồng thành công!");
 
-				// Cập nhật lại bảng ngoài View cha
 				if (parentController != null) {
-					parentController.refreshData(); // Hàm load lại bảng trong HopDongController
+					parentController.refreshData();
 				}
 
-				// Đóng form xem chi tiết
 				view.dispose();
 			} else {
 				JOptionPane.showMessageDialog(view, "Xóa hợp đồng thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -113,9 +101,7 @@ public class XemHopDongController {
 	}
 
 	private void xuLySua() {
-
 		try {
-
 			view.dispose();
 
 			ThemHopDongView suaView = new ThemHopDongView(parentController.getModel());
