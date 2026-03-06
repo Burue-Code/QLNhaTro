@@ -74,7 +74,6 @@ public class MainController implements ActionListener {
 		view.addCard("VIEW_PHUONGTHUCTHANHTOAN", phuongThucThanhToanView);
 		view.addCard("VIEW_DIENNUOC", dienNuocView);
 
-		// TƯƠNG TỰ cho các View khác
 	}
 
 	private void initMenuMap() {
@@ -94,20 +93,17 @@ public class MainController implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 
-		// [THAY ĐỔI 4]: Kiểm tra nếu là nút Giá Điện Nước thì mở Dialog riêng
 		if (source == view.getMniGiaDienNuoc()) {
 			openGiaDienNuocDialog();
-			return; // Dừng lại, không chạy logic chuyển trang bên dưới
+			return;
 		}
 
-		// Logic chuyển trang cho các menu còn lại
 		String card = menuMap.get(source);
 		if (card != null) {
 			view.showCard(card);
 		}
 	}
 
-	// Hàm hỗ trợ mở Dialog Giá Điện Nước
 	private void openGiaDienNuocDialog() {
 		GiaDienNuocView dialog = new GiaDienNuocView(view);
 		new GiaDienNuocController(dialog);

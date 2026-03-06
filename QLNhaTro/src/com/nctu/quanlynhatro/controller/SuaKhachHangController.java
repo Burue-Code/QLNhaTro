@@ -33,6 +33,7 @@ public class SuaKhachHangController {
 
 		this.khachHangDAO = new KhachHangDAO(DatabaseConnection.getConnection());
 		this.khachHangCanSua = this.khachHangDAO.findById(maKH);
+
 		if (this.khachHangCanSua == null) {
 			JOptionPane.showMessageDialog(view, "Không tìm thấy dữ liệu khách hàng này!", "Lỗi",
 					JOptionPane.ERROR_MESSAGE);
@@ -40,23 +41,53 @@ public class SuaKhachHangController {
 			return;
 		}
 
-		this.view.setTitle("Sửa Khách Hàng Mới");
+		this.view.setTitle("Cập Nhật Khách Hàng Mới");
 		this.view.getBtnThem().setText("Lưu Thay Đổi");
 
 		initData();
 		initSearch();
 		fillData();
 		initEvents();
+
 		this.view.setVisible(true);
 	}
 
 	private void initEvents() {
-		// Nút Hủy
 		view.getBtnHuy().addActionListener(e -> view.dispose());
-
-		// Nút Cập nhật (View bạn đặt tên nút là "Thêm Mới" nhưng dùng chung form thì
-		// vẫn lấy getBtnThem)
 		view.getBtnThem().addActionListener(e -> xuLyCapNhat());
+
+		setChiNhapSoNguyen(view.getTxtCCCD());
+		setChiNhapSoNguyen(view.getTxtSDT());
+		setChiNhapSoNgay(view.getTxtNgaySinh());
+	}
+
+	private void setChiNhapSoNguyen(javax.swing.JTextField txt) {
+		txt.addKeyListener(new java.awt.event.KeyAdapter() {
+			@Override
+			public void keyTyped(java.awt.event.KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!Character.isDigit(c) && c != java.awt.event.KeyEvent.VK_BACK_SPACE) {
+					e.consume();
+				}
+			}
+		});
+	}
+
+	private void setChiNhapSoNgay(javax.swing.JTextField txt) {
+		txt.addKeyListener(new java.awt.event.KeyAdapter() {
+			@Override
+			public void keyTyped(java.awt.event.KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!Character.isDigit(c) && c != java.awt.event.KeyEvent.VK_BACK_SPACE && c != '-') {
+					e.consume();
+				}
+				String currentText = txt.getText();
+				int hyphenCount = currentText.length() - currentText.replace("-", "").length();
+				if (c == '-' && hyphenCount >= 2) {
+					e.consume();
+				}
+			}
+		});
 	}
 
 	private void initData() {
@@ -85,29 +116,23 @@ public class SuaKhachHangController {
 			return;
 		}
 
-		// Đổ dữ liệu từ Object KhachHang vào View
 		view.setTenKhachHang(khachHangCanSua.getTenKH());
 		view.setDiaChi(khachHangCanSua.getDiaChi());
 		view.setSoDienThoai(khachHangCanSua.getSdt());
 		view.setCCCD(khachHangCanSua.getCccd());
 		view.setEmail(khachHangCanSua.getGmail());
 
-		// Xử lý ngày sinh (Chuyển từ LocalDate sang String)
 		if (khachHangCanSua.getNgaySinh() != null) {
 			view.setNgaySinh(khachHangCanSua.getNgaySinh().toString());
 		}
 
-		// Xử lý Giới tính (Giả sử false = Nam, true = Nữ theo logic của bạn)
 		view.setGioiTinh(khachHangCanSua.getGioiTinh());
 
-		// Xử lý Khách hàng chính (nếu có ghép phòng)
 		if (khachHangCanSua.getKhachHangChinh() > 0) {
 			view.setMaKhachHangChinh(String.valueOf(khachHangCanSua.getKhachHangChinh()));
 
-			// Gọi hàm findById từ DAO để lấy thông tin Khách hàng chính
 			KhachHang khachHangChinh = khachHangDAO.findById(khachHangCanSua.getKhachHangChinh());
 
-			// Nếu tìm thấy, lấy tên và set lên View
 			if (khachHangChinh != null) {
 				view.setTenKhachHangChinh(khachHangChinh.getTenKH());
 			}
@@ -116,17 +141,15 @@ public class SuaKhachHangController {
 
 	private void xuLyCapNhat() {
 		try {
-			// 1. Lấy dữ liệu mới từ Form
-			String tenKH = view.getTenKhachHang();
-			String cccd = view.getCCCD();
-			String sdt = view.getSoDienThoai();
-			String diaChi = view.getDiaChi();
-			String ngaySinh = view.getNgaySinh();
-			String email = view.getEmail();
-			boolean gioiTinh = view.getGioiTinh().equals("Nữ"); // Giả sử false=Nam, true=Nữ
-			String maKHC_str = view.getMaKhachHangChinh();
+			String tenKH = view.getTenKhachHang().trim();
+			String cccd = view.getCCCD().trim();
+			String sdt = view.getSoDienThoai().trim();
+			String diaChi = view.getDiaChi().trim();
+			String ngaySinh = view.getNgaySinh().trim();
+			String email = view.getEmail().trim();
+			boolean gioiTinh = view.getGioiTinh().equals("Nữ");
+			String maKHC_str = view.getMaKhachHangChinh().trim();
 
-			// 2. Validate dữ liệu cơ bản
 			if (tenKH.isEmpty()) {
 				JOptionPane.showMessageDialog(view, "Vui lòng nhập tên khách hàng!", "Cảnh báo",
 						JOptionPane.WARNING_MESSAGE);
@@ -138,12 +161,11 @@ public class SuaKhachHangController {
 				return;
 			}
 			if (!sdt.matches("0\\d{9}")) {
-				JOptionPane.showMessageDialog(view, "Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0)!",
+				JOptionPane.showMessageDialog(view, "Số điện thoại không hợp lệ (10 số, bắt đầu bằng số 0)!",
 						"Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
-			// 3. Cập nhật dữ liệu mới vào Object KhachHang hiện tại (khachHangCanSua)
 			khachHangCanSua.setTenKH(tenKH);
 			khachHangCanSua.setCccd(cccd);
 			khachHangCanSua.setSdt(sdt);
@@ -151,13 +173,12 @@ public class SuaKhachHangController {
 			khachHangCanSua.setGioiTinh(gioiTinh);
 			khachHangCanSua.setGmail(email);
 
-			// Chuyển đổi ngày sinh từ String -> LocalDate (Nếu bạn dùng JDateChooser thì
-			// getDate() rồi convert sẽ chuẩn hơn)
 			if (!ngaySinh.isEmpty()) {
 				try {
 					khachHangCanSua.setNgaySinh(java.time.LocalDate.parse(ngaySinh));
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(view, "Ngày sinh không đúng định dạng (YYYY-MM-DD)!", "Lỗi",
+					JOptionPane.showMessageDialog(view,
+							"Ngày sinh không đúng định dạng (Năm-Tháng-Ngày, VD: 2000-12-30)!", "Lỗi",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -165,35 +186,30 @@ public class SuaKhachHangController {
 				khachHangCanSua.setNgaySinh(null);
 			}
 
-			// Chuyển đổi Mã KH Chính từ String -> Long
 			if (!maKHC_str.isEmpty()) {
 				khachHangCanSua.setKhachHangChinh(Long.parseLong(maKHC_str));
 			} else {
-				khachHangCanSua.setKhachHangChinh(0); // 0 mang ý nghĩa không có KH chính
+				khachHangCanSua.setKhachHangChinh(0);
 			}
 
-			// 4. Chuẩn bị danh sách Khách Hàng Phụ
-			// Hiện tại giao diện chưa có phần chọn KH Phụ nên tạm truyền list rỗng.
 			List<Long> danhSachKHPhu = new ArrayList<>();
 
-			// 5. Gọi DAO để thực hiện Update
 			boolean kq = khachHangDAO.updateKhachHang(khachHangCanSua, danhSachKHPhu);
 
-			// 6. Xử lý kết quả
 			if (kq) {
 				JOptionPane.showMessageDialog(view, "Cập nhật khách hàng thành công!", "Thành công",
 						JOptionPane.INFORMATION_MESSAGE);
 				if (parentController != null) {
-					parentController.refreshData(); // Gọi lại hàm initData() bên KhachHangController để làm mới bảng
+					parentController.refreshData();
 				}
-				view.dispose(); // Đóng form
+				view.dispose();
 			} else {
 				JOptionPane.showMessageDialog(view, "Lỗi khi cập nhật vào cơ sở dữ liệu!", "Lỗi",
 						JOptionPane.ERROR_MESSAGE);
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace(); // In lỗi ra console để dễ debug
+			ex.printStackTrace();
 			JOptionPane.showMessageDialog(view, "Lỗi hệ thống: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
 		}
 	}

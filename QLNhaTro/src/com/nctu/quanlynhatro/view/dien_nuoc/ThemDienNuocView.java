@@ -23,7 +23,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class ThemDienNuocView extends JDialog {
 
-	// Các thành phần giao diện
 	private JTextField txtMaDN;
 	private JComboBox<String> cboNhaTro, cboSoPhong;
 	private JComboBox<String> cboThang;
@@ -36,11 +35,8 @@ public class ThemDienNuocView extends JDialog {
 	private JTextField txtTongTien;
 
 	private JButton btnThem;
+	private JButton btnDong; // Bổ sung nút Đóng
 	private DefaultTableModel tableModel;
-
-	// Cấu hình đơn giá mặc định
-	private final long DON_GIA_DIEN_MAC_DINH = 3500;
-	private final long DON_GIA_NUOC_MAC_DINH = 10000;
 
 	private DecimalFormat df = new DecimalFormat("#,###");
 
@@ -67,7 +63,6 @@ public class ThemDienNuocView extends JDialog {
 		gbc.gridy = 0;
 		formPanel.add(new JLabel("Nhà trọ:"), gbc);
 		cboNhaTro = new JComboBox<>();
-		// loadDataNhaTro(); // Để trống chờ DB
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		gbc.weightx = 1.0;
@@ -78,7 +73,6 @@ public class ThemDienNuocView extends JDialog {
 		gbc.weightx = 0;
 		formPanel.add(new JLabel("Phòng:"), gbc);
 		cboSoPhong = new JComboBox<>();
-		// loadDataPhong(); // Để trống chờ DB
 		gbc.gridx = 3;
 		gbc.gridy = 0;
 		gbc.weightx = 1.0;
@@ -88,7 +82,7 @@ public class ThemDienNuocView extends JDialog {
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		formPanel.add(new JLabel("Đơn giá Điện:"), gbc);
-		txtGiaDien = new JTextField(df.format(DON_GIA_DIEN_MAC_DINH));
+		txtGiaDien = new JTextField();
 		txtGiaDien.setEditable(false);
 		gbc.gridx = 1;
 		gbc.gridy = 1;
@@ -97,7 +91,7 @@ public class ThemDienNuocView extends JDialog {
 		gbc.gridx = 2;
 		gbc.gridy = 1;
 		formPanel.add(new JLabel("Đơn giá Nước:"), gbc);
-		txtGiaNuoc = new JTextField(df.format(DON_GIA_NUOC_MAC_DINH));
+		txtGiaNuoc = new JTextField();
 		txtGiaNuoc.setEditable(false);
 		gbc.gridx = 3;
 		gbc.gridy = 1;
@@ -118,7 +112,6 @@ public class ThemDienNuocView extends JDialog {
 		formPanel.add(new JLabel("Số nước cũ:"), gbc);
 		txtNuocCu = new JTextField("0");
 		txtNuocCu.setEditable(false);
-
 		gbc.gridx = 3;
 		gbc.gridy = 2;
 		formPanel.add(txtNuocCu, gbc);
@@ -165,9 +158,7 @@ public class ThemDienNuocView extends JDialog {
 		gbc.gridx = 0;
 		gbc.gridy = 5;
 		formPanel.add(new JLabel("Tháng thu:"), gbc);
-
 		cboThang = new JComboBox<>();
-//        loadDataThang(); // Hàm load tháng 1-12 (không có năm)
 		gbc.gridx = 1;
 		gbc.gridy = 5;
 		formPanel.add(cboThang, gbc);
@@ -186,16 +177,21 @@ public class ThemDienNuocView extends JDialog {
 		mainPanel.add(formPanel, BorderLayout.CENTER);
 
 		// --- NÚT BẤM ---
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+
 		btnThem = new JButton("Thêm");
 		btnThem.setPreferredSize(new Dimension(150, 40));
 		btnThem.setFont(new Font("Arial", Font.PLAIN, 14));
 
+		btnDong = new JButton("Đóng");
+		btnDong.setPreferredSize(new Dimension(150, 40));
+		btnDong.setFont(new Font("Arial", Font.PLAIN, 14));
+
 		buttonPanel.add(btnThem);
+		buttonPanel.add(btnDong);
+
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 	}
-
-	// ... (Phần code giao diện giữ nguyên) ...
 
 	// ==============================================
 	// GETTER CHO CONTROLLER TRUY CẬP
@@ -250,6 +246,10 @@ public class ThemDienNuocView extends JDialog {
 
 	public JButton getBtnThem() {
 		return btnThem;
+	}
+
+	public JButton getBtnDong() {
+		return btnDong;
 	}
 
 	public DefaultTableModel getTableModel() {

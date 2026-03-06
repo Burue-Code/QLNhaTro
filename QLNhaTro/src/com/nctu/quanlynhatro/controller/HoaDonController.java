@@ -38,7 +38,7 @@ public class HoaDonController {
 
 	private void initData() {
 
-		table.clear(); // clear table
+		table.clear();
 
 		for (HoaDon hd : hoaDonDAO.getAll()) {
 			table.addRow(new Object[] { hd.getMaHoaDon(), hd.getNgayThanhToan(), hd.getTongTien(),
@@ -56,7 +56,6 @@ public class HoaDonController {
 		return model;
 	}
 
-	/* ================= TÌM KIẾM ================= */
 	private void initSearch() {
 		sorter = new TableRowSorter<>(model);
 		table.setRowSorter(sorter);
@@ -70,7 +69,6 @@ public class HoaDonController {
 		});
 	}
 
-	/* ================= POPUP MENU ================= */
 	private void initPopupMenu() {
 		MyPopupMenu popup = new MyPopupMenu(table);
 
@@ -81,7 +79,6 @@ public class HoaDonController {
 		popup.addSeparator();
 		JMenuItem mnuLamMoi = popup.addItem("Làm mới");
 
-		// ==== ACTION ====
 		mnuThem.addActionListener(e -> {
 			ThemHoaDonView themHoaDonView = new ThemHoaDonView(model);
 			themHoaDonView.setModal(true);
@@ -114,11 +111,10 @@ public class HoaDonController {
 						"Xác nhận xóa", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
 				if (confirm == JOptionPane.YES_OPTION) {
-					// Gọi DAO để xóa
 					boolean kq = hoaDonDAO.deleteHoaDon(maHoaDon);
 					if (kq) {
 						JOptionPane.showMessageDialog(view, "Xóa thành công!");
-						refreshData(); // Load lại bảng
+						refreshData();
 					} else {
 						JOptionPane.showMessageDialog(view, "Xóa thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
 					}
@@ -149,7 +145,7 @@ public class HoaDonController {
 			if (sorter != null) {
 				sorter.setRowFilter(null);
 			}
-			refreshData(); // Gọi hàm load lại dữ liệu từ DB
+			refreshData();
 		});
 	}
 }

@@ -88,12 +88,17 @@ public class DienNuocDAO {
 	// 4. Lấy danh sách Phòng theo Mã Nhà Trọ (Chỉ lấy phòng đang thuê)
 	public Map<String, Integer> getListPhong(int maNT) {
 		Map<String, Integer> map = new HashMap<>();
-		// [FIX]: Bỏ chữ N trước chuỗi tiếng Việt
-		String sql = "SELECT MaPhong, SoPhong FROM Phong WHERE MaNT = ? AND TrangThaiPhong = 'Đã thuê' AND TrangThaiXoa = 0";
-		try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+		// Chỉ lấy những phòng thuộc Nhà Trọ được chọn VÀ đang có người thuê
+		String sql = "SELECT MaPhong, SoPhong FROM Phong WHERE MaNT = ? AND TrangThaiPhong = N'Đã thuê'";
+
+		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
 			ps.setInt(1, maNT);
+
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
+					// Đưa vào Map: Key là Tên/Số phòng (String), Value là Mã phòng (Integer)
 					map.put(rs.getString("SoPhong"), rs.getInt("MaPhong"));
 				}
 			}

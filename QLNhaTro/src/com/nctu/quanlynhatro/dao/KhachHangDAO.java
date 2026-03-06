@@ -26,11 +26,13 @@ public class KhachHangDAO {
 		String sql = "SELECT * FROM KhachHang WHERE TrangThaiXoa = 0";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
 			while (rs.next()) {
+				Date dbNgaySinh = rs.getDate("NgaySinh");
+				LocalDate ngaySinhAnToan = (dbNgaySinh != null) ? dbNgaySinh.toLocalDate() : null;
+
 				KhachHang kh = new KhachHang(rs.getLong("MaKH"), rs.getString("TenKH"), rs.getString("DiaChi"),
-						rs.getBoolean("GioiTinh"), rs.getDate("NgaySinh").toLocalDate(), rs.getString("SDT"),
-						rs.getString("Gmail"), rs.getString("SoCCCD"), rs.getLong("MaKHChinh"));
+						rs.getBoolean("GioiTinh"), ngaySinhAnToan, rs.getString("SDT"), rs.getString("Gmail"),
+						rs.getString("SoCCCD"), rs.getLong("MaKHChinh"));
 				list.add(kh);
 			}
 		} catch (SQLException e) {
@@ -42,7 +44,6 @@ public class KhachHangDAO {
 	public boolean isExistByCCCD(String cccd) {
 		String sql = "SELECT TrangThaiXoa FROM khachhang WHERE SoCCCD = ?";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
 			ps.setString(1, cccd);
 			ResultSet rs = ps.executeQuery();
 			return rs.next();
@@ -52,7 +53,6 @@ public class KhachHangDAO {
 		return false;
 	}
 
-// thêm dư liệu
 	public boolean insert(String tenKH, String diaChi, LocalDate ngaySinh, String sdt, boolean gioiTinh, String soCCCD,
 			String gmail, long maKHC) {
 		String sql = """
@@ -62,7 +62,6 @@ public class KhachHangDAO {
 				""";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
 			ps.setString(1, tenKH);
 			ps.setString(2, diaChi);
 
@@ -99,7 +98,6 @@ public class KhachHangDAO {
 				""";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
 			String key = "%" + keyword + "%";
 			ps.setString(1, key);
 			ps.setString(2, key);
@@ -117,7 +115,6 @@ public class KhachHangDAO {
 				if (ns != null) {
 					kh.setNgaySinh(ns.toLocalDate());
 				}
-
 				list.add(kh);
 			}
 		} catch (Exception e) {
@@ -144,12 +141,9 @@ public class KhachHangDAO {
 		return true;
 	}
 
-	// UpdelData
-
 	public KhachHang findById(Long maKH) {
 		String sql = "SELECT * FROM khachhang WHERE MaKH = ?";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
 			ps.setLong(1, maKH);
 			ResultSet rs = ps.executeQuery();
 
@@ -179,7 +173,6 @@ public class KhachHangDAO {
 	public boolean isKhachHangChinh(Long maKH) {
 		String sql = "SELECT COUNT(*) FROM khachhang WHERE MaKHChinh = ?";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
 			ps.setLong(1, maKH);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -196,7 +189,6 @@ public class KhachHangDAO {
 		String sql = "SELECT * FROM khachhang WHERE TrangThaiXoa = 0 AND MaKHChinh = ?";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
 			ps.setLong(1, maKHChinh);
 			ResultSet rs = ps.executeQuery();
 
@@ -231,7 +223,7 @@ public class KhachHangDAO {
 					if (rs.getDate("NgaySinh") != null) {
 						kh.setNgaySinh(rs.getDate("NgaySinh").toLocalDate());
 					}
-					return kh; // Trả về 1 đối tượng
+					return kh;
 				}
 			}
 		} catch (Exception e) {
@@ -252,18 +244,17 @@ public class KhachHangDAO {
 					kh.setTenKH(rs.getString("TenKH"));
 					kh.setDiaChi(rs.getString("DiaChi"));
 					kh.setGioiTinh(rs.getBoolean("GioiTinh"));
-					kh.setKhachHangChinh(rs.getLong("MaKHChinh")); // Để phân biệt chủ hộ
+					kh.setKhachHangChinh(rs.getLong("MaKHChinh"));
 					if (rs.getDate("NgaySinh") != null) {
 						kh.setNgaySinh(rs.getDate("NgaySinh").toLocalDate());
 					}
-
-					list.add(kh); // Thêm vào danh sách
+					list.add(kh);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return list; // Trả về danh sách
+		return list;
 	}
 
 	public boolean updateKhachHang(KhachHang kh, List<Long> danhSachKHPhu) {
@@ -275,9 +266,7 @@ public class KhachHangDAO {
 				""";
 
 		try {
-			conn.setAutoCommit(false); // 🔥 TRANSACTION
-
-			// Update khách hàng chính
+			conn.setAutoCommit(false);
 			try (PreparedStatement ps = conn.prepareStatement(updateKH)) {
 				ps.setString(1, kh.getTenKH());
 				ps.setString(2, kh.getDiaChi());
@@ -296,47 +285,33 @@ public class KhachHangDAO {
 				if (kh.getKhachHangChinh() > 0) {
 					ps.setLong(8, kh.getKhachHangChinh());
 				} else {
-					ps.setNull(8, Types.BIGINT); // Truyền NULL vào database nếu không có KH chính
+					ps.setNull(8, Types.BIGINT);
 				}
-				// =====================================
 
 				ps.setLong(9, kh.getMaKH());
 				ps.executeUpdate();
 			}
-
 			conn.commit();
 			return true;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 
-	// =================================================================
-	// HÀM XÓA KHÁCH HÀNG (XÓA MỀM)
-	// =================================================================
 	public boolean delete(long maKH) {
-		// Cập nhật TrangThaiXoa = 1 thay vì xóa cứng để bảo toàn dữ liệu lịch sử
 		String sql = "UPDATE khachhang SET TrangThaiXoa = 1 WHERE MaKH = ?";
-
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setLong(1, maKH);
-
-			// executeUpdate() trả về số dòng bị ảnh hưởng, > 0 nghĩa là xóa thành công
 			return ps.executeUpdate() > 0;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 
-	// 1. LẤY CHI TIẾT 1 KHÁCH HÀNG
 	public Map<String, Object> getChiTietKhachHang(long maKH) {
 		Map<String, Object> map = new HashMap<>();
-
-		// Sử dụng LEFT JOIN phòng trường hợp khách hàng chưa xếp phòng/hợp đồng
 		String sql = "SELECT kh.MaKH, kh.TenKH, kh.DiaChi, kh.GioiTinh, kh.NgaySinh, "
 				+ "kh.SDT, kh.Gmail, kh.SoCCCD, p.SoPhong, hd.MaHD, "
 				+ "(SELECT TenKH FROM KhachHang WHERE MaKH = hd.MaKH) AS TenKhachChinh " + "FROM KhachHang kh "
@@ -344,14 +319,13 @@ public class KhachHangDAO {
 				+ "LEFT JOIN HopDong hd ON p.MaPhong = hd.MaPhong AND hd.TrangThaiXoa = 0 " + "WHERE kh.MaKH = ?";
 
 		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
 			ps.setLong(1, maKH);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					map.put("MaKH", rs.getLong("MaKH"));
 					map.put("TenKH", rs.getString("TenKH"));
 					map.put("DiaChi", rs.getString("DiaChi"));
-					map.put("GioiTinh", rs.getBoolean("GioiTinh")); // boolean (0/1)
+					map.put("GioiTinh", rs.getBoolean("GioiTinh"));
 					map.put("NgaySinh", rs.getDate("NgaySinh"));
 					map.put("SDT", rs.getString("SDT"));
 					map.put("Gmail", rs.getString("Gmail"));
@@ -367,7 +341,6 @@ public class KhachHangDAO {
 		return map;
 	}
 
-	// 2. LẤY KHÁCH HÀNG PHỤ THUỘC (Ở chung phòng, ngoại trừ người đang xem)
 	public List<Map<String, Object>> getKhachHangPhuThuocTheoPhong(String maPhong, long maKHHienTai) {
 		List<Map<String, Object>> list = new ArrayList<>();
 		if (maPhong == null || maPhong.isEmpty()) {
@@ -378,7 +351,6 @@ public class KhachHangDAO {
 				+ "FROM KhachHang WHERE MaPhong = ? AND MaKH != ? AND TrangThaiXoa = 0";
 
 		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
 			ps.setString(1, maPhong);
 			ps.setLong(2, maKHHienTai);
 			try (ResultSet rs = ps.executeQuery()) {
@@ -398,5 +370,4 @@ public class KhachHangDAO {
 		}
 		return list;
 	}
-
 }

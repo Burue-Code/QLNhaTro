@@ -97,6 +97,7 @@ public class ThemHopDongView extends JDialog {
 		JPanel p1 = new JPanel(new BorderLayout());
 		p1.add(new JLabel("Ngày Lập:"), BorderLayout.NORTH);
 		txtNgayLap = new JTextField(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		txtNgayLap.setEditable(false);
 		p1.add(txtNgayLap, BorderLayout.CENTER);
 
 		JPanel p2 = new JPanel(new BorderLayout());

@@ -15,57 +15,62 @@ public class SuaPhuPhiController implements ActionListener {
 	private PhuPhiController phuPhiController;
 	private PhuPhiDAO phuPhiDAO;
 	private PhuPhi phuPhi;
-	
-	public SuaPhuPhiController(ThemPhuPhiView view,PhuPhiController phuPhiController, PhuPhi phuPhi) {
+
+	public SuaPhuPhiController(ThemPhuPhiView view, PhuPhiController phuPhiController, PhuPhi phuPhi) {
 		this.view = view;
 		this.phuPhiController = phuPhiController;
 		this.phuPhi = phuPhi;
 		this.phuPhiDAO = new PhuPhiDAO(DatabaseConnection.getConnection());
+
 		this.view.setTitle("Sửa Phụ Phí");
 		this.view.getBtnXatNhan().setText("Xác Nhận");
-		
+
 		fillData();
 		addEvents();
 		this.view.setVisible(true);
 	}
-	
+
 	private void fillData() {
 		view.getTxtTenPP().setText(phuPhi.getTenPP());
 		view.getTxtGia().setText(String.valueOf(phuPhi.getGia()));
 	}
-	
+
 	private void addEvents() {
 		view.getBtnThoat().addActionListener(this);
 		view.getBtnXatNhan().addActionListener(this);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == view.getBtnThoat()) view.dispose();
-		else if(e.getSource() == view.getBtnXatNhan()) xuLyCapNhat();
+		if (e.getSource() == view.getBtnThoat()) {
+			view.dispose();
+		} else if (e.getSource() == view.getBtnXatNhan()) {
+			xuLyCapNhat();
+		}
 	}
-	
+
 	private void xuLyCapNhat() {
 		try {
-			
-			phuPhi.setTenPP((String)view.getTxtTenPP().getText());
+			phuPhi.setTenPP(view.getTxtTenPP().getText());
 			phuPhi.setGia(Double.parseDouble(view.getTxtGia().getText()));
-			
+
 			boolean kq = phuPhiDAO.update(phuPhi);
-			
+
 			if (kq) {
-                JOptionPane.showMessageDialog(view, "Cập nhật thành công!");
-//                parentController.refreshData();
-                view.dispose();
-            } else {
-                JOptionPane.showMessageDialog(view, "Lỗi khi cập nhật!");
-            }
+				JOptionPane.showMessageDialog(view, "Cập nhật thành công!");
+				if (phuPhiController != null) {
+					phuPhiController.refreshData();
+				}
+				view.dispose();
+			} else {
+				JOptionPane.showMessageDialog(view, "Lỗi khi cập nhật!");
+			}
 
 		} catch (NumberFormatException e) {
-	        JOptionPane.showMessageDialog(view, "Vui lòng nhập giá là số hợp lệ!");
-	    } catch (Exception ex) {
-	        ex.printStackTrace(); // In lỗi ra console để dễ debug
-	        JOptionPane.showMessageDialog(view, "Lỗi: " + ex.getMessage());
-	    }
+			JOptionPane.showMessageDialog(view, "Vui lòng nhập giá là số hợp lệ!");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			JOptionPane.showMessageDialog(view, "Lỗi: " + ex.getMessage());
+		}
 	}
 }
