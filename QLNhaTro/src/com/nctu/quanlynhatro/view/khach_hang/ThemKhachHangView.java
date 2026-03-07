@@ -30,22 +30,18 @@ import com.nctu.quanlynhatro.view.component.MyTextField;
 
 public class ThemKhachHangView extends JDialog {
 
-	// --- Component bên TRÁI (Form nhập liệu) ---
 	private JTextField txtTenKH, txtDiaChi, txtSDT;
 	private JTextField txtCCCD, txtEmail;
 	private MyTextField txtNgaySinh;
 	private JRadioButton rdoNam, rdoNu;
 	private ButtonGroup btnGroupGioiTinh;
 
-	// Hai ô này Read-only, dữ liệu lấy từ bảng bên phải
 	private JTextField txtTenKHChinh, txtMaKHChinh;
 
-	// --- Component bên PHẢI (Danh sách chọn KH chính) ---
 	private JTextField txtTimKiem;
 	private MyTable tblKhachHang;
 	private DefaultTableModel tableModelDS;
 
-	// --- Component bên DƯỚI ---
 	private JButton btnThem, btnHuy;
 
 	private DefaultTableModel mainTableModel;
@@ -61,16 +57,12 @@ public class ThemKhachHangView extends JDialog {
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(contentPane);
 
-		// =================================================================
-		// 1. PANEL TRÁI: FORM NHẬP LIỆU
-		// =================================================================
 		JPanel pnlLeft = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(5, 5, 5, 5);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 
-		// Dòng 1: Tên Khách Hàng
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = 2;
@@ -80,7 +72,6 @@ public class ThemKhachHangView extends JDialog {
 		txtTenKH.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtTenKH, gbc);
 
-		// Dòng 2: Địa Chỉ
 		gbc.gridy = 2;
 		pnlLeft.add(new JLabel("Địa Chỉ:"), gbc);
 		gbc.gridy = 3;
@@ -88,7 +79,6 @@ public class ThemKhachHangView extends JDialog {
 		txtDiaChi.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtDiaChi, gbc);
 
-		// Dòng 3: Ngày Sinh & SĐT
 		JPanel pnlRow3 = new JPanel(new GridLayout(1, 2, 10, 0));
 
 		JPanel pnlNgaySinh = new JPanel(new BorderLayout());
@@ -109,7 +99,6 @@ public class ThemKhachHangView extends JDialog {
 		gbc.gridy = 4;
 		pnlLeft.add(pnlRow3, gbc);
 
-		// Dòng 4: Giới Tính
 		gbc.gridy = 5;
 		pnlLeft.add(new JLabel("Giới Tính:"), gbc);
 
@@ -128,7 +117,6 @@ public class ThemKhachHangView extends JDialog {
 		gbc.gridy = 6;
 		pnlLeft.add(pnlGioiTinh, gbc);
 
-		// Dòng 5: CCCD
 		gbc.gridy = 7;
 		pnlLeft.add(new JLabel("Số CCCD:"), gbc);
 		gbc.gridy = 8;
@@ -136,7 +124,6 @@ public class ThemKhachHangView extends JDialog {
 		txtCCCD.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtCCCD, gbc);
 
-		// Dòng 6: Gmail
 		gbc.gridy = 9;
 		pnlLeft.add(new JLabel("Gmail:"), gbc);
 		gbc.gridy = 10;
@@ -144,7 +131,6 @@ public class ThemKhachHangView extends JDialog {
 		txtEmail.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtEmail, gbc);
 
-		// Dòng 7: Tên KH Chính
 		gbc.gridy = 11;
 		pnlLeft.add(new JLabel("Tên Khách Hàng Chính:"), gbc);
 		gbc.gridy = 12;
@@ -154,7 +140,6 @@ public class ThemKhachHangView extends JDialog {
 		txtTenKHChinh.setBackground(new Color(240, 240, 240));
 		pnlLeft.add(txtTenKHChinh, gbc);
 
-		// Dòng 8: Mã KH Chính
 		gbc.gridy = 13;
 		pnlLeft.add(new JLabel("Mã Khách Hàng Chính:"), gbc);
 		gbc.gridy = 14;
@@ -164,14 +149,10 @@ public class ThemKhachHangView extends JDialog {
 		txtMaKHChinh.setBackground(new Color(240, 240, 240));
 		pnlLeft.add(txtMaKHChinh, gbc);
 
-		// Đẩy lên
 		gbc.gridy = 15;
 		gbc.weighty = 1.0;
 		pnlLeft.add(new JLabel(), gbc);
 
-		// =================================================================
-		// 2. PANEL PHẢI: DANH SÁCH TÌM KIẾM
-		// =================================================================
 		JPanel pnlRight = new JPanel(new BorderLayout(5, 5));
 
 		JPanel pnlSearch = new JPanel(new BorderLayout());
@@ -202,18 +183,12 @@ public class ThemKhachHangView extends JDialog {
 			}
 		});
 
-		// =================================================================
-		// 3. TỔNG HỢP (SPLIT PANE)
-		// =================================================================
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlLeft, pnlRight);
 		splitPane.setDividerLocation(400);
 		splitPane.setResizeWeight(0.4);
 
 		contentPane.add(splitPane, BorderLayout.CENTER);
 
-		// =================================================================
-		// 4. PANEL DƯỚI: NÚT BẤM
-		// =================================================================
 		JPanel pnlBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
 
 		btnHuy = new JButton("Hủy");
@@ -229,10 +204,6 @@ public class ThemKhachHangView extends JDialog {
 
 		contentPane.add(pnlBottom, BorderLayout.SOUTH);
 	}
-
-	// =================================================================
-	// CÁC HÀM GETTER
-	// =================================================================
 
 	public String getTenKhachHang() {
 		return txtTenKH.getText().trim();

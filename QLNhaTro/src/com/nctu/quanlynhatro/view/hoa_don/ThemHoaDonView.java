@@ -34,11 +34,10 @@ import com.nctu.quanlynhatro.model.KhachHangGoiY;
 
 public class ThemHoaDonView extends JDialog {
 
-	// --- Component KHU VỰC TRÁI ---
 	private JTextField txtTenKH, txtNgayThanhToan;
 	private JTextField txtMaHopDong;
-	// Thay đổi: Nhà trọ & Phòng thành ComboBox
-	private JTextField txtNhaTro, txtPhong; // Đổi từ ComboBox về JTextField
+
+	private JTextField txtNhaTro, txtPhong;
 	private JPopupMenu popupMenu;
 	private JList<KhachHangGoiY> listGoiY;
 	private DefaultListModel<KhachHangGoiY> listModel;
@@ -49,11 +48,9 @@ public class ThemHoaDonView extends JDialog {
 	private JButton btnCongDN, btnThemPhieuMoi;
 	private JComboBox<String> cboPhuongThuc, cboLoaiThanhToan;
 
-	// --- Component KHU VỰC PHẢI ---
 	private JTable tblPhuPhi, tblDienNuoc;
 	private DefaultTableModel modelPhuPhi, modelDienNuoc;
 
-	// --- Component KHU VỰC DƯỚI (Footer) ---
 	private JTextField txtTongTienDN, txtTongTienPhuPhi, txtTongThanhToan;
 	private JButton btnHuy, btnXacNhan, btnIn;
 
@@ -68,19 +65,14 @@ public class ThemHoaDonView extends JDialog {
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(contentPane);
 
-		// =================================================================
-		// 1. PHẦN GIỮA: CHIA 2 CỘT
-		// =================================================================
 		JPanel pnlCenter = new JPanel(new GridLayout(1, 2, 20, 0));
 
-		// --- CỘT TRÁI: FORM NHẬP LIỆU ---
 		JPanel pnlLeftForm = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(5, 0, 5, 0);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 
-		// Hàng 1
 		addLabel(pnlLeftForm, "Tên Khách Hàng:", 0, 0);
 		addLabel(pnlLeftForm, "Ngày Thanh Toán:", 1, 0);
 
@@ -92,7 +84,6 @@ public class ThemHoaDonView extends JDialog {
 		txtNgayThanhToan.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		addComponent(pnlLeftForm, txtNgayThanhToan, 1, 1);
 
-		// Hàng 2: Mã Hợp Đồng & Điện Nước
 		addLabel(pnlLeftForm, "Mã Hợp Đồng:", 0, 2);
 		addLabel(pnlLeftForm, "Hóa Đơn Điện Nước:", 1, 2);
 
@@ -114,7 +105,6 @@ public class ThemHoaDonView extends JDialog {
 
 		addComponent(pnlLeftForm, pnlDienNuocOption, 1, 3);
 
-		// Hàng 3: Nhà Trọ & Giá Thuê
 		addLabel(pnlLeftForm, "Nhà Trọ:", 0, 4);
 		addLabel(pnlLeftForm, "Giá Thuê:", 1, 4);
 
@@ -126,7 +116,6 @@ public class ThemHoaDonView extends JDialog {
 		txtGiaThue.setEditable(false);
 		addComponent(pnlLeftForm, txtGiaThue, 1, 5);
 
-		// Hàng 4: Phòng & Ghi Chú
 		addLabel(pnlLeftForm, "Phòng:", 0, 6);
 		addLabel(pnlLeftForm, "Ghi Chú:", 1, 6);
 
@@ -137,14 +126,12 @@ public class ThemHoaDonView extends JDialog {
 		txtGhiChu = createTextField();
 		addComponent(pnlLeftForm, txtGhiChu, 1, 7);
 
-//		Khởi tạo Popup Menu cho gợi ý
 		popupMenu = new JPopupMenu();
 		listModel = new DefaultListModel<>();
 		listGoiY = new JList<>(listModel);
 		popupMenu.add(new JScrollPane(listGoiY));
-		popupMenu.setFocusable(false); // Quan trọng để không mất focus khỏi txtTenKH
+		popupMenu.setFocusable(false);
 
-		// Hàng 5
 		addLabel(pnlLeftForm, "Phương Thức Thanh Toán:", 0, 8);
 		addLabel(pnlLeftForm, "Loại Thanh Toán:", 1, 8);
 		cboPhuongThuc = new JComboBox<>();
@@ -160,10 +147,8 @@ public class ThemHoaDonView extends JDialog {
 		gbc.weighty = 1.0;
 		pnlLeftForm.add(new JLabel(), gbc);
 
-		// --- CỘT PHẢI: BẢNG DỮ LIỆU ---
 		JPanel pnlRightTables = new JPanel(new GridLayout(2, 1, 0, 10));
 
-		// Bảng Phụ Phí
 		JPanel pnlPhuPhi = new JPanel(new BorderLayout());
 		pnlPhuPhi.setBorder(new TitledBorder("Phụ Phí"));
 		String[] colsPhuPhi = { "MaPP", "Tên Phụ Phí", "Giá" };
@@ -173,7 +158,6 @@ public class ThemHoaDonView extends JDialog {
 		tblPhuPhi.setPreferredScrollableViewportSize(new Dimension(450, 100));
 		pnlPhuPhi.add(new JScrollPane(tblPhuPhi), BorderLayout.CENTER);
 
-		// Bảng Điện Nước
 		JPanel pnlDienNuoc = new JPanel(new BorderLayout());
 		pnlDienNuoc.setBorder(new TitledBorder("Hóa Đơn Điện Nước"));
 		String[] colsDN = { "MaDN", "Thời Gian", "Giá" };
@@ -190,9 +174,6 @@ public class ThemHoaDonView extends JDialog {
 		pnlCenter.add(pnlRightTables);
 		contentPane.add(pnlCenter, BorderLayout.CENTER);
 
-		// =================================================================
-		// 2. PHẦN DƯỚI: FOOTER
-		// =================================================================
 		JPanel pnlFooter = new JPanel(new GridLayout(1, 2, 20, 0));
 		pnlFooter.setBorder(new EmptyBorder(10, 0, 0, 0));
 
@@ -236,7 +217,6 @@ public class ThemHoaDonView extends JDialog {
 		setLocationRelativeTo(null);
 	}
 
-	// --- Helper Functions ---
 	private void addLabel(JPanel panel, String text, int x, int y) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = x;
@@ -282,10 +262,6 @@ public class ThemHoaDonView extends JDialog {
 		return p;
 	}
 
-	// =================================================================
-	// CÁC HÀM GETTER (Để Controller lấy dữ liệu từ giao diện)
-	// =================================================================
-
 	public JTextField getTxtTenKH() {
 		return txtTenKH;
 	}
@@ -298,7 +274,6 @@ public class ThemHoaDonView extends JDialog {
 		return txtMaHopDong;
 	}
 
-	// Getter mới cho ComboBox
 	public JTextField getTxtNhaTro() {
 		return txtNhaTro;
 	}
@@ -386,10 +361,6 @@ public class ThemHoaDonView extends JDialog {
 	public JTextField getTxtTongThanhToan() {
 		return txtTongThanhToan;
 	}
-
-	// =================================================================
-	// CÁC HÀM SETTER (Để Controller đổ dữ liệu lên giao diện)
-	// =================================================================
 
 	public void setTenKH(String tenKH) {
 		this.txtTenKH.setText(tenKH);

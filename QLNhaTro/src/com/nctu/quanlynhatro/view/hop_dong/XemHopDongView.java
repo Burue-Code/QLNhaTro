@@ -22,7 +22,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class XemHopDongView extends JDialog {
 
-	// ====== TextFields (chỉ giao diện, không cần dữ liệu) ======
 	private JTextField txtMaHopDong;
 	private JTextField txtTenKhachHang;
 	private JTextField txtNgayBatDau;
@@ -36,11 +35,9 @@ public class XemHopDongView extends JDialog {
 	private JTextField txtTrangThaiHopDong;
 	private JTextField txtGhiChu;
 
-	// ====== Table ======
 	private JTable tblKhachHangPhuThuoc;
 	private DefaultTableModel modelPhuThuoc;
 
-	// ====== Buttons ======
 	private JButton btnThoat;
 	private JButton btnSua;
 	private JButton btnXoa;
@@ -72,17 +69,14 @@ public class XemHopDongView extends JDialog {
 		txtTrangThaiHopDong = createFieldReadonly();
 		txtGhiChu = createFieldReadonly();
 
-		// ---- Row 0: MaHD | NhaTro | GiaThue ----
 		addLabeledField(pnlTop, gbc, 0, 0, "Mã Hợp Đồng", txtMaHopDong);
 		addLabeledField(pnlTop, gbc, 1, 0, "Nhà Trọ", txtNhaTro);
 		addLabeledField(pnlTop, gbc, 2, 0, "Giá Thuê", txtGiaThue);
 
-		// ---- Row 1: TenKH | Phong | TrangThai ----
 		addLabeledField(pnlTop, gbc, 0, 1, "Tên Khách Hàng", txtTenKhachHang);
 		addLabeledField(pnlTop, gbc, 1, 1, "Phòng", txtPhong);
 		addLabeledField(pnlTop, gbc, 2, 1, "Trạng Thái Hợp Đồng", txtTrangThaiHopDong);
 
-		// ---- Row 2: (NgayBatDau + NgayKetThuc) | SoLuongNguoiO | GhiChu ----
 		JPanel pnlDates = new JPanel(new GridBagLayout());
 		GridBagConstraints d = new GridBagConstraints();
 		d.insets = new Insets(0, 0, 0, 8);
@@ -117,9 +111,6 @@ public class XemHopDongView extends JDialog {
 
 		contentPane.add(pnlTop, BorderLayout.NORTH);
 
-		// =========================
-		// CENTER: TABLE "Khách Hàng Phụ Thuộc"
-		// =========================
 		JPanel pnlCenter = new JPanel(new BorderLayout());
 		pnlCenter.setBorder(new TitledBorder("Khách Hàng Phụ Thuộc"));
 
@@ -127,12 +118,12 @@ public class XemHopDongView extends JDialog {
 		modelPhuThuoc = new DefaultTableModel(colsPT, 0) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
-				return false; // không cho sửa cell
+				return false;
 			}
 		};
 
 		tblKhachHangPhuThuoc = new JTable(modelPhuThuoc);
-		tblKhachHangPhuThuoc.setEnabled(false); // không cho tương tác (chọn/sửa)
+		tblKhachHangPhuThuoc.setEnabled(false);
 		tblKhachHangPhuThuoc.setRowSelectionAllowed(false);
 		tblKhachHangPhuThuoc.setCellSelectionEnabled(false);
 		tblKhachHangPhuThuoc.setFocusable(false);
@@ -151,7 +142,6 @@ public class XemHopDongView extends JDialog {
 		btnXoa.setPreferredSize(btnSize);
 		btnThoat.setPreferredSize(btnSize);
 
-		// Add theo thứ tự từ trái qua phải
 		pnlBottom.add(btnSua);
 		pnlBottom.add(btnXoa);
 		pnlBottom.add(btnThoat);
@@ -163,9 +153,9 @@ public class XemHopDongView extends JDialog {
 	private JTextField createFieldReadonly() {
 		JTextField tf = new JTextField();
 		tf.setPreferredSize(new Dimension(0, 34));
-		tf.setEditable(false); // không cho gõ
-		tf.setFocusable(false); // không focus bằng tab/click
-		tf.setBackground(UIManager.getColor("TextField.background")); // giữ màu giống form
+		tf.setEditable(false);
+		tf.setFocusable(false);
+		tf.setBackground(UIManager.getColor("TextField.background"));
 		return tf;
 	}
 
@@ -181,8 +171,6 @@ public class XemHopDongView extends JDialog {
 		gbc.weightx = 1.0;
 		parent.add(box, gbc);
 	}
-
-	// ====== Getters ======
 
 	public JTextField getTxtMaHopDong() {
 		return txtMaHopDong;
@@ -236,7 +224,6 @@ public class XemHopDongView extends JDialog {
 		return btnThoat;
 	}
 
-	// [MỚI THÊM] Getter cho 2 nút Sửa và Xóa
 	public JButton getBtnSua() {
 		return btnSua;
 	}
@@ -244,8 +231,6 @@ public class XemHopDongView extends JDialog {
 	public JButton getBtnXoa() {
 		return btnXoa;
 	}
-
-	// ====== Setters (Cho các trường dữ liệu) ======
 
 	public void setTxtMaHopDong(String maHopDong) {
 		this.txtMaHopDong.setText(maHopDong);

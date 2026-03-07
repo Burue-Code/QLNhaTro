@@ -25,7 +25,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class XemKhachHangView extends JDialog {
 
-	// ====== Text fields (chỉ hiển thị) ======
 	private JTextField txtTenKH;
 	private JTextField txtNgaySinh;
 	private JTextField txtGioiTinh;
@@ -38,14 +37,12 @@ public class XemKhachHangView extends JDialog {
 	private JTextField txtThuocHopDong;
 	private JTextField txtTenKhachHangChinh;
 
-	// ====== Table ======
 	private JTable tblKhachHangPhuThuoc;
 	private DefaultTableModel modelPhuThuoc;
 
-	// ====== Buttons ======
 	private JButton btnThoat;
-	private JButton btnSua; // [MỚI THÊM]
-	private JButton btnXoa; // [MỚI THÊM]
+	private JButton btnSua;
+	private JButton btnXoa;
 
 	public XemKhachHangView(Frame owner) {
 		super(owner, "Xem Hồ Sơ Khách Hàng", true);
@@ -58,9 +55,6 @@ public class XemKhachHangView extends JDialog {
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(contentPane);
 
-		// ============================================================
-		// TOP: KHU VỰC THÔNG TIN 
-		// ============================================================
 		JPanel pnlTop = new JPanel(new GridBagLayout());
 		GridBagConstraints gbcTop = new GridBagConstraints();
 		gbcTop.fill = GridBagConstraints.BOTH;
@@ -82,9 +76,6 @@ public class XemKhachHangView extends JDialog {
 
 		contentPane.add(pnlTop, BorderLayout.NORTH);
 
-		// ============================================================
-		// CENTER: BẢNG "Khách Hàng Phụ Thuộc"
-		// ============================================================
 		JPanel pnlCenter = new JPanel(new BorderLayout());
 		pnlCenter.setBorder(new TitledBorder("Khách Hàng Phụ Thuộc"));
 
@@ -105,13 +96,10 @@ public class XemKhachHangView extends JDialog {
 
 		contentPane.add(pnlCenter, BorderLayout.CENTER);
 
-		// ============================================================
-		// SOUTH: NÚT (Thoát - Sửa - Xóa) căn phải
-		// ============================================================
 		JPanel pnlBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
 
-		btnSua = new JButton("Sửa Hồ Sơ"); // [MỚI THÊM]
-		btnXoa = new JButton("Xóa Khách Hàng"); // [MỚI THÊM]
+		btnSua = new JButton("Sửa Hồ Sơ");
+		btnXoa = new JButton("Xóa Khách Hàng");
 		btnThoat = new JButton("Thoát");
 
 		Dimension btnSize = new Dimension(130, 35);
@@ -119,7 +107,6 @@ public class XemKhachHangView extends JDialog {
 		btnXoa.setPreferredSize(btnSize);
 		btnThoat.setPreferredSize(btnSize);
 
-		// Thêm theo thứ tự
 		pnlBottom.add(btnSua);
 		pnlBottom.add(btnXoa);
 		pnlBottom.add(btnThoat);
@@ -127,56 +114,85 @@ public class XemKhachHangView extends JDialog {
 		contentPane.add(pnlBottom, BorderLayout.SOUTH);
 	}
 
-	// ======= Cột trái =======
 	private JPanel buildLeftColumn() {
 		JPanel pnl = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = baseGbc();
 
-		gbc.gridy = 0; pnl.add(labelAbove("Tên Khách Hàng"), gbc);
-		gbc.gridy = 1; txtTenKH = viewOnlyField(); pnl.add(txtTenKH, gbc);
+		gbc.gridy = 0;
+		pnl.add(labelAbove("Tên Khách Hàng"), gbc);
+		gbc.gridy = 1;
+		txtTenKH = viewOnlyField();
+		pnl.add(txtTenKH, gbc);
 
-		gbc.gridy = 2; gbc.insets = new Insets(16, 0, 0, 0);
+		gbc.gridy = 2;
+		gbc.insets = new Insets(16, 0, 0, 0);
 		JPanel row2 = new JPanel(new GridLayout(1, 2, 20, 0));
 		row2.add(stack("Ngày Sinh", txtNgaySinh = viewOnlyField()));
 		row2.add(stack("Giới Tính", txtGioiTinh = viewOnlyField()));
 		pnl.add(row2, gbc);
 
-		gbc.gridy = 3; gbc.insets = new Insets(16, 0, 0, 0); pnl.add(labelAbove("Số Điện Thoại"), gbc);
-		gbc.gridy = 4; gbc.insets = new Insets(6, 0, 0, 0); txtSDT = viewOnlyField(); pnl.add(txtSDT, gbc);
+		gbc.gridy = 3;
+		gbc.insets = new Insets(16, 0, 0, 0);
+		pnl.add(labelAbove("Số Điện Thoại"), gbc);
+		gbc.gridy = 4;
+		gbc.insets = new Insets(6, 0, 0, 0);
+		txtSDT = viewOnlyField();
+		pnl.add(txtSDT, gbc);
 
-		gbc.gridy = 5; gbc.insets = new Insets(16, 0, 0, 0); pnl.add(labelAbove("Địa Chỉ"), gbc);
-		gbc.gridy = 6; gbc.insets = new Insets(6, 0, 0, 0); txtDiaChi = viewOnlyField(); pnl.add(txtDiaChi, gbc);
+		gbc.gridy = 5;
+		gbc.insets = new Insets(16, 0, 0, 0);
+		pnl.add(labelAbove("Địa Chỉ"), gbc);
+		gbc.gridy = 6;
+		gbc.insets = new Insets(6, 0, 0, 0);
+		txtDiaChi = viewOnlyField();
+		pnl.add(txtDiaChi, gbc);
 
 		return pnl;
 	}
 
-	// ======= Cột phải =======
 	private JPanel buildRightColumn() {
 		JPanel pnl = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = baseGbc();
 
-		gbc.gridy = 0; pnl.add(labelAbove("Căn Cước Công Dân"), gbc);
-		gbc.gridy = 1; txtCCCD = viewOnlyField(); pnl.add(txtCCCD, gbc);
+		gbc.gridy = 0;
+		pnl.add(labelAbove("Căn Cước Công Dân"), gbc);
+		gbc.gridy = 1;
+		txtCCCD = viewOnlyField();
+		pnl.add(txtCCCD, gbc);
 
-		gbc.gridy = 2; gbc.insets = new Insets(16, 0, 0, 0); pnl.add(labelAbove("Gmail"), gbc);
-		gbc.gridy = 3; gbc.insets = new Insets(6, 0, 0, 0); txtGmail = viewOnlyField(); pnl.add(txtGmail, gbc);
+		gbc.gridy = 2;
+		gbc.insets = new Insets(16, 0, 0, 0);
+		pnl.add(labelAbove("Gmail"), gbc);
+		gbc.gridy = 3;
+		gbc.insets = new Insets(6, 0, 0, 0);
+		txtGmail = viewOnlyField();
+		pnl.add(txtGmail, gbc);
 
-		gbc.gridy = 4; gbc.insets = new Insets(16, 0, 0, 0);
+		gbc.gridy = 4;
+		gbc.insets = new Insets(16, 0, 0, 0);
 		JPanel row = new JPanel(new GridLayout(1, 2, 20, 0));
 		row.add(stack("Ở Phòng", txtOPHong = viewOnlyField()));
 		row.add(stack("Thuộc Hợp Đồng", txtThuocHopDong = viewOnlyField()));
 		pnl.add(row, gbc);
 
-		gbc.gridy = 5; gbc.insets = new Insets(16, 0, 0, 0); pnl.add(labelAbove("Tên Khách Hàng Chính"), gbc);
-		gbc.gridy = 6; gbc.insets = new Insets(6, 0, 0, 0); txtTenKhachHangChinh = viewOnlyField(); pnl.add(txtTenKhachHangChinh, gbc);
+		gbc.gridy = 5;
+		gbc.insets = new Insets(16, 0, 0, 0);
+		pnl.add(labelAbove("Tên Khách Hàng Chính"), gbc);
+		gbc.gridy = 6;
+		gbc.insets = new Insets(6, 0, 0, 0);
+		txtTenKhachHangChinh = viewOnlyField();
+		pnl.add(txtTenKhachHangChinh, gbc);
 
 		return pnl;
 	}
 
-	// ===== Helpers =====
 	private GridBagConstraints baseGbc() {
 		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0; gbc.gridwidth = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0; gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.gridx = 0;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 1.0;
+		gbc.insets = new Insets(0, 0, 0, 0);
 		return gbc;
 	}
 
@@ -198,39 +214,103 @@ public class XemKhachHangView extends JDialog {
 		tf.setPreferredSize(new Dimension(0, 32));
 		tf.setEditable(false);
 		tf.setFocusable(false);
-		tf.setBackground(new Color(240, 240, 240)); 
+		tf.setBackground(new Color(240, 240, 240));
 		return tf;
 	}
 
-	// =================================================================
-	// GETTERS
-	// =================================================================
-	public JTextField getTxtTenKH() { return txtTenKH; }
-	public JTextField getTxtNgaySinh() { return txtNgaySinh; }
-	public JTextField getTxtGioiTinh() { return txtGioiTinh; }
-	public JTextField getTxtSDT() { return txtSDT; }
-	public JTextField getTxtDiaChi() { return txtDiaChi; }
-	public JTextField getTxtCCCD() { return txtCCCD; }
-	public JTextField getTxtGmail() { return txtGmail; }
-	public JTextField getTxtOPHong() { return txtOPHong; }
-	public JTextField getTxtThuocHopDong() { return txtThuocHopDong; }
-	public JTextField getTxtTenKhachHangChinh() { return txtTenKhachHangChinh; }
-	public DefaultTableModel getModelPhuThuoc() { return modelPhuThuoc; }
-	public JButton getBtnThoat() { return btnThoat; }
-	public JButton getBtnSua() { return btnSua; }
-	public JButton getBtnXoa() { return btnXoa; }
+	public JTextField getTxtTenKH() {
+		return txtTenKH;
+	}
 
-	// =================================================================
-	// SETTERS
-	// =================================================================
-	public void setTxtTenKH(String text) { this.txtTenKH.setText(text); }
-	public void setTxtNgaySinh(String text) { this.txtNgaySinh.setText(text); }
-	public void setTxtGioiTinh(String text) { this.txtGioiTinh.setText(text); }
-	public void setTxtSDT(String text) { this.txtSDT.setText(text); }
-	public void setTxtDiaChi(String text) { this.txtDiaChi.setText(text); }
-	public void setTxtCCCD(String text) { this.txtCCCD.setText(text); }
-	public void setTxtGmail(String text) { this.txtGmail.setText(text); }
-	public void setTxtOPHong(String text) { this.txtOPHong.setText(text); }
-	public void setTxtThuocHopDong(String text) { this.txtThuocHopDong.setText(text); }
-	public void setTxtTenKhachHangChinh(String text) { this.txtTenKhachHangChinh.setText(text); }
+	public JTextField getTxtNgaySinh() {
+		return txtNgaySinh;
+	}
+
+	public JTextField getTxtGioiTinh() {
+		return txtGioiTinh;
+	}
+
+	public JTextField getTxtSDT() {
+		return txtSDT;
+	}
+
+	public JTextField getTxtDiaChi() {
+		return txtDiaChi;
+	}
+
+	public JTextField getTxtCCCD() {
+		return txtCCCD;
+	}
+
+	public JTextField getTxtGmail() {
+		return txtGmail;
+	}
+
+	public JTextField getTxtOPHong() {
+		return txtOPHong;
+	}
+
+	public JTextField getTxtThuocHopDong() {
+		return txtThuocHopDong;
+	}
+
+	public JTextField getTxtTenKhachHangChinh() {
+		return txtTenKhachHangChinh;
+	}
+
+	public DefaultTableModel getModelPhuThuoc() {
+		return modelPhuThuoc;
+	}
+
+	public JButton getBtnThoat() {
+		return btnThoat;
+	}
+
+	public JButton getBtnSua() {
+		return btnSua;
+	}
+
+	public JButton getBtnXoa() {
+		return btnXoa;
+	}
+
+	public void setTxtTenKH(String text) {
+		this.txtTenKH.setText(text);
+	}
+
+	public void setTxtNgaySinh(String text) {
+		this.txtNgaySinh.setText(text);
+	}
+
+	public void setTxtGioiTinh(String text) {
+		this.txtGioiTinh.setText(text);
+	}
+
+	public void setTxtSDT(String text) {
+		this.txtSDT.setText(text);
+	}
+
+	public void setTxtDiaChi(String text) {
+		this.txtDiaChi.setText(text);
+	}
+
+	public void setTxtCCCD(String text) {
+		this.txtCCCD.setText(text);
+	}
+
+	public void setTxtGmail(String text) {
+		this.txtGmail.setText(text);
+	}
+
+	public void setTxtOPHong(String text) {
+		this.txtOPHong.setText(text);
+	}
+
+	public void setTxtThuocHopDong(String text) {
+		this.txtThuocHopDong.setText(text);
+	}
+
+	public void setTxtTenKhachHangChinh(String text) {
+		this.txtTenKhachHangChinh.setText(text);
+	}
 }

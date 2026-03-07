@@ -17,7 +17,6 @@ public class PhieuDienNuoc {
 		this.phong = new Phong();
 	}
 
-	// Constructor đầy đủ khớp với các cột chính trong DB
 	public PhieuDienNuoc(long maDN, LocalDate thangNam, float chiSoDienCu, float chiSoDienMoi, float chiSoNuocCu,
 			float chiSoNuocMoi, double tienDien, double tienNuoc, double giaDien, double giaNuoc, double tongTien,
 			String trangThaiDN) {

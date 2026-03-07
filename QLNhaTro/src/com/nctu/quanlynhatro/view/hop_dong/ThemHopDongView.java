@@ -30,24 +30,20 @@ import javax.swing.table.DefaultTableModel;
 
 public class ThemHopDongView extends JDialog {
 
-	// --- Component TRÁI (Form Hợp Đồng) ---
-	private JTextField txtMaKH, txtTenKH; // Read-only
+	private JTextField txtMaKH, txtTenKH;
 	private JTextField txtNgayLap, txtSoThang, txtNgayKetThuc;
 	private JComboBox<String> cboNhaTro, cboPhong;
 	private JTextField txtSoNguoi, txtGiaThue;
 	private JTextArea txtGhiChu;
 
-	// --- Component PHẢI TRÊN (Tìm KH Chính) ---
 	private JTextField txtTimKiem;
 	private JButton btnThemKH;
 	private JTable tblKhachHang;
 	private DefaultTableModel modelKH;
 
-	// --- Component PHẢI DƯỚI (KH Phụ Thuộc) ---
 	private JTable tblKHPhuThuoc;
 	private DefaultTableModel modelPhuThuoc;
 
-	// --- Component DƯỚI ---
 	private JButton btnThem, btnThoat;
 
 	private DefaultTableModel mainTableModel;
@@ -55,7 +51,7 @@ public class ThemHopDongView extends JDialog {
 	public ThemHopDongView(DefaultTableModel model) {
 		this.mainTableModel = model;
 		setTitle("Lập Hợp Đồng Mới");
-		setSize(1100, 650); // Form lớn
+		setSize(1100, 650);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -63,16 +59,12 @@ public class ThemHopDongView extends JDialog {
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(contentPane);
 
-		// =================================================================
-		// 1. PANEL TRÁI: FORM NHẬP LIỆU HỢP ĐỒNG
-		// =================================================================
 		JPanel pnlLeft = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(5, 5, 5, 5);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 
-		// --- Hàng 1: Mã KH (Read-only) ---
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		pnlLeft.add(new JLabel("Mã Khách Hàng:"), gbc);
@@ -82,7 +74,6 @@ public class ThemHopDongView extends JDialog {
 		txtMaKH.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtMaKH, gbc);
 
-		// --- Hàng 2: Tên KH (Read-only) ---
 		gbc.gridy = 2;
 		pnlLeft.add(new JLabel("Tên Khách Hàng:"), gbc);
 		gbc.gridy = 3;
@@ -91,7 +82,6 @@ public class ThemHopDongView extends JDialog {
 		txtTenKH.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtTenKH, gbc);
 
-		// --- Hàng 3: Ngày Lập - Số Tháng - Ngày KT ---
 		JPanel pnlTime = new JPanel(new GridLayout(1, 3, 5, 0));
 
 		JPanel p1 = new JPanel(new BorderLayout());
@@ -118,7 +108,6 @@ public class ThemHopDongView extends JDialog {
 		gbc.gridy = 4;
 		pnlLeft.add(pnlTime, gbc);
 
-		// --- Hàng 4: Nhà Trọ ---
 		gbc.gridy = 5;
 		pnlLeft.add(new JLabel("Chọn Nhà Trọ:"), gbc);
 		gbc.gridy = 6;
@@ -126,7 +115,6 @@ public class ThemHopDongView extends JDialog {
 		cboNhaTro.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(cboNhaTro, gbc);
 
-		// --- Hàng 5: Phòng ---
 		gbc.gridy = 7;
 		pnlLeft.add(new JLabel("Chọn Phòng:"), gbc);
 		gbc.gridy = 8;
@@ -134,27 +122,24 @@ public class ThemHopDongView extends JDialog {
 		cboPhong.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(cboPhong, gbc);
 
-		// --- Hàng 6: Số Lượng Người Ở ---
 		gbc.gridy = 9;
 		pnlLeft.add(new JLabel("Số Lượng Người Ở:"), gbc);
 		gbc.gridy = 10;
 		txtSoNguoi = new JTextField("1");
-		txtSoNguoi.setEditable(false); // không cho gõ
+		txtSoNguoi.setEditable(false);
 		txtSoNguoi.setFocusable(false);
 		txtSoNguoi.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtSoNguoi, gbc);
 
-		// --- Hàng 7: Giá Thuê ---
 		gbc.gridy = 11;
 		pnlLeft.add(new JLabel("Giá Thuê:"), gbc);
 		gbc.gridy = 12;
 		txtGiaThue = new JTextField();
-		txtGiaThue.setEditable(false); // không cho gõ
+		txtGiaThue.setEditable(false);
 		txtGiaThue.setFocusable(false);
 		txtGiaThue.setPreferredSize(new Dimension(0, 30));
 		pnlLeft.add(txtGiaThue, gbc);
 
-		// --- Hàng 8: Ghi Chú ---
 		gbc.gridy = 13;
 		pnlLeft.add(new JLabel("Ghi Chú:"), gbc);
 		gbc.gridy = 14;
@@ -162,17 +147,12 @@ public class ThemHopDongView extends JDialog {
 		txtGhiChu.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		pnlLeft.add(txtGhiChu, gbc);
 
-		// Spacer đẩy lên
 		gbc.gridy = 15;
 		gbc.weighty = 1.0;
 		pnlLeft.add(new JLabel(), gbc);
 
-		// =================================================================
-		// 2. PANEL PHẢI: TÌM KIẾM & DANH SÁCH PHỤ THUỘC
-		// =================================================================
-		JPanel pnlRight = new JPanel(new GridLayout(2, 1, 0, 10)); // Chia 2 phần trên dưới
+		JPanel pnlRight = new JPanel(new GridLayout(2, 1, 0, 10));
 
-		// --- PHẦN TRÊN: TÌM KIẾM KHÁCH HÀNG ---
 		JPanel pnlTopRight = new JPanel(new BorderLayout(5, 5));
 		pnlTopRight.setBorder(new TitledBorder("Khách Hàng (Người thuê chính)"));
 
@@ -190,7 +170,6 @@ public class ThemHopDongView extends JDialog {
 		tblKhachHang = new JTable(modelKH);
 		pnlTopRight.add(new JScrollPane(tblKhachHang), BorderLayout.CENTER);
 
-		// --- PHẦN DƯỚI: KHÁCH HÀNG PHỤ THUỘC ---
 		JPanel pnlBotRight = new JPanel(new BorderLayout());
 		pnlBotRight.setBorder(new TitledBorder("Khách Hàng Phụ Thuộc (Ở chung)"));
 
@@ -202,18 +181,12 @@ public class ThemHopDongView extends JDialog {
 		pnlRight.add(pnlTopRight);
 		pnlRight.add(pnlBotRight);
 
-		// =================================================================
-		// 3. TỔNG HỢP GIAO DIỆN
-		// =================================================================
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlLeft, pnlRight);
-		splitPane.setDividerLocation(350); // Chiều rộng panel trái
+		splitPane.setDividerLocation(350);
 		splitPane.setResizeWeight(0.3);
 
 		contentPane.add(splitPane, BorderLayout.CENTER);
 
-		// =================================================================
-		// 4. PANEL DƯỚI CÙNG: NÚT BẤM
-		// =================================================================
 		JPanel pnlBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		btnThoat = new JButton("Thoát");
@@ -230,9 +203,6 @@ public class ThemHopDongView extends JDialog {
 
 	}
 
-	// =================================================================
-	// CÁC HÀM GETTER COMPONENT (Dành cho Controller gắn sự kiện, đổ dữ liệu)
-	// =================================================================
 	public JButton getBtnThem() {
 		return btnThem;
 	}
@@ -281,9 +251,6 @@ public class ThemHopDongView extends JDialog {
 		return modelPhuThuoc;
 	}
 
-	// =================================================================
-	// CÁC HÀM GETTER DỮ LIỆU NHẬP LIỆU (Lấy chuỗi text để lưu CSDL)
-	// =================================================================
 	public String getMaKH() {
 		return txtMaKH.getText().trim();
 	}
@@ -316,9 +283,6 @@ public class ThemHopDongView extends JDialog {
 		return txtGhiChu.getText().trim();
 	}
 
-	// =================================================================
-	// CÁC HÀM SETTER (Controller dùng để đẩy dữ liệu ngược lên giao diện)
-	// =================================================================
 	public void setMaKH(String maKH) {
 		this.txtMaKH.setText(maKH);
 	}

@@ -41,14 +41,12 @@ public class ThemNhaTroView extends JDialog {
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(mainPanel);
 
-		// Form nhập liệu
 		JPanel formPanel = new JPanel(new GridBagLayout());
 		formPanel.setBorder(new TitledBorder("Thông tin nhà trọ"));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(8, 8, 8, 8);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		// Hàng 0: Tên & Số Phòng
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.anchor = GridBagConstraints.EAST;
@@ -70,7 +68,6 @@ public class ThemNhaTroView extends JDialog {
 		gbc.weightx = 1.0;
 		formPanel.add(txtSoPhong, gbc);
 
-		// Hàng 1: Địa Chỉ & Trạng Thái
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.weightx = 0;
@@ -92,7 +89,6 @@ public class ThemNhaTroView extends JDialog {
 		gbc.weightx = 1.0;
 		formPanel.add(cboTrangThai, gbc);
 
-		// Hàng 2: Ghi Chú
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		gbc.weightx = 0;
@@ -107,7 +103,6 @@ public class ThemNhaTroView extends JDialog {
 
 		mainPanel.add(formPanel, BorderLayout.CENTER);
 
-		// Nút bấm
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		btnHuy = new MyButton("Hủy");
 		btnHuy.setButtonColor(Color.red);

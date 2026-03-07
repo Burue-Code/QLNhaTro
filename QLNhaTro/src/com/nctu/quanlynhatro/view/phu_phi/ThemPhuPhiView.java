@@ -1,89 +1,108 @@
 package com.nctu.quanlynhatro.view.phu_phi;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
 public class ThemPhuPhiView extends JDialog {
 
-    private JTextField txtTenPP, txtGia;
-    private JButton btnThoat, btnXacNhan;
-    private DefaultTableModel tableModel;
+	private JTextField txtTenPP, txtGia;
+	private JButton btnThoat, btnXacNhan;
+	private DefaultTableModel tableModel;
 
-    public ThemPhuPhiView(DefaultTableModel model) {
-        this.tableModel = model;
-        
-        setTitle("Thêm Phụ Phí Mới");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	public ThemPhuPhiView(DefaultTableModel model) {
+		this.tableModel = model;
 
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+		setTitle("Thêm Phụ Phí Mới");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // =================================================================
-        // 1. TẠO CONTAINER CHỨA CẢ FORM VÀ NÚT
-        // =================================================================
-        JPanel containerPanel = new JPanel(new BorderLayout(0, 15)); 
+		JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		setContentPane(mainPanel);
 
-        // --- A. FORM NHẬP LIỆU ---
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(new TitledBorder("Thông tin phụ phí"));
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8); 
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+		JPanel containerPanel = new JPanel(new BorderLayout(0, 15));
 
-        // Dòng 1: Tên Phụ Phí
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
-        formPanel.add(new JLabel("Tên Phụ Phí:"), gbc);
+		JPanel formPanel = new JPanel(new GridBagLayout());
+		formPanel.setBorder(new TitledBorder("Thông tin phụ phí"));
 
-        txtTenPP = new JTextField(20); // Số 20 để định hình chiều rộng ban đầu
-        gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1.0;
-        formPanel.add(txtTenPP, gbc);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(8, 8, 8, 8);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Dòng 2: Giá
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
-        formPanel.add(new JLabel("Đơn Giá:"), gbc);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		formPanel.add(new JLabel("Tên Phụ Phí:"), gbc);
 
-        txtGia = new JTextField(20);
-        gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1.0;
-        formPanel.add(txtGia, gbc);
+		txtTenPP = new JTextField(20);
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.weightx = 1.0;
+		formPanel.add(txtTenPP, gbc);
 
-        // --- B. PANEL NÚT BẤM ---
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
-        
-        btnThoat = new JButton("Thoát");
-        btnThoat.setPreferredSize(new Dimension(100, 35));
-        
-        btnXacNhan = new JButton("Xác Nhận");
-        btnXacNhan.setPreferredSize(new Dimension(100, 35));
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.weightx = 0;
+		formPanel.add(new JLabel("Đơn Giá:"), gbc);
 
-        buttonPanel.add(btnThoat);
-        buttonPanel.add(btnXacNhan);
+		txtGia = new JTextField(20);
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		gbc.weightx = 1.0;
+		formPanel.add(txtGia, gbc);
 
-        // --- C. GỘP VÀO CONTAINER ---
-        containerPanel.add(formPanel, BorderLayout.CENTER);
-        containerPanel.add(buttonPanel, BorderLayout.SOUTH);
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
 
-        // Đặt container vào giữa
-        mainPanel.add(containerPanel, BorderLayout.CENTER);
+		btnThoat = new JButton("Thoát");
+		btnThoat.setPreferredSize(new Dimension(100, 35));
 
-        // =================================================================
-        // QUAN TRỌNG: LỆNH PACK() ĐỂ CO KHUNG VỪA KHÍT
-        // =================================================================
-        pack(); // Tự động co giãn cửa sổ vừa với nội dung
-        setLocationRelativeTo(null); // Ra giữa màn hình (phải gọi sau pack)
+		btnXacNhan = new JButton("Xác Nhận");
+		btnXacNhan.setPreferredSize(new Dimension(100, 35));
 
-        // =================================================================
-        // 2. XỬ LÝ SỰ KIỆN
-        // =================================================================
-    }
-    public JTextField getTxtTenPP() { return txtTenPP; }
-    public JTextField getTxtGia() { return txtGia; }
-    public JButton getBtnThoat() { return btnThoat;}
-    public JButton getBtnXatNhan() { return btnXacNhan; }
-    public DefaultTableModel getTableModel() { return tableModel; }
+		buttonPanel.add(btnThoat);
+		buttonPanel.add(btnXacNhan);
+
+		containerPanel.add(formPanel, BorderLayout.CENTER);
+		containerPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+		mainPanel.add(containerPanel, BorderLayout.CENTER);
+
+		pack();
+		setLocationRelativeTo(null);
+
+	}
+
+	public JTextField getTxtTenPP() {
+		return txtTenPP;
+	}
+
+	public JTextField getTxtGia() {
+		return txtGia;
+	}
+
+	public JButton getBtnThoat() {
+		return btnThoat;
+	}
+
+	public JButton getBtnXatNhan() {
+		return btnXacNhan;
+	}
+
+	public DefaultTableModel getTableModel() {
+		return tableModel;
+	}
 
 }

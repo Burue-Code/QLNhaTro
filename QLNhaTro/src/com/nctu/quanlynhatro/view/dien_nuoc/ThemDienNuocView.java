@@ -35,7 +35,7 @@ public class ThemDienNuocView extends JDialog {
 	private JTextField txtTongTien;
 
 	private JButton btnThem;
-	private JButton btnDong; // Bổ sung nút Đóng
+	private JButton btnDong;
 	private DefaultTableModel tableModel;
 
 	private DecimalFormat df = new DecimalFormat("#,###");
@@ -51,14 +51,12 @@ public class ThemDienNuocView extends JDialog {
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(mainPanel);
 
-		// --- FORM NHẬP LIỆU (GRID BAG LAYOUT) ---
 		JPanel formPanel = new JPanel(new GridBagLayout());
 		formPanel.setBorder(new TitledBorder("Nhập chỉ số điện nước"));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		// --- HÀNG 1: Nhà trọ (Trái) - Phòng (Phải) ---
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		formPanel.add(new JLabel("Nhà trọ:"), gbc);
@@ -78,7 +76,6 @@ public class ThemDienNuocView extends JDialog {
 		gbc.weightx = 1.0;
 		formPanel.add(cboSoPhong, gbc);
 
-		// --- HÀNG 2: Giá điện (Trái) - Giá nước (Phải) ---
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		formPanel.add(new JLabel("Đơn giá Điện:"), gbc);
@@ -97,7 +94,6 @@ public class ThemDienNuocView extends JDialog {
 		gbc.gridy = 1;
 		formPanel.add(txtGiaNuoc, gbc);
 
-		// --- HÀNG 3: Số điện cũ (Trái) - Số nước cũ (Phải) ---
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		formPanel.add(new JLabel("Số điện cũ:"), gbc);
@@ -116,7 +112,6 @@ public class ThemDienNuocView extends JDialog {
 		gbc.gridy = 2;
 		formPanel.add(txtNuocCu, gbc);
 
-		// --- HÀNG 4: Số điện mới (Trái) - Số nước mới (Phải) ---
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		formPanel.add(new JLabel("Số điện mới:"), gbc);
@@ -133,7 +128,6 @@ public class ThemDienNuocView extends JDialog {
 		gbc.gridy = 3;
 		formPanel.add(txtNuocMoi, gbc);
 
-		// --- HÀNG 5: Tiền điện (Trái) - Tiền nước (Phải) ---
 		gbc.gridx = 0;
 		gbc.gridy = 4;
 		formPanel.add(new JLabel("Thành tiền Điện:"), gbc);
@@ -154,7 +148,6 @@ public class ThemDienNuocView extends JDialog {
 		gbc.gridy = 4;
 		formPanel.add(txtTienNuoc, gbc);
 
-		// --- HÀNG 6: Tháng thu (Combobox) - Tổng tiền (Phải) ---
 		gbc.gridx = 0;
 		gbc.gridy = 5;
 		formPanel.add(new JLabel("Tháng thu:"), gbc);
@@ -176,7 +169,6 @@ public class ThemDienNuocView extends JDialog {
 
 		mainPanel.add(formPanel, BorderLayout.CENTER);
 
-		// --- NÚT BẤM ---
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
 		btnThem = new JButton("Thêm");
@@ -193,9 +185,6 @@ public class ThemDienNuocView extends JDialog {
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 	}
 
-	// ==============================================
-	// GETTER CHO CONTROLLER TRUY CẬP
-	// ==============================================
 	public JComboBox<String> getCboNhaTro() {
 		return cboNhaTro;
 	}

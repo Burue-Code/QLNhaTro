@@ -93,6 +93,8 @@ public class PhongDAO {
 					p.setGia(rs.getDouble("Gia"));
 					p.setSoNguoiToiDa(rs.getInt("SLNguoiMax"));
 					p.setPhuThu(rs.getDouble("PhuThu"));
+					p.setTrangThaiPhong(rs.getString("TrangThaiPhong"));
+					p.setGhiChu(rs.getString("GhiChu"));
 
 					NhaTro nt = new NhaTro();
 					nt.setMaNT(rs.getInt("MaNT"));
@@ -281,5 +283,26 @@ public class PhongDAO {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public List<Map<String, Object>> getKhachHangTrongPhong(long maPhong) {
+		List<Map<String, Object>> list = new ArrayList<>();
+		String sql = "SELECT MaKH, TenKH, DiaChi, GioiTinh, NgaySinh FROM KhachHang WHERE MaPhong = ? AND TrangThaiXoa = 0";
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setLong(1, maPhong);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Map<String, Object> row = new HashMap<>();
+				row.put("MaKH", rs.getLong("MaKH"));
+				row.put("TenKH", rs.getString("TenKH"));
+				row.put("DiaChi", rs.getString("DiaChi"));
+				row.put("GioiTinh", rs.getBoolean("GioiTinh") ? "Nữ" : "Nam");
+				row.put("NgaySinh", rs.getDate("NgaySinh"));
+				list.add(row);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }
