@@ -1,7 +1,7 @@
 package com.nctu.quanlynhatro.model;
 
 public class GiaDienNuoc {
-	private long maGiaDN; // [QUAN TRỌNG] Đổi từ int sang long cho khớp với bigint trong DB
+	private long maGiaDN;
 	private double giaDien;
 	private double giaNuoc;
 	private boolean trangThaiXoa;
@@ -9,7 +9,6 @@ public class GiaDienNuoc {
 	public GiaDienNuoc() {
 	}
 
-	// Constructor khớp với DAO
 	public GiaDienNuoc(long maGiaDN, double giaDien, double giaNuoc) {
 		this.maGiaDN = maGiaDN;
 		this.giaDien = giaDien;

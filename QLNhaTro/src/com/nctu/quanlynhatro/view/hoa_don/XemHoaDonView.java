@@ -25,25 +25,21 @@ import javax.swing.table.DefaultTableModel;
 
 public class XemHoaDonView extends JDialog {
 
-	// --- KHU VỰC TRÁI ---
 	private JTextField txtTenKH, txtNgayThanhToan;
 	private JTextField txtMaHopDong, txtNhaTro, txtPhong;
 	private JTextField txtGiaThue, txtGhiChu;
 
-	// Hiển thị dạng textbox
 	private JTextField txtHoaDonDienNuoc;
 	private JTextField txtPhuongThucThanhToan;
 	private JTextField txtLoaiThanhToan;
 
-	// --- KHU VỰC PHẢI ---
 	private JTable tblPhuPhi, tblDienNuoc;
 	private DefaultTableModel modelPhuPhi, modelDienNuoc;
 
-	// --- FOOTER ---
 	private JTextField txtTongTienDN, txtTongTienPhuPhi, txtTongThanhToan;
 	private JButton btnDong;
-	private JButton btnSua; // [MỚI THÊM]
-	private JButton btnXoa; // [MỚI THÊM]
+	private JButton btnSua;
+	private JButton btnXoa;
 
 	public XemHoaDonView() {
 
@@ -53,19 +49,14 @@ public class XemHoaDonView extends JDialog {
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(contentPane);
 
-		// =========================================================
-		// 1) CENTER: 2 CỘT
-		// =========================================================
 		JPanel pnlCenter = new JPanel(new GridLayout(1, 2, 20, 0));
 
-		// ---------- LEFT FORM ----------
 		JPanel pnlLeftForm = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(5, 0, 5, 0);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 
-		// Row 1
 		addLabel(pnlLeftForm, "Tên Khách Hàng:", 0, 0);
 		addLabel(pnlLeftForm, "Ngày Thanh Toán:", 1, 0);
 
@@ -76,7 +67,6 @@ public class XemHoaDonView extends JDialog {
 		txtNgayThanhToan.setText("");
 		addComponent(pnlLeftForm, txtNgayThanhToan, 1, 1);
 
-		// Row 2
 		addLabel(pnlLeftForm, "Mã Hợp Đồng:", 0, 2);
 		addLabel(pnlLeftForm, "Hóa Đơn Điện Nước:", 1, 2);
 
@@ -86,7 +76,6 @@ public class XemHoaDonView extends JDialog {
 		txtHoaDonDienNuoc = createTextField();
 		addComponent(pnlLeftForm, txtHoaDonDienNuoc, 1, 3);
 
-		// Row 3
 		addLabel(pnlLeftForm, "Nhà Trọ:", 0, 4);
 		addLabel(pnlLeftForm, "Giá Thuê:", 1, 4);
 
@@ -96,7 +85,6 @@ public class XemHoaDonView extends JDialog {
 		txtGiaThue = createTextField();
 		addComponent(pnlLeftForm, txtGiaThue, 1, 5);
 
-		// Row 4
 		addLabel(pnlLeftForm, "Phòng:", 0, 6);
 		addLabel(pnlLeftForm, "Ghi Chú:", 1, 6);
 
@@ -106,7 +94,6 @@ public class XemHoaDonView extends JDialog {
 		txtGhiChu = createTextField();
 		addComponent(pnlLeftForm, txtGhiChu, 1, 7);
 
-		// Row 5
 		addLabel(pnlLeftForm, "Phương Thức Thanh Toán:", 0, 8);
 		addLabel(pnlLeftForm, "Loại Thanh Toán:", 1, 8);
 
@@ -116,16 +103,13 @@ public class XemHoaDonView extends JDialog {
 		txtLoaiThanhToan = createTextField();
 		addComponent(pnlLeftForm, txtLoaiThanhToan, 1, 9);
 
-		// push content up
 		gbc.gridx = 0;
 		gbc.gridy = 10;
 		gbc.weighty = 1.0;
 		pnlLeftForm.add(new JLabel(), gbc);
 
-		// ---------- RIGHT TABLES ----------
 		JPanel pnlRightTables = new JPanel(new GridLayout(2, 1, 0, 10));
 
-		// Phụ phí
 		JPanel pnlPhuPhi = new JPanel(new BorderLayout());
 		pnlPhuPhi.setBorder(new TitledBorder("Phụ Phí"));
 		String[] colsPhuPhi = { "MaPP", "Tên Phụ Phí", "Giá" };
@@ -140,7 +124,6 @@ public class XemHoaDonView extends JDialog {
 		tblPhuPhi.setPreferredScrollableViewportSize(new Dimension(450, 100));
 		pnlPhuPhi.add(new JScrollPane(tblPhuPhi), BorderLayout.CENTER);
 
-		// Điện nước
 		JPanel pnlDienNuoc = new JPanel(new BorderLayout());
 		pnlDienNuoc.setBorder(new TitledBorder("Hóa Đơn Điện Nước"));
 		String[] colsDN = { "MaDN", "Thời Gian", "Giá" };
@@ -162,9 +145,6 @@ public class XemHoaDonView extends JDialog {
 		pnlCenter.add(pnlRightTables);
 		contentPane.add(pnlCenter, BorderLayout.CENTER);
 
-		// =========================================================
-		// 2) SOUTH: FOOTER
-		// =========================================================
 		JPanel pnlFooter = new JPanel(new GridLayout(1, 2, 20, 0));
 		pnlFooter.setBorder(new EmptyBorder(10, 0, 0, 0));
 
@@ -204,7 +184,6 @@ public class XemHoaDonView extends JDialog {
 
 		contentPane.add(pnlFooter, BorderLayout.SOUTH);
 
-		// KHÓA TOÀN BỘ INPUT -> CHỈ XEM
 		setViewOnly();
 
 		pack();
@@ -216,14 +195,13 @@ public class XemHoaDonView extends JDialog {
 				txtTongThanhToan };
 		for (JTextField f : fields) {
 			f.setEditable(false);
-			f.setBackground(new Color(240, 240, 240)); // Đổi màu xám nhạt cho giống form chỉ đọc
+			f.setBackground(new Color(240, 240, 240));
 		}
 
 		tblPhuPhi.setEnabled(false);
 		tblDienNuoc.setEnabled(false);
 	}
 
-	// ---------------- Helper UI ----------------
 	private void addLabel(JPanel panel, String text, int x, int y) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = x;
@@ -269,9 +247,6 @@ public class XemHoaDonView extends JDialog {
 		return p;
 	}
 
-	// =================================================================
-	// GETTERS
-	// =================================================================
 	public JTextField getTxtTenKH() {
 		return txtTenKH;
 	}
@@ -352,9 +327,6 @@ public class XemHoaDonView extends JDialog {
 		return btnXoa;
 	}
 
-	// =================================================================
-	// SETTERS
-	// =================================================================
 	public void setTxtTenKH(String text) {
 		this.txtTenKH.setText(text);
 	}

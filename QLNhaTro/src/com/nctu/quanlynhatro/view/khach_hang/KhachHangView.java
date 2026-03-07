@@ -21,7 +21,6 @@ public class KhachHangView extends JPanel {
 		setLayout(new BorderLayout(10, 10));
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		// --- KHU VỰC NORTH: TIÊU ĐỀ + TÌM KIẾM ---
 		JPanel pnlNorth = new JPanel(new BorderLayout(0, 10));
 
 		MyLabel lblTitle = new MyLabel("HỒ SƠ KHÁCH HÀNG", MyLabel.HEADER, SwingConstants.CENTER);
@@ -29,14 +28,13 @@ public class KhachHangView extends JPanel {
 
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		MyLabel lblTim = new MyLabel("Tìm kiếm: ");
-		txtTimKiem = new MyTextField("Nhập từ khóa cần tìm.....", 300, 35); // Độ dài chuẩn
+		txtTimKiem = new MyTextField("Nhập từ khóa cần tìm.....", 300, 35);
 
 		searchPanel.add(lblTim);
 		searchPanel.add(txtTimKiem);
 		pnlNorth.add(searchPanel, BorderLayout.SOUTH);
 		add(pnlNorth, BorderLayout.NORTH);
 
-		// --- BẢNG DỮ LIỆU ---
 		String[] headers = { "MaKH", "Tên Khách Hàng", "Địa Chỉ", "Giới Tính", "Ngày Sinh", "Số Điện Thoại", "CCCD" };
 
 		tblKhachHang = new MyTable(headers);

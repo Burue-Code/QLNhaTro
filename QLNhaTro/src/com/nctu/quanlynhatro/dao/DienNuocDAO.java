@@ -20,7 +20,6 @@ public class DienNuocDAO {
 		this.conn = conn;
 	}
 
-	// 1. Lấy danh sách tất cả phiếu điện nước (Cho bảng hiển thị chính)
 	public List<PhieuDienNuoc> getAll() {
 		List<PhieuDienNuoc> list = new ArrayList<>();
 		String sql = "SELECT dn.*, p.SoPhong, p.MaPhong " + "FROM PhieuDienNuoc dn "
@@ -30,7 +29,6 @@ public class DienNuocDAO {
 		try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
-				// Xử lý ngày tháng an toàn
 				java.sql.Date d = rs.getDate("ThangNam");
 				LocalDate ld = (d != null) ? d.toLocalDate() : null;
 
@@ -39,7 +37,6 @@ public class DienNuocDAO {
 						rs.getDouble("TienDien"), rs.getDouble("TienNuoc"), rs.getDouble("GiaDienTaiThoiDiem"),
 						rs.getDouble("GiaNuocTaiThoiDiem"), rs.getDouble("TongTien"), rs.getString("TrangThaiDN"));
 
-				// Set thông tin Phòng vào object con
 				if (pdn.getPhong() == null) {
 					pdn.setPhong(new Phong());
 				}
@@ -54,9 +51,7 @@ public class DienNuocDAO {
 		return list;
 	}
 
-	// 2. Lấy thông tin giá điện nước hiện tại (Mới nhất)
 	public Map<String, Object> getGiaDienNuocHienTai() {
-		// [FIX]: Dùng LIMIT 1 thay vì TOP 1
 		String sql = "SELECT MaGiaDN, GiaDien, GiaNuoc FROM GiaDienNuoc ORDER BY MaGiaDN DESC LIMIT 1";
 		Map<String, Object> map = new HashMap<>();
 		try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -71,7 +66,6 @@ public class DienNuocDAO {
 		return map;
 	}
 
-	// 3. Lấy danh sách Nhà Trọ
 	public Map<String, Integer> getListNhaTro() {
 		Map<String, Integer> map = new HashMap<>();
 		String sql = "SELECT MaNT, TenNT FROM NhaTro WHERE TrangThaiXoa = 0";
@@ -85,11 +79,9 @@ public class DienNuocDAO {
 		return map;
 	}
 
-	// 4. Lấy danh sách Phòng theo Mã Nhà Trọ (Chỉ lấy phòng đang thuê)
 	public Map<String, Integer> getListPhong(int maNT) {
 		Map<String, Integer> map = new HashMap<>();
 
-		// Chỉ lấy những phòng thuộc Nhà Trọ được chọn VÀ đang có người thuê
 		String sql = "SELECT MaPhong, SoPhong FROM Phong WHERE MaNT = ? AND TrangThaiPhong = N'Đã thuê'";
 
 		try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -98,7 +90,6 @@ public class DienNuocDAO {
 
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					// Đưa vào Map: Key là Tên/Số phòng (String), Value là Mã phòng (Integer)
 					map.put(rs.getString("SoPhong"), rs.getInt("MaPhong"));
 				}
 			}
@@ -108,13 +99,11 @@ public class DienNuocDAO {
 		return map;
 	}
 
-	// 5. Lấy chỉ số điện/nước MỚI NHẤT của phòng để làm chỉ số cũ
 	public Map<String, Double> getChiSoCu(int maPhong) {
 		Map<String, Double> result = new HashMap<>();
 		result.put("Dien", 0.0);
 		result.put("Nuoc", 0.0);
 
-		// [FIX]: Dùng LIMIT 1 thay vì TOP 1
 		String sql = "SELECT ChiSoDienMoi, ChiSoNuocMoi FROM PhieuDienNuoc WHERE MaPhong = ? AND TrangThaiXoa = 0 ORDER BY ThangNam DESC LIMIT 1";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -131,7 +120,6 @@ public class DienNuocDAO {
 		return result;
 	}
 
-	// 6. Kiểm tra đã tồn tại phiếu trong tháng chưa
 	public boolean checkTonTai(int maPhong, java.time.LocalDate thangNam) {
 		String sql = "SELECT 1 FROM PhieuDienNuoc WHERE MaPhong = ? AND ThangNam = ? AND TrangThaiXoa = 0";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -146,11 +134,9 @@ public class DienNuocDAO {
 		}
 	}
 
-	// 7. Thêm phiếu điện nước mới
 	public boolean insertPhieu(int maPhong, java.sql.Date thangNam, double dCu, double dMoi, double nCu, double nMoi,
 			double tDien, double tNuoc, double tong, double giaDien, double giaNuoc, int maGiaDN) {
 
-		// [FIX]: Bỏ chữ N trước chuỗi 'Chưa đóng'
 		String sql = "INSERT INTO PhieuDienNuoc(MaPhong, ThangNam, ChiSoDienCu, ChiSoDienMoi, ChiSoNuocCu, ChiSoNuocMoi, TienDien, TienNuoc, TongTien, GiaDienTaiThoiDiem, GiaNuocTaiThoiDiem, TrangThaiDN, TrangThaiXoa, MaGiaDN) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Chưa thanh toán', 0, ?)";
 
@@ -166,7 +152,7 @@ public class DienNuocDAO {
 			ps.setDouble(9, tong);
 			ps.setDouble(10, giaDien);
 			ps.setDouble(11, giaNuoc);
-			ps.setInt(12, maGiaDN); // Thêm mã giá để tham chiếu sau này
+			ps.setInt(12, maGiaDN);
 
 			return ps.executeUpdate() > 0;
 		} catch (Exception e) {
@@ -175,11 +161,6 @@ public class DienNuocDAO {
 		}
 	}
 
-	// =================================================================
-	// CÁC HÀM PHỤC VỤ SỬA (UPDATE)
-	// =================================================================
-
-	// 7. Lấy phiếu điện nước theo ID
 	public PhieuDienNuoc getById(long maDN) {
 		String sql = "SELECT dn.*, p.SoPhong, nt.TenNT " + "FROM PhieuDienNuoc dn "
 				+ "JOIN Phong p ON dn.MaPhong = p.MaPhong " + "JOIN NhaTro nt ON p.MaNT = nt.MaNT "
@@ -200,10 +181,7 @@ public class DienNuocDAO {
 					p.setTongTien(rs.getDouble("TongTien"));
 					p.setGiaDienTaiThoiDiem(rs.getDouble("GiaDienTaiThoiDiem"));
 					p.setGiaNuocTaiThoiDiem(rs.getDouble("GiaNuocTaiThoiDiem"));
-
-					// Lưu tạm tên NT và Phòng để hiển thị lên View
-					p.setGhiChu(rs.getString("TenNT")); // Hack: Dùng tạm field GhiChu hoặc tạo DTO
-					// Hoặc set vào object Phong bên trong
+					p.setGhiChu(rs.getString("TenNT"));
 					if (p.getPhong() == null) {
 						p.setPhong(new com.nctu.quanlynhatro.model.Phong());
 					}
@@ -218,7 +196,6 @@ public class DienNuocDAO {
 		return null;
 	}
 
-	// 8. Cập nhật phiếu điện nước
 	public boolean updatePhieu(PhieuDienNuoc p) {
 		String sql = "UPDATE PhieuDienNuoc SET " + "ChiSoDienCu=?, ChiSoDienMoi=?, ChiSoNuocCu=?, ChiSoNuocMoi=?, "
 				+ "TienDien=?, TienNuoc=?, TongTien=?, GiaDienTaiThoiDiem=?, GiaNuocTaiThoiDiem=? " + "WHERE MaDN=?";
@@ -241,9 +218,6 @@ public class DienNuocDAO {
 		}
 	}
 
-	// =================================================================
-	// XÓA PHIẾU ĐIỆN NƯỚC (XÓA MỀM)
-	// =================================================================
 	public boolean delete(long maDN) {
 		String sql = "UPDATE PhieuDienNuoc SET TrangThaiXoa = 1 WHERE MaDN = ?";
 

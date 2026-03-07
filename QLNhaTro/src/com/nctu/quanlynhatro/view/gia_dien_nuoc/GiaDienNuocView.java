@@ -21,15 +21,14 @@ public class GiaDienNuocView extends JDialog { // Kế thừa JDialog
 	private JButton btnLuu, btnHuy;
 
 	public GiaDienNuocView(Frame owner) {
-		super(owner, "Cập nhật Giá Điện Nước", true); // Set title và modal = true
+		super(owner, "Cập nhật Giá Điện Nước", true);
 		setSize(400, 350);
-		setLocationRelativeTo(owner); // Căn giữa so với form cha
+		setLocationRelativeTo(owner);
 		setLayout(new BorderLayout(10, 10));
 
 		JPanel pnlCenter = new JPanel(new GridLayout(5, 2, 10, 15));
 		pnlCenter.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-		// Giá hiện tại (Read-only)
 		pnlCenter.add(new JLabel("Giá Điện hiện tại:"));
 		txtGiaDienCu = createTextField(false);
 		pnlCenter.add(txtGiaDienCu);
@@ -38,11 +37,9 @@ public class GiaDienNuocView extends JDialog { // Kế thừa JDialog
 		txtGiaNuocCu = createTextField(false);
 		pnlCenter.add(txtGiaNuocCu);
 
-		// Separator (Dòng kẻ ngang)
 		pnlCenter.add(new JSeparator());
 		pnlCenter.add(new JSeparator());
 
-		// Giá mới
 		pnlCenter.add(new JLabel("Giá Điện MỚI:"));
 		txtGiaDienMoi = createTextField(true);
 		pnlCenter.add(txtGiaDienMoi);
@@ -53,7 +50,6 @@ public class GiaDienNuocView extends JDialog { // Kế thừa JDialog
 
 		add(pnlCenter, BorderLayout.CENTER);
 
-		// Buttons
 		JPanel pnlBtn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		btnHuy = new JButton("Hủy");
 		btnLuu = new JButton("Lưu Thay Đổi");
@@ -76,7 +72,6 @@ public class GiaDienNuocView extends JDialog { // Kế thừa JDialog
 		return txt;
 	}
 
-	// Getters
 	public JTextField getTxtGiaDienCu() {
 		return txtGiaDienCu;
 	}

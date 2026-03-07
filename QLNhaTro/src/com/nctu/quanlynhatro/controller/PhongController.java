@@ -17,6 +17,7 @@ import com.nctu.quanlynhatro.view.component.MyPopupMenu;
 import com.nctu.quanlynhatro.view.component.MyTable;
 import com.nctu.quanlynhatro.view.phong.PhongView;
 import com.nctu.quanlynhatro.view.phong.ThemPhongView;
+import com.nctu.quanlynhatro.view.phong.XemPhong;
 
 public class PhongController {
 	private PhongView view;
@@ -50,6 +51,10 @@ public class PhongController {
 
 	public void refreshData() {
 		initData();
+	}
+
+	public DefaultTableModel getModel() {
+		return model;
 	}
 
 	private void initSearch() {
@@ -106,6 +111,7 @@ public class PhongController {
 		JMenuItem mnuThem = popup.addItem("Thêm Phòng");
 		JMenuItem mnuSua = popup.addItem("Sửa Phòng");
 		JMenuItem mnuXoa = popup.addItem("Xóa Phòng");
+		JMenuItem mnuXem = popup.addItem("Xem Phòng");
 		popup.addSeparator();
 		JMenuItem mnuLamMoi = popup.addItem("Làm Mới");
 
@@ -150,11 +156,27 @@ public class PhongController {
 				if (phongDAO.deleteSoft(maPhong)) {
 					JOptionPane.showMessageDialog(view, "Xóa phòng thành công!", "Thông báo",
 							JOptionPane.INFORMATION_MESSAGE);
-					refreshData(); // reload bảng
+					refreshData();
 				} else {
 					JOptionPane.showMessageDialog(view, "Xóa phòng thất bại! Vui lòng kiểm tra lại.", "Lỗi",
 							JOptionPane.ERROR_MESSAGE);
 				}
+			}
+		});
+
+		mnuXem.addActionListener(e -> {
+			int row = table.getSelectedRow();
+			if (row >= 0) {
+				int modelRow = table.convertRowIndexToModel(row);
+				long maPhong = Long.parseLong(model.getValueAt(modelRow, 0).toString());
+
+				XemPhong xemPhongView = new XemPhong((java.awt.Frame) null);
+				xemPhongView.setModal(true);
+				new XemPhongController(xemPhongView, maPhong, this);
+
+			} else {
+				JOptionPane.showMessageDialog(view, "Vui lòng chọn một phòng để xem chi tiết!", "Cảnh báo",
+						JOptionPane.WARNING_MESSAGE);
 			}
 		});
 
